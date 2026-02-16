@@ -55,11 +55,21 @@ flowchart TD
 *Grading Criteria: Identifies relevant automation opportunities.*
 
 ### 3.1 The Target Zone
-*(Look at your diagram in Part 1.2 (_The Minimal Viable Workflow_). Which specific nodes will you replace with AI in Week 3?)*
-*   **We will replace:** [Step Name]
-*   **We will keep human:** [Step Name]
+From the AS-IS workflow, the Minimal Viable Workflow (MVW) we identified was:
+
+Automate: Candidate search & background relevance evaluation → Node B[📦 Company + Job Title + School/Common Background]
+
+Keep Human: Drafting personalized messages & sending requests → Nodes F and G
+
+Summary Table:
+| Step                                         | Current Responsibility | TO-BE Responsibility                          |
+| -------------------------------------------- | ---------------------- | --------------------------------------------- |
+| Search for candidates & filter by background | Human                  | AI                                            |
+| Open profile & evaluate                      | Human                  | AI-assisted / Human review                    |
+| Draft personalized message                   | Human                  | Human with AI suggestions                     |
+| Overthink/customize message                  | Human                  | Human                                         |
+| Send connection request                      | Human                  | Human / Semi-automated with prepared messages |
+
 
 ### 3.2 The Hypothesis
-*   "By automating [Step X], we expect to reduce the time spent from [Current Time] to [Target Time]."
-*  **HINT**: Refer to your Segment 1 interview notes where you discussed 'Hours Saved' and 'Cost of Error' to fill this out.
-> EXAMPLE: _By implementing an AI Context Guardian to cross-reference meeting transcripts with the Master Budget Excel, we will reduce the budget reconciliation time from 2 hours to 30 seconds and reduce the financial risk of unauthorized shifts to near zero._
+*   By automating candidate search and relevance filtering, we expect to reduce the time spent from 1–2 hours/week to 0.25-0.5 hours/week, while maintaining or improving the quality of connections and reducing human error associated with missing relevant contacts."
