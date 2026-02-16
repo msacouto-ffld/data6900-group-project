@@ -15,16 +15,24 @@ For each job posting, the student must extract key details, search for professio
 
 ### 1.2 The "As-Is" Diagram (Mermaid)
 
+### 1.2 The "As-Is" Diagram (Mermaid)
+
 ```mermaid
 flowchart TD
     A[⚡ Job Posting] --> B[📦 Identify Company + Job Title + School/Common Background]
     B --> C[🛠️ Analyze Profile for Relevance; Pain Point: Time consuming]
     C --> D[🛠️ Draft Customized Message; Pain Point: Time consuming]
     D --> F[🛠️ Send Connection]
+
+    %% Highlight the most time consuming bottlenecks (B, C, and D)
+    style B fill:#f90
+    style C fill:#f90
+    style D fill:#f90
 ```
 
 ### 1.3 Pain Point Diagnosis
-*   **The Bottleneck:** The bottleneck occurs between “Analyze Profile” and “Overthink/Draft Customized Message.” This stage requires reviewing unstructured profile information, exercising judgment about strategic value, and writing a personalized outreach message. It is the most cognitively demanding and time-intensive step, and it must be repeated for every potential connection.
+*   **The Bottleneck:** The main bottleneck occurs between "Identifying Company + Job Title + School/Common Background", “Analyze Profile” and “Draft Customized Message.” This stage requires reviewing unstructured profile information, exercising judgment about strategic value, and writing a personalized outreach message. It is the most cognitively demanding and time-intensive step, and it must be repeated for every potential connection.
+
 
 *   **The Cost:** The student typically attempts 8–12 outreach connections per week. Profile analysis takes approximately 3–5 minutes per person, and drafting a customized message takes 7–10 minutes. This results in approximately 2–3 hours per week spent primarily on evaluation and message drafting, representing roughly 70–80% of total process time. Additional costs include cognitive fatigue, inconsistent message quality, and reduced outreach volume due to overthinking.
 
