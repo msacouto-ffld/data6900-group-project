@@ -8,10 +8,9 @@
 ## Part 1: Process Mapping (The "As-Is" State)
 
 ### 1.1 The Scenario
-Current students are aware that networking is a powerful tool for landing job interviews, 
+A student wants to improve chances in the job market by manually generating leads on LinkedIn to connect with people who can land job interviews or gather career insights. The process involves multiple manual steps, from identifying relevant profiles to sending personalized connection requests.
 
 ### 1.2 The "As-Is" Diagram (Mermaid)
-*(Use ChatGPT to help you generate a `graph TD` flow chart of the current MANUAL steps. You must clearly label the manual bottlenecks.)*
 
 ```mermaid
 flowchart TD
