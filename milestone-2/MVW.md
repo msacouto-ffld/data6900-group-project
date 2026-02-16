@@ -98,15 +98,19 @@ Summary Table:
 ## Part 2: The "To-Be" Solution (Milestone 2)
 
 ### 2.1 The "To-Be" Map
-*(Paste the Mermaid `graph TD` code for your Linear Assembly Line. It should look like a pipeline, not a spaghetti mess.)*
+graph TD
+    A[⚡ Job Posting] --> Node_1 --> Node_2 --> Node_3 --> F[🛠️ Send Connection]
 
-```mermaid
-graph LR
-    Input[Raw Text] --> Node1[Gatekeeper]
-    Node1 --JSON--> Node2[Judge]
-    Node2 --Verdict--> Node3[Worker]
-    Node3 --> Output[Final Draft]
-```
+    subgraph Automated AI Pipeline
+        Node_1[🤖 Gatekeeper: Extraction]
+        Node_2[⚖️ Judge: Reasoning]
+        Node_3[✍️ Worker: Drafting]
+    end
+
+    %% Visual Highlighting for AI Pipeline Nodes
+    style Node_1 fill:#FFF4DD,stroke:#333,stroke-width:2,stroke-dasharray:5 5
+    style Node_2 fill:#FFF4DD,stroke:#333,stroke-width:2,stroke-dasharray:5 5
+    style Node_3 fill:#FFF4DD,stroke:#333,stroke-width:2,stroke-dasharray:5 5
 
 ---
 
