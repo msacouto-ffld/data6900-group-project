@@ -72,4 +72,4 @@ Summary Table:
 
 
 ### 3.2 The Hypothesis
-*   By automating candidate search and relevance filtering, we expect to reduce the time spent from 1–2 hours/week to 0.25-0.5 hours/week, while maintaining or improving the quality of connections and reducing human error associated with missing relevant contacts."
+*   By automating candidate search and relevance filtering, we expect to reduce the time spent from 1–2 hours/week to 0.25-0.5 hours/week, while maintaining or improving the quality of connections and reducing human error associated with missing relevant contacts.
