@@ -14,12 +14,13 @@ Current students are aware that networking is a powerful tool for landing job in
 *(Use ChatGPT to help you generate a `graph TD` flow chart of the current MANUAL steps. You must clearly label the manual bottlenecks.)*
 
 ```mermaid
-graph TD
-    Trigger[Email Arrives] --> Step1[Read Email]
-    Step1 --> Decision{Is it Spam?}
-    Decision --No--> Step2[Manually Copy Data]
-    Step2 --> PainPoint((PAIN: Time Consuming))
-    PainPoint --> Step3[Write Reply]
+flowchart TD
+    %% AS-IS LinkedIn Lead Generation Workflow
+
+    A[⚡ Job Posting] --> B[📦 Identify Company + Job Title + School/Common Background]
+    B --> C[🛠️ Analize Profile]
+    C --> D[🛠️ Overthink/Draft Customized Message]
+    D --> F[🛠️ Send connection]
 ```
 
 ### 1.3 Pain Point Diagnosis
