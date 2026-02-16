@@ -1,15 +1,14 @@
 # Process Design Document (PDD) - Milestone 1: Process Analysis
-**Team Name:**
-**Project Title:** (e.g., The LinkedIn Job Matcher)
-**Target Workflow:** (Personal/Professional Daily Task)
+**Team Name:** Group 2
+**Project Title:** LinkedIn Lead Generator
+**Target Workflow:** Personal Daily Task
 
 ---
 
 ## Part 1: Process Mapping (The "As-Is" State)
-*Grading Criteria: Diagram is clear, accurate, and highlights pain points.*
 
 ### 1.1 The Scenario
-*(Briefly describe the manual process as it exists today. Who does it? When? What triggers it?)*
+Current students are aware that networking is a powerful tool for landing job interviews, 
 
 ### 1.2 The "As-Is" Diagram (Mermaid)
 *(Use ChatGPT to help you generate a `graph TD` flow chart of the current MANUAL steps. You must clearly label the manual bottlenecks.)*
@@ -33,9 +32,13 @@ graph TD
 *Grading Criteria: Logically justifies why this is a good fit for GenAI.*
 
 ### 2.1 The 3-Filter Analysis
-*   **Value:** (Is it repetitive? Is the "Cost" defined above high enough to justify building a bot?)
-*   **Feasibility:** (Is the input data text-based? Do you have access to the rules/context needed to make decisions?)
-*   **Risk:** (What happens if the AI hallucinates? Is this a "Game Over" scenario or just a minor annoyance?)
+| Activity                                                             | Pain (1-10) | Feasibility (1-10) | Risk (1-10) | Rationale                                                                                                       |
+| -------------------------------------------------------------------- | ----------- | ------------------ | ----------- | --------------------------------------------------------------------------------------------------------------- |
+| Open profile → evaluate relevance → customize message → send request | 8           | 6                  | 7           | This is the most time-consuming step, requires judgment, and mistakes (weak messages) can reduce response rate. |
+| Overthink/customize each message                                     | 9           | 5                  | 6           | High mental effort; automation is challenging due to personalization, but template guidance could help.         |
+| Searching for relevant people                                        | 7           | 9                  | 4           | Can be partially automated via AI filters; relatively low risk if criteria are clear.                           |
+| Decision based on shared background                                  | 6           | 8                  | 3           | Straightforward evaluation based on known criteria; low-risk and feasible to automate filtering.                |
+| Sending connection request                                           | 5           | 9                  | 5           | Easy to automate; Not necessary to automate                           |
 
 ### 2.2 The "Why AI?" Justification
 *(Explain why Standard Software (like Excel formulas) isn't enough. Does this task require "Reasoning," "Summarization," or "Tone Adjustment"?)*
