@@ -42,7 +42,13 @@ flowchart TD
 | Sending connection request                                           | 5           | 9                  | 5           | Easy to automate; Not necessary to automate                           |
 
 ### 2.2 The "Why AI?" Justification
-*(Explain why Standard Software (like Excel formulas) isn't enough. Does this task require "Reasoning," "Summarization," or "Tone Adjustment"?)*
+| Activity                                           | Recommended Approach | Reasoning                                                                                                  |
+| -------------------------------------------------- | -------------------- | ---------------------------------------------------------------------------------------------------------- |
+| Searching for relevant people                      | AI / Automation      | AI can filter candidates based on company, title, and background, reducing hours spent.                    |
+| Decision based on shared background                | AI / Automation      | Matching criteria is rule-based; AI can score relevance efficiently.                                       |
+| Open profile → evaluate → customize message → send | Hybrid (AI-assisted) | AI can suggest message templates and highlight key details, but human personalization improves engagement. |
+| Overthink/customize each message                   | Human + AI Template  | Human judgment needed to maintain authenticity; AI can reduce cognitive load by suggesting drafts.         |
+| Sending connection request                         | Automation           | Once the message is ready, requests can be sent automatically with minimal risk.                           |
 
 ---
 
