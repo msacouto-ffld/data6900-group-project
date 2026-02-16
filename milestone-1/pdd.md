@@ -29,7 +29,6 @@ flowchart TD
 ---
 
 ## Part 2: Opportunity Analysis (The Business Case)
-*Grading Criteria: Logically justifies why this is a good fit for GenAI.*
 
 ### 2.1 The 3-Filter Analysis
 | Activity                                                             | Pain (1-10) | Feasibility (1-10) | Risk (1-10) | Rationale                                                                                                       |
@@ -57,7 +56,7 @@ flowchart TD
 ### 3.1 The Target Zone
 From the AS-IS workflow, the Minimal Viable Workflow (MVW) we identified was:
 
-Automate: Candidate search & background relevance evaluation → Node B[📦 Company + Job Title + School/Common Background] and Proposal drafted message
+Automate: Candidate search & background relevance evaluation → [📦 Company + Job Title + School/Common Background] and [🛠️ Overthink/Draft Customized Message]
 
 Keep Human: Finalized personalized messages & sending requests 
 
