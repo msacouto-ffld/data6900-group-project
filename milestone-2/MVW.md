@@ -98,6 +98,8 @@ Summary Table:
 ## Part 2: The "To-Be" Solution (Milestone 2)
 
 ### 2.1 The "To-Be" Map
+
+```mermaid
 graph TD
     A[⚡ Job Posting] --> Node_1 --> Node_2 --> Node_3 --> F[🛠️ Send Connection]
 
@@ -111,11 +113,10 @@ graph TD
     style Node_1 fill:#FFF4DD,stroke:#333,stroke-width:2,stroke-dasharray:5 5
     style Node_2 fill:#FFF4DD,stroke:#333,stroke-width:2,stroke-dasharray:5 5
     style Node_3 fill:#FFF4DD,stroke:#333,stroke-width:2,stroke-dasharray:5 5
-
+```
 ---
 
 ### 2.2 The R.A.F.T. Implementation (The Prompts)
-*Draft your System Prompts first. These are the instructions you give the AI.*
 
 **Prompt 1 (Gatekeeper):**
 > **Role:** ...
