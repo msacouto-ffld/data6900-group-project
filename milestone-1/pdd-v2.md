@@ -66,7 +66,7 @@ flowchart TD
 ### 3.1 The Target Zone
 From the AS-IS workflow, the Minimal Viable Workflow (MVW) we identified was:
 
-Automate: Extract job criteria → Search and rank relevant professionals → Summarize profile highlights → Generate draft personalized message
+Target steps to automate: Extract company + role + criteria →  Analyze Profile for Relevance  → Draft Customized message
 
 Keep Human: Final evaluation of strategic fit → Final message edits → Sending connection requests
 
@@ -74,8 +74,7 @@ Summary Table:
 | Step                                         | Current Responsibility | TO-BE Responsibility                |
 | -------------------------------------------- | ---------------------- | ----------------------------------- |
 | Extract company + role + criteria            | Human                  | AI                                  |
-| Search for professionals                     | Human                  | AI-assisted                         |
-| Evaluate profile for relevance               | Human                  | AI-assisted + Human validation      |
+| Analyze profile for relevance                | Human                  | AI-assisted + Human validation      |
 | Draft personalized message                   | Human                  | AI-assisted + Human refinement      |
 | Send connection request                      | Human                  | Human                               |
 
