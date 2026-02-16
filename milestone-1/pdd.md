@@ -57,17 +57,16 @@ flowchart TD
 ### 3.1 The Target Zone
 From the AS-IS workflow, the Minimal Viable Workflow (MVW) we identified was:
 
-Automate: Candidate search & background relevance evaluation → Node B[📦 Company + Job Title + School/Common Background]
+Automate: Candidate search & background relevance evaluation → Node B[📦 Company + Job Title + School/Common Background] and Proposal drafted message
 
-Keep Human: Drafting personalized messages & sending requests → Nodes F and G
+Keep Human: Finalized personalized messages & sending requests 
 
 Summary Table:
 | Step                                         | Current Responsibility | TO-BE Responsibility                          |
 | -------------------------------------------- | ---------------------- | --------------------------------------------- |
 | Search for candidates & filter by background | Human                  | AI                                            |
 | Open profile & evaluate                      | Human                  | AI-assisted / Human review                    |
-| Draft personalized message                   | Human                  | Human with AI suggestions                     |
-| Overthink/customize message                  | Human                  | Human                                         |
+| Draft personalized message                   | Human                  | AI-assisted / Human review                    |
 | Send connection request                      | Human                  | Human / Semi-automated with prepared messages |
 
 
