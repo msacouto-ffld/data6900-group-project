@@ -100,19 +100,37 @@ Summary Table:
 ### 2.1 The "To-Be" Map
 
 ```mermaid
-graph TD
-    A[⚡ Job Posting] --> Node_1 --> Node_2 --> Node_3 --> F[🛠️ Send Connection]
+flowchart TD
+    A[⚡ Job Posting] --> B_subgraph[Automated AI Pipeline: Identify Company + Job Title + School/Common Background]
+    B_subgraph --> C_subgraph[Automated AI Pipeline: Analyze Profile for Relevance]
+    C_subgraph --> D_subgraph[Automated AI Pipeline: Draft Customized Message]
+    D_subgraph --> F[🛠️ Send Connection]
 
-    subgraph Automated AI Pipeline
-        Node_1[🤖 Gatekeeper: Extraction]
-        Node_2[⚖️ Judge: Reasoning]
-        Node_3[✍️ Worker: Drafting]
+    %% Automated AI Pipelines
+    subgraph B_subgraph["Automated AI Pipeline"]
+        B1[🤖 Gatekeeper: Extraction] --> B2[⚖️ Judge: Reasoning] --> B3[✍️ Worker: Drafting]
     end
 
-    %% Visual Highlighting for AI Pipeline Nodes
-    style Node_1 fill:#FFF4DD,stroke:#333,stroke-width:2,stroke-dasharray:5 5
-    style Node_2 fill:#FFF4DD,stroke:#333,stroke-width:2,stroke-dasharray:5 5
-    style Node_3 fill:#FFF4DD,stroke:#333,stroke-width:2,stroke-dasharray:5 5
+    subgraph C_subgraph["Automated AI Pipeline"]
+        C1[🤖 Gatekeeper: Extraction] --> C2[⚖️ Judge: Reasoning] --> C3[✍️ Worker: Drafting]
+    end
+
+    subgraph D_subgraph["Automated AI Pipeline"]
+        D1[🤖 Gatekeeper: Extraction] --> D2[⚖️ Judge: Reasoning] --> D3[✍️ Worker: Drafting]
+    end
+
+    %% Styling for each node
+    style B1 fill:#FFF4DD,stroke-dasharray:5 5
+    style B2 fill:#FFF4DD,stroke-dasharray:5 5
+    style B3 fill:#FFF4DD,stroke-dasharray:5 5
+
+    style C1 fill:#FFF4DD,stroke-dasharray:5 5
+    style C2 fill:#FFF4DD,stroke-dasharray:5 5
+    style C3 fill:#FFF4DD,stroke-dasharray:5 5
+
+    style D1 fill:#FFF4DD,stroke-dasharray:5 5
+    style D2 fill:#FFF4DD,stroke-dasharray:5 5
+    style D3 fill:#FFF4DD,stroke-dasharray:5 5
 ```
 ---
 
