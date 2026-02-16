@@ -8,23 +8,25 @@
 ## Part 1: Process Mapping (The "As-Is" State)
 
 ### 1.1 The Scenario
-A student wants to improve chances in the job market by manually generating leads on LinkedIn to connect with people who can land job interviews or gather career insights. The process involves multiple manual steps, from identifying relevant profiles to sending personalized connection requests.
+A student wants to improve chances in the job market by manually generating leads on LinkedIn to connect with professionals who may provide referrals, insights, or interview opportunities. The process involves multiple manual steps, from identifying relevant profiles to drafting and sending personalized connection requests.
+
+For each job posting, the student must extract key details, search for professionals at the company, evaluate their relevance, and write a customized message. Because personalization is required for every outreach attempt, the time required increases with the number of leads pursued.
+
 
 ### 1.2 The "As-Is" Diagram (Mermaid)
 
 ```mermaid
 flowchart TD
-    %% AS-IS LinkedIn Lead Generation Workflow
-
     A[⚡ Job Posting] --> B[📦 Identify Company + Job Title + School/Common Background]
-    B --> C[🛠️ Analize Profile]
-    C --> D[🛠️ Overthink/Draft Customized Message]
-    D --> F[🛠️ Send connection]
+    B --> C[🛠️ Analyze Profile for Relevance]
+    C --> D[🛠️ Draft Customized Message]
+    D --> F[🛠️ Send Connection]
 ```
 
 ### 1.3 Pain Point Diagnosis
-*   **The Bottleneck:** (Which specific step in the diagram is the slowest or most error-prone?)
-*   **The Cost:** (Quantify the pain: e.g., "5 hours/week" or "Error rate of 20%").
+*   **The Bottleneck:** The bottleneck occurs between “Analyze Profile” and “Overthink/Draft Customized Message.” This stage requires reviewing unstructured profile information, exercising judgment about strategic value, and writing a personalized outreach message. It is the most cognitively demanding and time-intensive step, and it must be repeated for every potential connection.
+
+*   **The Cost:** The student typically attempts 8–12 outreach connections per week. Profile analysis takes approximately 3–5 minutes per person, and drafting a customized message takes 7–10 minutes. This results in approximately 2–3 hours per week spent primarily on evaluation and message drafting, representing roughly 70–80% of total process time. Additional costs include cognitive fatigue, inconsistent message quality, and reduced outreach volume due to overthinking.
 
 ---
 
@@ -34,21 +36,20 @@ flowchart TD
 ### 2.1 The 3-Filter Analysis
 | Activity                                                             | Pain (1-10) | Feasibility (1-10) | Risk (1-10) | Rationale                                                                                                       |
 | -------------------------------------------------------------------- | ----------- | ------------------ | ----------- | --------------------------------------------------------------------------------------------------------------- |
-| Open profile → evaluate relevance → customize message → send request | 8           | 6                  | 7           | This is the most time-consuming step, requires judgment, and mistakes (weak messages) can reduce response rate. |
-| Overthink/customize each message                                     | 9           | 5                  | 6           | High mental effort; automation is challenging due to personalization, but template guidance could help.         |
-| Searching for relevant people                                        | 7           | 9                  | 4           | Can be partially automated via AI filters; relatively low risk if criteria are clear.                           |
-| Decision based on shared background                                  | 6           | 8                  | 3           | Straightforward evaluation based on known criteria; low-risk and feasible to automate filtering.                |
-| Sending connection request                                           | 5           | 9                  | 5           | Easy to automate; Not necessary to automate                           |
+| Evaluate profile for relevance                                       | 9           | 8                  | 4           | Requires interpreting unstructured profile information, identifying shared background, and judging strategic value. Highly repetitive and cognitively demanding. |
+| Draft personalized message                                           | 9           | 8                  | 5           | Writing customized outreach is time-intensive and mentally taxing. Message quality directly impacts response rates. AI can generate strong drafts while preserving human review. |
+| Search LinkedIn for relevant professionals                           | 7           | 8                  | 4           | Filtering by company, title, and shared background is structured and repeatable. AI can improve efficiency through ranking and prioritization. |
+| Extract company + role + criteria from job posting                   | 6           | 9                  | 3           | Information extraction from job descriptions is well-suited for AI summarization and structured output generation. |
+| Send connection request                                              | 4           | 9                  | 6           | Technically easy to automate, but full automation increases platform and account risk. Human control is preferred. |
 
 ### 2.2 The "Why AI?" Justification
 | Activity                                           | Recommended Approach | Reasoning                                                                                                  |
 | -------------------------------------------------- | -------------------- | ---------------------------------------------------------------------------------------------------------- |
-| Searching for relevant people                      | AI / Automation      | AI can filter candidates based on company, title, and background, reducing hours spent.                    |
-| Decision based on shared background                | AI / Automation      | Matching criteria is rule-based; AI can score relevance efficiently.                                       |
-| Open profile → evaluate → customize message → send | Hybrid (AI-assisted) | AI can suggest message templates and highlight key details, but human personalization improves engagement. |
-| Overthink/customize each message                   | Human + AI Template  | Human judgment needed to maintain authenticity; AI can reduce cognitive load by suggesting drafts.         |
-| Sending connection request                         | Automation           | Once the message is ready, requests can be sent automatically with minimal risk.                           |
-
+| Extract company + role + criteria                  | AI / Automation      | AI can quickly summarize job postings and extract structured information needed for targeting relevant professionals. |
+| Search and rank relevant professionals             | AI / Automation      | AI can filter and prioritize candidates based on structured criteria such as company, role, and shared background. |
+| Evaluate profile for relevance                     | AI-assisted (Hybrid) | AI can summarize profile highlights and identify alignment signals, reducing review time while allowing human validation. |
+| Draft personalized message                         | AI-assisted (Hybrid) | AI can generate tailored draft messages using extracted profile data, reducing cognitive load and drafting time. Human review maintains authenticity. |
+| Send connection request                            | Human                | Final sending remains human-controlled to reduce platform risk and ensure intentional outreach. |
 ---
 
 ## Part 3: Scope of Automation (The Setup for Week 3)
@@ -57,18 +58,19 @@ flowchart TD
 ### 3.1 The Target Zone
 From the AS-IS workflow, the Minimal Viable Workflow (MVW) we identified was:
 
-Automate: Candidate search & background relevance evaluation → Node B[📦 Company + Job Title + School/Common Background] and Proposal drafted message
+Automate: Extract job criteria → Search and rank relevant professionals → Summarize profile highlights → Generate draft personalized message
 
-Keep Human: Finalized personalized messages & sending requests 
+Keep Human: Final evaluation of strategic fit → Final message edits → Sending connection requests
 
 Summary Table:
-| Step                                         | Current Responsibility | TO-BE Responsibility                          |
-| -------------------------------------------- | ---------------------- | --------------------------------------------- |
-| Search for candidates & filter by background | Human                  | AI                                            |
-| Open profile & evaluate                      | Human                  | AI-assisted / Human review                    |
-| Draft personalized message                   | Human                  | AI-assisted / Human review                    |
-| Send connection request                      | Human                  | Human / Semi-automated with prepared messages |
+| Step                                         | Current Responsibility | TO-BE Responsibility                |
+| -------------------------------------------- | ---------------------- | ----------------------------------- |
+| Extract company + role + criteria            | Human                  | AI                                  |
+| Search for professionals                     | Human                  | AI-assisted                         |
+| Evaluate profile for relevance               | Human                  | AI-assisted + Human validation      |
+| Draft personalized message                   | Human                  | AI-assisted + Human refinement      |
+| Send connection request                      | Human                  | Human                               |
 
 
 ### 3.2 The Hypothesis
-*   By automating candidate search and relevance filtering, we expect to reduce the time spent from 1–2 hours/week to 0.25-0.5 hours/week, while maintaining or improving the quality of connections and reducing human error associated with missing relevant contacts.
+*   By automating job criteria extraction, candidate filtering, and first-draft message generation, we expect to reduce the time spent on profile evaluation and drafting by approximately 50–70%. This would reduce total weekly effort from approximately 2–3 hours to approximately 1–1.5 hours per week, while maintaining or improving message quality and consistency through structured AI support and human review.
