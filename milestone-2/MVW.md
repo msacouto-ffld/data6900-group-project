@@ -499,5 +499,5 @@ The goal is to produce a focused lead list who are most likely to have comparabl
 > To audit the prompts or get the outputs: 
  - Step B. Tool A: https://chatgpt.com/share/6994f2a5-8410-8007-9979-18e331a2f22e
  - Step B. Tool B: https://chatgpt.com/share/6994f779-6f10-8007-a498-ab5610a02ac7
- - Step B. Tool C: 
+ - Step B. Tool C: https://chatgpt.com/share/6994fa79-0aa4-8007-a4f9-72125d5870c5
 ```
