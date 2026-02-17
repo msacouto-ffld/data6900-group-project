@@ -207,6 +207,34 @@ Plain Text
 - Ensure the string is fully formed, with no placeholders, and captures all relevant filters: company, role, skills, education, and additional parameters.
 - Maintain clarity and proper Boolean syntax so it runs immediately in LinkedIn.
 
+- Receive:
+    - JSON from Gatekeeper
+    - XML from Judge (<verdict>)
+- Combine inputs to generate a single LinkedIn People keyword search string that can be pasted directly into LinkedIn.
+- The output must be bullet-proof for LinkedIn parsing and return results without requiring manual filters.
+- LinkedIn Parsing Constraints (MANDATORY)
+    - Maximum length: ≤ 200 characters.
+- Structure:
+    - One parenthetical OR block for job titles only. Followed by space-separated keywords (no additional parentheses).
+- Boolean rules:
+    - DO NOT use nested parentheses.
+    - DO NOT use multiple AND operators.
+    - DO NOT use NOT.
+    - Use spaces as implicit AND.
+
+- Content prioritization:
+    - Include 3–5 realistic LinkedIn job titles derived from the verdict.
+    - Include 2–3 high-frequency skills that commonly co-occur in profiles (e.g., Python, LLM, NLP, chatbot, generative AI).
+    - Avoid rare tools, long phrases, or education terms.
+
+- Language normalization: Prefer terms people actually write on profiles (e.g., LLM instead of “large language model”, chatbot instead of “conversational AI system”).
+
+- Output rules:
+    - Output one single line
+    - No explanations
+    - No labels
+    - No filters
+    - No placeholders
 
 ```
 **Automating Step C: Analyze Profile for Relevance**
@@ -422,7 +450,7 @@ Plain Text
   "company": "Gartner",
   "role": "Data Scientist – Conversational AI / LLM",
   "tasks_skills": "Lead end-to-end data science projects; architect and build AI-powered chatbot systems; develop conversational AI tools (intelligent search, recommendation engines, context-aware content retrieval); design and implement MCP servers for AI agent integration; build user profiling and personalization models; optimize and productionize ML/LLM models; collaborate with data engineering, product, and business stakeholders; influence senior leadership and define AI strategy; mentor junior data scientists; stay current with LLMs and agentic AI. Required skills include LLMs and generative AI, NLP, chatbot/dialogue systems, prompt engineering, LLM fine-tuning, AI agents and orchestration, MCP, Python, scikit-learn, PyTorch/TensorFlow, Hugging Face, LangChain/LlamaIndex, SQL/NoSQL, vector databases (Pinecone/Weaviate), Spark, Linux, AWS/Azure ML, strong communication, and product/ML lifecycle knowledge."
-}´
+}`
 > 
 > **Node 2 Verdict:** `<thinking> To determine the most effective parameters for identifying relevant leads, I systematically analyzed the input JSON:
 
@@ -466,9 +494,9 @@ The goal is to produce a focused lead list who are most likely to have comparabl
 - Skills: Conversational AI, LLMs, generative AI, NLP, recommendation engines, prompt engineering, AI agent architectures (MCP, LangChain/LlamaIndex), Python, ML frameworks (PyTorch, TensorFlow, scikit-learn, HuggingFace), SQL/NoSQL/vector DBs, Spark, Linux, AWS/Azure ML
 - Education: Master’s or PhD in quantitative field (CS, Data Science, AI, Statistics)
 - Additional Parameters: Shared universities, previous experience in AI/product teams, mentorship experience, leadership in data science projects
-</verdict>´
+</verdict>`
 
-> **Final Output:** `("Data Scientist" OR "AI Engineer" OR "Machine Learning Engineer" OR "NLP Engineer" OR "Conversational AI Specialist" OR "Product Data Scientist") AND ("Conversational AI" OR "Chatbots" OR "LLM" OR "Generative AI" OR "NLP" OR "Recommendation Engine" OR "Prompt Engineering" OR "AI Agent Architecture" OR "MCP" OR "LangChain" OR "LlamaIndex") AND (Python OR PyTorch OR TensorFlow OR scikit-learn OR HuggingFace OR SQL OR NoSQL OR MongoDB OR Pinecone OR Weaviate OR Spark OR Linux OR "AWS ML" OR "Azure ML") AND (Gartner OR Microsoft OR "Google DeepMind" OR OpenAI OR "IBM Watson" OR "Amazon Alexa") AND ("Master's" OR "PhD") AND ("Computer Science" OR "Data Science" OR AI OR Statistics)´
+> **Final Output:** ´´
 
 #### Step C
 > **Input:** 
