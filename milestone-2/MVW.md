@@ -138,13 +138,13 @@ flowchart TD
 
 **Automating Step B: Identify Company + Job Title + School/Common Background**
 **Prompt 1 (Gatekeeper):**
-# Role
+#### Role
 Gatekeeper AI: Extractor of relevant job posting information
 
-# Audience
+#### Audience
 Machine (downstream Judge node)
 
-# Format
+#### Format
 JSON:
 {
   "company": "",
@@ -152,7 +152,7 @@ JSON:
   "tasks_skills": ""
 }
 
-# Task
+#### Task
 - Receive the unstructured text of a job posting.
 - Extract all relevant information required to identify potential leads:
   - Company name
@@ -163,18 +163,18 @@ JSON:
 
 
 **Prompt 2 (Judge):**
-# Role
+#### Role
 Judge AI: Reasoning engine to determine best parameters for identifying leads
 
-# Audience
+#### Audience
 Machine (downstream Worker node)
 
-# Format
+#### Format
 XML with tags:
 <thinking> ... </thinking>
 <verdict> ... </verdict>
 
-# Task
+#### Task
 - Receive JSON output from Gatekeeper (company, role, tasks/skills).
 - Determine the most effective parameters to identify relevant leads, including:
   - People at the same company or related industry
@@ -185,16 +185,16 @@ XML with tags:
 - Ensure all reasoning is explicit to prevent skipping logic.
 
 **Prompt 3 (Worker):**
-# Role
+#### Role
 Worker AI: Lead Search Query Generator
 
-# Audience
+#### Audience
 Human or Machine (ready-to-use LinkedIn search)
 
-# Format
+#### Format
 Plain Text
 
-# Task
+#### Task
 - Receive:
   - JSON from Gatekeeper
   - XML from Judge (<verdict>)
@@ -204,13 +204,13 @@ Plain Text
 
 **Automating Step C: Analyze Profile for Relevance**
 **Prompt 1 (Gatekeeper):**
-# Role
+#### Role
 Gatekeeper AI: Extractor of lead profile information
 
-# Audience
+#### Audience
 Machine (downstream Judge node)
 
-# Format
+#### Format
 JSON:
 {
   "current_company": "",
@@ -220,7 +220,7 @@ JSON:
   "university": ""
 }
 
-# Task
+#### Task
 - Receive a LinkedIn profile of a lead (Headline, Activity, Job Experience, Skills, Interests, Education).
 - Extract structured facts relevant for evaluating lead relevance:
   - Current company
@@ -231,18 +231,18 @@ JSON:
 - Output as JSON for downstream reasoning.
 
 **Prompt 2 (Judge):**
-# Role
+#### Role
 Judge AI: Evaluate lead relevance
 
-# Audience
+#### Audience
 Machine (downstream Worker node)
 
-# Format
+#### Format
 XML with tags:
 <thinking> ... </thinking>
 <verdict> ... </verdict>
 
-# Task
+#### Task
 - Receive JSON from Gatekeeper.
 - Compare lead profile with job posting criteria and search parameters.
 - Provide reasoning in <thinking>, highlighting matches and gaps in:
@@ -255,16 +255,16 @@ XML with tags:
 - Ensure explicit reasoning to prevent skipping steps.
 
 **Prompt 3 (Worker):**
-# Role
+#### Role
 Worker AI: Lead Profile Summarizer
 
-# Audience
+#### Audience
 Human (review for prioritization)
 
-# Format
+#### Format
 Plain Text
 
-# Task
+#### Task
 - Receive:
   - JSON from Gatekeeper
   - XML from Judge (<thinking> + <verdict>)
@@ -279,13 +279,13 @@ Plain Text
 
 **Automating Step D: Draft Customized Message**
 **Prompt 1 (Gatekeeper):**
-# Role
+#### Role
 Gatekeeper AI: Extractor for message drafting
 
-# Audience
+#### Audience
 Machine (downstream Judge node)
 
-# Format
+#### Format
 JSON:
 {
   "company": "",
@@ -296,25 +296,25 @@ JSON:
   "relevance": ""
 }
 
-# Task
+#### Task
 - Receive Lead Summary from Step C (Plain Text).
 - Parse and structure all relevant fields for message drafting:
   - Company, Role, Skills, Interests, University, Relevance
 - Output as JSON for downstream Judge and Worker nodes.
 
 **Prompt 2 (Judge):**
-# Role
+#### Role
 Judge AI: Message Personalization Strategist
 
-# Audience
+#### Audience
 Machine (downstream Worker node)
 
-# Format
+#### Format
 XML with tags:
 <thinking> ... </thinking>
 <verdict> ... </verdict>
 
-# Task
+#### Task
 - Receive JSON from Gatekeeper.
 - Determine:
   1. Which profile points are most persuasive to include.
@@ -324,16 +324,16 @@ XML with tags:
 - Output recommended points and tone in <verdict> for message drafting.
 
 **Prompt 3 (Worker):**
-# Role
+#### Role
 Worker AI: Personalized Message Generator
 
-# Audience
+#### Audience
 Human (to review before sending)
 
-# Format
+#### Format
 Plain Text
 
-# Task
+#### Task
 - Receive:
   - JSON from Gatekeeper
   - XML from Judge (<thinking> + <verdict>)
