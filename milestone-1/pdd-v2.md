@@ -12,9 +12,6 @@ A student wants to improve chances in the job market by manually generating lead
 
 For each job posting, the student must extract key details, search for professionals at the company, evaluate their relevance, and write a customized message. Because personalization is required for every outreach attempt, the time required increases with the number of leads pursued.
 
-
-### 1.2 The "As-Is" Diagram (Mermaid)
-
 ### 1.2 The "As-Is" Diagram (Mermaid)
 
 ```mermaid
