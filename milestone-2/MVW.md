@@ -136,23 +136,212 @@ flowchart TD
 
 ### 2.2 The R.A.F.T. Implementation (The Prompts)
 
+**Automating Step B: Identify Company + Job Title + School/Common Background**
 **Prompt 1 (Gatekeeper):**
-> **Role:** ...
-> **Audience:** ...
-> **Format:** ...
-> **Task:** ...
+# Role
+Gatekeeper AI: Extractor of relevant job posting information
+
+# Audience
+Machine (downstream Judge node)
+
+# Format
+JSON:
+{
+  "company": "",
+  "role": "",
+  "tasks_skills": ""
+}
+
+# Task
+- Receive the unstructured text of a job posting.
+- Extract all relevant information required to identify potential leads:
+  - Company name
+  - Type of role
+  - Key tasks and skills required
+- Output the extracted information in JSON format.
+- Do not make assumptions; extract only explicit or strongly implied information from the job posting.
+
 
 **Prompt 2 (Judge):**
-> **Role:** ...
-> **Audience:** ...
-> **Format:** ...
-> **Task:** ...
+# Role
+Judge AI: Reasoning engine to determine best parameters for identifying leads
+
+# Audience
+Machine (downstream Worker node)
+
+# Format
+XML with tags:
+<thinking> ... </thinking>
+<verdict> ... </verdict>
+
+# Task
+- Receive JSON output from Gatekeeper (company, role, tasks/skills).
+- Determine the most effective parameters to identify relevant leads, including:
+  - People at the same company or related industry
+  - Shared university
+  - Similar skills as described in the job posting
+- Explain reasoning in the <thinking> tag.
+- Provide final recommended search parameters in the <verdict> tag.
+- Ensure all reasoning is explicit to prevent skipping logic.
 
 **Prompt 3 (Worker):**
-> **Role:** ...
-> **Audience:** ...
-> **Format:** ...
-> **Task:** ...
+# Role
+Worker AI: Lead Search Query Generator
+
+# Audience
+Human or Machine (ready-to-use LinkedIn search)
+
+# Format
+Plain Text
+
+# Task
+- Receive:
+  - JSON from Gatekeeper
+  - XML from Judge (<verdict>)
+- Combine inputs to generate a fully formed LinkedIn lead search query.
+- Ensure query is ready-to-use without placeholders.
+- Maintain clarity and structure so a human or automated system can immediately run the search.
+
+**Automating Step C: Analyze Profile for Relevance**
+**Prompt 1 (Gatekeeper):**
+# Role
+Gatekeeper AI: Extractor of lead profile information
+
+# Audience
+Machine (downstream Judge node)
+
+# Format
+JSON:
+{
+  "current_company": "",
+  "current_role": "",
+  "skills": [],
+  "interests": [],
+  "university": ""
+}
+
+# Task
+- Receive a LinkedIn profile of a lead (Headline, Activity, Job Experience, Skills, Interests, Education).
+- Extract structured facts relevant for evaluating lead relevance:
+  - Current company
+  - Current role
+  - Skills
+  - Interests
+  - University
+- Output as JSON for downstream reasoning.
+
+**Prompt 2 (Judge):**
+# Role
+Judge AI: Evaluate lead relevance
+
+# Audience
+Machine (downstream Worker node)
+
+# Format
+XML with tags:
+<thinking> ... </thinking>
+<verdict> ... </verdict>
+
+# Task
+- Receive JSON from Gatekeeper.
+- Compare lead profile with job posting criteria and search parameters.
+- Provide reasoning in <thinking>, highlighting matches and gaps in:
+  - Company/industry
+  - Role similarity
+  - Skills alignment
+  - University/education
+  - Interests
+- Provide final relevance verdict in <verdict> as High, Medium, or Low.
+- Ensure explicit reasoning to prevent skipping steps.
+
+**Prompt 3 (Worker):**
+# Role
+Worker AI: Lead Profile Summarizer
+
+# Audience
+Human (review for prioritization)
+
+# Format
+Plain Text
+
+# Task
+- Receive:
+  - JSON from Gatekeeper
+  - XML from Judge (<thinking> + <verdict>)
+- Combine inputs to generate a concise, human-readable summary of the lead profile:
+  - Current Company
+  - Current Role
+  - Skills
+  - Interests
+  - University
+  - Relevance verdict
+- Output should be easy to read and ready for human review.
+
+**Automating Step D: Draft Customized Message**
+**Prompt 1 (Gatekeeper):**
+# Role
+Gatekeeper AI: Extractor for message drafting
+
+# Audience
+Machine (downstream Judge node)
+
+# Format
+JSON:
+{
+  "company": "",
+  "role": "",
+  "skills": [],
+  "interests": [],
+  "university": "",
+  "relevance": ""
+}
+
+# Task
+- Receive Lead Summary from Step C (Plain Text).
+- Parse and structure all relevant fields for message drafting:
+  - Company, Role, Skills, Interests, University, Relevance
+- Output as JSON for downstream Judge and Worker nodes.
+
+**Prompt 2 (Judge):**
+# Role
+Judge AI: Message Personalization Strategist
+
+# Audience
+Machine (downstream Worker node)
+
+# Format
+XML with tags:
+<thinking> ... </thinking>
+<verdict> ... </verdict>
+
+# Task
+- Receive JSON from Gatekeeper.
+- Determine:
+  1. Which profile points are most persuasive to include.
+  2. Appropriate tone/focus based on relevance.
+  3. Rank personalization priorities (university, skills, role, company, interests).
+- Provide detailed reasoning in <thinking>.
+- Output recommended points and tone in <verdict> for message drafting.
+
+**Prompt 3 (Worker):**
+# Role
+Worker AI: Personalized Message Generator
+
+# Audience
+Human (to review before sending)
+
+# Format
+Plain Text
+
+# Task
+- Receive:
+  - JSON from Gatekeeper
+  - XML from Judge (<thinking> + <verdict>)
+- Generate a fully drafted, human-friendly, ready-to-send personalized message:
+  - Include highlighted persuasive points (university, skills, role, company)
+  - Apply tone recommended by Judge
+- Output should be immediately readable, editable, and ready for human review before sending.
+
 
 ---
 
