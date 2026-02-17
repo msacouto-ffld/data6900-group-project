@@ -137,6 +137,7 @@ flowchart TD
 ### 2.2 The R.A.F.T. Implementation (The Prompts)
 
 **Automating Step B: Identify Company + Job Title + School/Common Background**
+```
 **Prompt 1 (Gatekeeper):**
 #### Role
 Gatekeeper AI: Extractor of relevant job posting information
@@ -160,8 +161,8 @@ JSON:
   - Key tasks and skills required
 - Output the extracted information in JSON format.
 - Do not make assumptions; extract only explicit or strongly implied information from the job posting.
-
-
+´´´
+```
 **Prompt 2 (Judge):**
 #### Role
 Judge AI: Reasoning engine to determine best parameters for identifying leads
@@ -183,7 +184,9 @@ XML with tags:
 - Explain reasoning in the <thinking> tag.
 - Provide final recommended search parameters in the <verdict> tag.
 - Ensure all reasoning is explicit to prevent skipping logic.
+´´´
 
+```
 **Prompt 3 (Worker):**
 #### Role
 Worker AI: Lead Search Query Generator
@@ -201,7 +204,8 @@ Plain Text
 - Combine inputs to generate a fully formed LinkedIn lead search query.
 - Ensure query is ready-to-use without placeholders.
 - Maintain clarity and structure so a human or automated system can immediately run the search.
-
+´´´
+```
 **Automating Step C: Analyze Profile for Relevance**
 **Prompt 1 (Gatekeeper):**
 #### Role
@@ -229,7 +233,9 @@ JSON:
   - Interests
   - University
 - Output as JSON for downstream reasoning.
+´´´
 
+```
 **Prompt 2 (Judge):**
 #### Role
 Judge AI: Evaluate lead relevance
@@ -253,7 +259,9 @@ XML with tags:
   - Interests
 - Provide final relevance verdict in <verdict> as High, Medium, or Low.
 - Ensure explicit reasoning to prevent skipping steps.
+´´´
 
+```
 **Prompt 3 (Worker):**
 #### Role
 Worker AI: Lead Profile Summarizer
@@ -276,7 +284,9 @@ Plain Text
   - University
   - Relevance verdict
 - Output should be easy to read and ready for human review.
+´´´
 
+```
 **Automating Step D: Draft Customized Message**
 **Prompt 1 (Gatekeeper):**
 #### Role
@@ -301,7 +311,9 @@ JSON:
 - Parse and structure all relevant fields for message drafting:
   - Company, Role, Skills, Interests, University, Relevance
 - Output as JSON for downstream Judge and Worker nodes.
+´´´
 
+```
 **Prompt 2 (Judge):**
 #### Role
 Judge AI: Message Personalization Strategist
@@ -322,7 +334,9 @@ XML with tags:
   3. Rank personalization priorities (university, skills, role, company, interests).
 - Provide detailed reasoning in <thinking>.
 - Output recommended points and tone in <verdict> for message drafting.
+´´´
 
+```
 **Prompt 3 (Worker):**
 #### Role
 Worker AI: Personalized Message Generator
@@ -341,7 +355,7 @@ Plain Text
   - Include highlighted persuasive points (university, skills, role, company)
   - Apply tone recommended by Judge
 - Output should be immediately readable, editable, and ready for human review before sending.
-
+´´´
 
 ---
 
