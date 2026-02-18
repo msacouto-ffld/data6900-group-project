@@ -179,6 +179,7 @@ XML with tags:
 
 #### Task
 - Receive JSON output from Gatekeeper (company, role, tasks/skills).
+- Receive the unstructured text of a LinkedIn profile (student searching for people to network with)
 - Determine the most effective parameters to identify relevant leads, including:
   - People at the same company or related industry
   - Shared university
@@ -237,7 +238,7 @@ Plain Text
     - No placeholders
 
 ```
-**Automating Step C: Analyze Profile for Relevance**
+**Automating Step C: Analyze Profiles for Relevance**
 **Prompt 1 (Gatekeeper):**
 ```
 #### Role
@@ -249,6 +250,7 @@ Machine (downstream Judge node)
 #### Format
 JSON:
 {
+  "name": "",
   "current_company": "",
   "current_role": "",
   "skills": [],
@@ -257,8 +259,10 @@ JSON:
 }
 
 #### Task
-- Receive a LinkedIn profile of a lead (Headline, Activity, Job Experience, Skills, Interests, Education).
+- Receive a list of LinkedIn profiles and info generated from a query 
+  (Headline, Activity, Job Experience, Skills, Education).
 - Extract structured facts relevant for evaluating lead relevance:
+  - Name
   - Current company
   - Current role
   - Skills
@@ -266,6 +270,27 @@ JSON:
   - University
 - Output as JSON for downstream reasoning.
 
+#### Grounding Guardrail — STRICT PROFILE-BOUND EXTRACTION
+- ONLY extract words, phrases, and concepts that appear verbatim or are 
+  directly and explicitly stated in the individual's profile text 
+  (headline, experience descriptions, skills section, education, and 
+  their own posts/comments).
+- DO NOT infer, inherit, or import any terms from the search query, 
+  job postings, reposts, or other people's content that appears in 
+  the profile's activity feed.
+- If a field cannot be populated with profile-sourced data, return null 
+  rather than inferring a plausible value.
+- Before writing any value, ask internally: 
+  "Did THIS person write or claim this — or did it come from somewhere else?"
+
+#### Source Hierarchy (in order of trust)
+1. Profile headline
+2. Own experience descriptions
+3. Skills section (explicitly listed)
+4. Education section
+5. The person's OWN posts and comments
+6. Reposts of others' content — DO NOT use as a source
+7. Search query terms — DO NOT use as a source
 
 ```
 **Prompt 2 (Judge):**
@@ -420,23 +445,52 @@ Plain Text
 *   **Tone/Style:** Single Boolean LinkedIn Query
 
 #### **Step C | Tool A: The Gatekeeper (Extraction)**
-*   **Goal:** Extract structured data from job posting.
-*   **Input Variable:** `{job posting description}´ (String)
+*   **Goal:** Extract information from LinkedIn profiles returned in Query.
+*   **Input Variable:** `{list of profiles and information}´ (String)
 *   **Output Schema (JSON):**
-    *   `{}´
+    *   `{
+    "name": "",
+    "current_company": "",
+    "current_role": "",
+    "skills": "",
+    "interests": "",
+    "university": ""}`
 *   **Failure Mode:** If no information was extracted, output null across all fields.
 
 #### **Step C | Tool B: The Judge (Reasoning)**
-*   **Goal:** Establish criteria to find relevant people.
-*   **Input Variable:** `{{json from previous rules}}`
+*   **Goal:** Assign relevance scores to generated leads.
+*   **Input Variable:** `{{json with lead information}}`
 *   **Context Rules:** Sticking to JSON output from previous node
 *   **Output Schema (XML):** `<thinking>` and `<verdict>`
 
 #### **Step C | Tool C: The Worker (Drafting)**
-*   **Goal:** Generate the ready-to-paste LinkedIn query.
+*   **Goal:** Summarize the lead information and relevance assignment for human review.
 *   **Input Variable:** `{{verdict}}`
-*   **Tone/Style:** Single Boolean LinkedIn Query
+*   **Tone/Style:** Text for human review, straightforward.
 
+#### **Step D | Tool A: The Gatekeeper (Extraction)**
+*   **Goal:** Extract information from LinkedIn profiles returned in Query.
+*   **Input Variable:** `{list of profiles and information}´ (String)
+*   **Output Schema (JSON):**
+    *   `{
+    "name": "",
+    "current_company": "",
+    "current_role": "",
+    "skills": "",
+    "interests": "",
+    "university": ""}`
+*   **Failure Mode:** If no information was extracted, output null across all fields.
+
+#### **Step D | Tool B: The Judge (Reasoning)**
+*   **Goal:** Assign relevance scores to generated leads.
+*   **Input Variable:** `{{json with lead information}}`
+*   **Context Rules:** Sticking to JSON output from previous node
+*   **Output Schema (XML):** `<thinking>` and `<verdict>`
+
+#### **Step D | Tool C: The Worker (Drafting)**
+*   **Goal:** Summarize the lead information and relevance assignment for human review.
+*   **Input Variable:** `{{verdict}}`
+*   **Tone/Style:** Text for human review, straightforward.
 ---
 
 ### 2.4 "Proof of Life" (Simulation Log)
@@ -447,68 +501,475 @@ Plain Text
 > 
 > **Node 1 Output:**
 > `{
-  "company": "Gartner",
-  "role": "Data Scientist – Conversational AI / LLM",
-  "tasks_skills": "Lead end-to-end data science projects; architect and build AI-powered chatbot systems; develop conversational AI tools (intelligent search, recommendation engines, context-aware content retrieval); design and implement MCP servers for AI agent integration; build user profiling and personalization models; optimize and productionize ML/LLM models; collaborate with data engineering, product, and business stakeholders; influence senior leadership and define AI strategy; mentor junior data scientists; stay current with LLMs and agentic AI. Required skills include LLMs and generative AI, NLP, chatbot/dialogue systems, prompt engineering, LLM fine-tuning, AI agents and orchestration, MCP, Python, scikit-learn, PyTorch/TensorFlow, Hugging Face, LangChain/LlamaIndex, SQL/NoSQL, vector databases (Pinecone/Weaviate), Spark, Linux, AWS/Azure ML, strong communication, and product/ML lifecycle knowledge."
+>  "company": "Gartner",
+> "role": "Data Scientist – Conversational AI / LLM",
+>  "tasks_skills": "Lead end-to-end data science projects; architect and build AI-powered chatbot systems; develop conversational AI > tools (intelligent search, recommendation engines, context-aware content retrieval); design and implement MCP servers for AI agent >integration; build user profiling and personalization models; optimize and productionize ML/LLM models; collaborate with data >engineering, product, and business stakeholders; influence senior leadership and define AI strategy; mentor junior data scientists; >stay current with LLMs and agentic AI. Required skills include LLMs and generative AI, NLP, chatbot/dialogue systems, prompt >engineering, LLM fine-tuning, AI agents and orchestration, MCP, Python, scikit-learn, PyTorch/TensorFlow, Hugging Face, >LangChain/LlamaIndex, SQL/NoSQL, vector databases (Pinecone/Weaviate), Spark, Linux, AWS/Azure ML, strong communication, and >product/ML lifecycle knowledge."
 }`
 > 
-> **Node 2 Verdict:** `<thinking> To determine the most effective parameters for identifying relevant leads, I systematically analyzed the input JSON:
+> **Node 2 Verdict:** ````xml
+<thinking>
+I will integrate both inputs: (1) job requirements and (2) job searcher profile, then derive lead identification parameters.
 
-1. **Company**: The target company is Gartner. Prioritizing current employees here is crucial for network relevance and context alignment.
+STEP 1 — Target Role Analysis
+The Gartner role is a highly technical Data Scientist position focused on:
+- Conversational AI, LLMs, NLP
+- Recommendation/search systems
+- AI architecture and ML engineering stack
+- Product-facing data science
+- Cross-functional leadership
+This implies leads should be technically senior and embedded in AI product environments.
 
-2. **Role**: "Data Scientist – Global Product Management Data Science (Conversational AI / Chatbots)" indicates a specialized AI/data science function focused on conversational AI, LLMs, and recommendation systems. Leads with similar roles in the same or adjacent companies in AI, product management, or data science are highly relevant.
+STEP 2 — Job Searcher Profile Analysis
+The candidate is NOT a hands-on ML engineer but a:
+- Senior Product Developer (E-mobility digital products)
+- Data & AI Strategy Consultant (operating models, governance, AI use-case identification)
+- Business-facing, cross-functional, stakeholder-heavy roles
+- Currently pursuing MS in Business Analytics with Python/SQL exposure
+Strengths:
+- Product management for digital/AI-adjacent products
+- AI strategy, governance, operating models
+- Workshops, C-level communication, roadmap definition
+- Utilities and energy domain
+- Analytics education (in progress)
 
-3. **Tasks and Skills**: Key responsibilities include:
-   - Leading complex data science projects
-   - Architecting AI-powered chatbot systems
-   - Designing conversational AI tools (search, recommendation, context-aware retrieval)
-   - Developing personalization models
-   - Mentoring and influencing teams
+Gap vs role:
+- Limited evidence of hands-on LLM/NLP model building
+- Strong in product + AI strategy layer, not deep ML engineering
 
-   Required skills emphasize:
-   - Conversational AI, LLMs, generative AI, NLP
-   - AI architectures (MCP, LangChain/LlamaIndex)
-   - Programming (Python), ML frameworks (PyTorch, TensorFlow, scikit-learn, HuggingFace)
-   - Data engineering (SQL/NoSQL/vector databases, Spark)
-   - Cloud ML platforms (AWS/Azure)
-   - Strong communication and advanced degrees
+Therefore, optimal leads are NOT only pure Data Scientists, but:
+- Product Data Scientists
+- Applied AI Product Managers
+- Conversational AI Product Leads
+- AI Strategy leaders inside technical teams
+These profiles bridge product + AI and are more likely to respond and provide referrals.
 
-4. **Derived Lead Parameters**:
-   - **Company & Industry**: Look for leads at Gartner or top AI/product-focused companies (e.g., Microsoft, Google DeepMind, OpenAI, IBM Watson, Amazon Alexa). Industry relevance ensures similar challenges and expertise.
-   - **Role Alignment**: Data Scientist, AI Engineer, Machine Learning Engineer, NLP Engineer, Conversational AI Specialist, Product Data Scientist.
-   - **Skills Overlap**: Prioritize leads with experience in conversational AI, LLMs, NLP, recommendation systems, prompt engineering, Python, deep learning frameworks, vector databases, cloud ML platforms, and AI agent architecture.
-   - **University/Advanced Degrees**: Focus on individuals with a Master’s or PhD in quantitative fields (CS, Data Science, AI, Statistics).
-   - **Networking Potential**: Shared universities or prior companies can improve lead receptivity.
+STEP 3 — Company Targeting Logic
+Primary:
+- Gartner (direct internal referrals)
 
-5. **Logic for Prioritization**:
-   - Highest weight: Company match + Role match + Skill overlap
-   - Medium weight: Advanced degree + industry adjacency
-   - Lower weight: Shared university, minor skill overlap
+Secondary (industry adjacency):
+Companies with:
+- AI-powered products
+- Conversational AI platforms
+- Strong product-data collaboration
+Examples: Microsoft, Amazon, Google, Salesforce, ServiceNow, IBM, OpenAI, startups in conversational AI.
+These environments mirror Gartner’s product data science org.
 
-The goal is to produce a focused lead list who are most likely to have comparable expertise, be in a similar network, and be receptive to outreach.
+STEP 4 — Skill Overlap Matching
+We should match on:
+From job:
+- Conversational AI, LLMs, NLP, recommendation systems
+From candidate:
+- AI strategy, product roadmaps, cross-functional AI delivery, data governance, analytics
+Intersection leads to:
+- Product-facing AI roles
+- AI platform product teams
+- Data science teams working with PMs
 
+STEP 5 — University Signal
+Candidate universities:
+- Fairfield University (current MS)
+- KU Leuven (MSc Economics)
+Shared university filters increase response probability, especially:
+- Fairfield alumni in tech/data roles in US
+- KU Leuven alumni in AI/data in Europe/US
+
+STEP 6 — Seniority Band
+Role requires 6–8 years experience.
+Candidate has ~6+ years total.
+Therefore leads should be:
+- Senior Data Scientist
+- Staff/Lead Data Scientist
+- AI Product Manager
+- Principal DS (not Directors)
+
+Peer-level increases response likelihood.
+
+STEP 7 — Functional Context Filters
+High-priority environments:
+- AI product teams
+- Data science within product orgs
+- Personalization/search/recommendation teams
+- Conversational AI platforms
+
+STEP 8 — Outreach Relevance Logic
+Leads most likely to engage:
+- Product + Data hybrid backgrounds
+- Former consultants now in DS/product
+- Utilities/energy AI teams (domain overlap)
+- People who transitioned from strategy to technical AI roles
+
+This alignment creates a credible narrative for the candidate.
+
+FINAL PARAMETER PRIORITIZATION (by weight):
+1. Same company (Gartner) in Data Science, AI Product, or Product Analytics
+2. Product-facing Data Scientists in conversational AI / NLP / personalization
+3. AI Product Managers in LLM or chatbot platforms
+4. Shared universities (Fairfield, KU Leuven)
+5. Former consultants now in DS/AI roles
+6. Utilities/energy AI product teams
+7. Seniority: Senior IC (5–9 years experience)
+
+This produces high-relevance, high-response-probability leads.
 </thinking>
 <verdict>
-- Company: Gartner or top AI/product-focused companies (Microsoft, Google DeepMind, OpenAI, IBM Watson, Amazon Alexa)
-- Role: Data Scientist, AI Engineer, Machine Learning Engineer, NLP Engineer, Conversational AI Specialist, Product Data Scientist
-- Skills: Conversational AI, LLMs, generative AI, NLP, recommendation engines, prompt engineering, AI agent architectures (MCP, LangChain/LlamaIndex), Python, ML frameworks (PyTorch, TensorFlow, scikit-learn, HuggingFace), SQL/NoSQL/vector DBs, Spark, Linux, AWS/Azure ML
-- Education: Master’s or PhD in quantitative field (CS, Data Science, AI, Statistics)
-- Additional Parameters: Shared universities, previous experience in AI/product teams, mentorship experience, leadership in data science projects
-</verdict>`
+SEARCH PARAMETERS:
 
-> **Final Output:** ´´
+Company:
+- Gartner (primary)
+- Microsoft, Amazon, Google, Salesforce, ServiceNow, IBM, OpenAI, conversational AI startups (secondary)
+
+Roles:
+- Senior Data Scientist (Product / Personalization / NLP / Conversational AI)
+- Product Data Scientist
+- Applied Scientist (Conversational AI / LLM)
+- AI Product Manager (LLM / Chatbots / Personalization)
+- Machine Learning Scientist in product teams
+
+Skills Keywords:
+- Conversational AI, LLMs, NLP
+- Recommendation systems, search, personalization
+- Python, SQL, ML frameworks
+- LangChain, LlamaIndex, vector databases
+- AI product analytics, experimentation
+- AI platform product development
+
+Background Signals:
+- Product + Data cross-functional experience
+- Former consultants now in AI/data roles
+- Experience translating business needs into ML products
+- Mentorship or tech leadership at IC level
+
+Education Filters:
+- Fairfield University alumni in tech/data roles
+- KU Leuven alumni in data/AI/analytics roles
+- Master’s or PhD in analytics, data science, AI, statistics, economics
+
+Industry Filters:
+- AI product companies
+- SaaS platforms with conversational AI features
+- Utilities/energy AI teams (for domain overlap)
+
+Seniority:
+- 5–9 years experience
+- Senior IC (not Director/VP)
+
+Geography:
+- United States (primary)
+- Europe (secondary for KU Leuven network)
+</verdict>
+```
+`
+
+> **Final Output:** ´("Data Scientist" OR "Applied Scientist" OR "AI Product Manager" OR "Product Data Scientist" OR "Conversational AI Lead") LLM NLP chatbot personalization Gartner´
 
 #### Step C
 > **Input:** 
-> `{{X}}`
+> `{================================================================================
+LINKEDIN PROFILES - MERGED
+Query: "Data Scientist" OR "Applied Scientist" OR "AI Product Manager" OR 
+"Product Data Scientist" OR "Conversational AI Lead") LLM NLP chatbot personalization Gartner
+================================================================================
+
+--------------------------------------------------------------------------------
+PROFILE 1: Zixiao Chen
+--------------------------------------------------------------------------------
+Name:             Zixiao Chen
+Current Role:     Applied Scientist II
+Current Company:  Microsoft
+Location:         New York, New York, United States
+University:       New York University (MS, Data Science, 2020–2022)
+                  Rotterdam School of Management, Erasmus University (MS, Business Information Management, 2019–2020)
+
+EXPERIENCE:
+- Applied Scientist II | Microsoft | Dec 2024 – Present | New York, US
+- Data Scientist II | McKinsey & Company | Jul 2022 – Nov 2024 | New York, US
+- Research Intern | NYU Langone Health | Aug 2021 – Nov 2021 | New York, US
+- Research Intern | New York University | May 2021 – Aug 2021 | New York, US
+- Intern | Microsoft | Sep 2018 – Nov 2018 | Beijing
+
+SKILLS:
+- Data Science, Machine Learning, NLP
+
+INTERESTS/ACTIVITY:
+- AI/ML research, Information integrity, Recommender systems
+- Reposted content on AI and information integrity research
+- Announced Applied Scientist II role at Microsoft (Dec 2024)
+
+--------------------------------------------------------------------------------
+PROFILE 2: Fábio Maltêz
+--------------------------------------------------------------------------------
+Name:             Fábio Maltêz
+Current Role:     Product Manager I - Private Capital
+Current Company:  McKinsey & Company
+Location:         New York, New York, United States
+University:       ISCTE - Instituto Universitário de Lisboa (MSc, Data Science, 2020–2022, Grade: 18/20)
+                  ISCTE Business School (Bachelor's, Management, 2017–2020, Grade: 17/20)
+
+EXPERIENCE:
+- Product Manager I - Private Capital | McKinsey & Company | May 2025 – Present | New York, US
+- Senior Product Analyst - Private Capital | McKinsey & Company | Mar 2024 – May 2025 | Lisbon, Portugal
+- Private Equity Senior Analyst | McKinsey & Company | Nov 2023 – Mar 2024 | Lisbon, Portugal
+- Private Equity Analyst | McKinsey & Company | May 2022 – Nov 2023 | Lisbon, Portugal
+- Intern Data Analyst | Portland Hill Capital | Apr 2021 – Apr 2022 | Lisbon, Portugal
+- Monitor, Dept. of Quantitative Methods | ISCTE | Sep 2020 – Jun 2021
+- FSO Assistant | EY | Jan 2021 – Feb 2021 | Lisbon, Portugal
+- Board President | ITIC - ISCTE Trading & Investment Club | Jun 2019 – Jun 2020
+
+SKILLS:
+- AI Product Management, LLMs, Agentic AI, Deep Reinforcement Learning, Python, Data Science, Product Analytics, Product Management, Excel Modeling
+
+INTERESTS/ACTIVITY:
+- AI in Finance, LLMs for investment workflows, Private Equity tech, AI ethics
+- Shared research on Agentic AI, LLMs and data management in investment contexts (Man Group, Bridgewater, CFA Institute, Two Sigma publications)
+- Recently completed DeepLearning.AI certifications: Neural Networks & Deep Learning; Hyperparameter Tuning, Regularization and Optimization
+
+CERTIFICATIONS:
+- Neural Networks and Deep Learning | DeepLearning.AI
+- Improving Deep Neural Networks: Hyperparameter Tuning, Regularization and Optimization | DeepLearning.AI
+
+--------------------------------------------------------------------------------
+PROFILE 3: Aayush Khemka
+--------------------------------------------------------------------------------
+Name:             Aayush Khemka
+Current Role:     Data Scientist
+Current Company:  Amazon Web Services (AWS)
+Location:         New York City Metropolitan Area
+University:       University of Connecticut School of Business (MS, Business Analytics and Project Management, 2015–2016)
+                  Jadavpur University (B.Tech, Information Technology, 2007–2011)
+
+EXPERIENCE:
+- Data Scientist | Amazon Web Services (AWS) | Aug 2021 – Present | Seattle, WA
+- Senior Manager, Data Science | PepsiCo | Mar 2020 – Aug 2021 | Plano, TX
+- Manager, Data Science | PepsiCo | Jan 2018 – Mar 2020 | Fayetteville, AR
+- Associate Manager, Advanced Analytics | PepsiCo | Aug 2016 – Jan 2018 | New York, US
+- Business Analyst | GENPACT | May 2013 – Jul 2015 | Bengaluru, India
+- Senior Business Analyst | Mu Sigma | Jun 2011 – Apr 2013 | Bangalore, India
+
+SKILLS:
+- Machine Learning, Statistical Analysis, Predictive Modeling, Python, R, SAS (Base, E.Guide, Miner, JMP), Tableau, NLP, Text Mining, Hadoop, Pig, Hive, PL/SQL, MS Excel
+- Logistic/Linear Regression, Random Forest, Gradient Boosting, Neural Networks, Decision Trees, Ensemble Models, Bootstrapping
+- Data Mining, Forecasting, Segmentation, Market Basket Analysis, Web Analytics, Network Modeling, Scenario Planning
+
+INTERESTS/ACTIVITY:
+- Predictive Modeling, Forecasting, Consumer Segmentation, Demand Space analysis, Cross-sell/Up-sell analytics
+
+--------------------------------------------------------------------------------
+PROFILE 4: Bryon Kucharski
+--------------------------------------------------------------------------------
+Name:             Bryon Kucharski
+Current Role:     Lead Data Scientist
+Current Company:  Gartner
+Location:         New Haven, Connecticut, United States
+University:       University of Massachusetts Amherst (MS, Computer Science, 2018–2020)
+                  Wentworth Institute of Technology (BS, Computer Engineering, 2014–2018, GPA: 3.82)
+
+EXPERIENCE:
+- Lead Data Scientist | Gartner | Feb 2024 – Present | Remote
+  · Lead DS on AskGartner (AI-powered tool for Gartner insights access)
+  · Tech lead for search and retrieval projects on gartner.com
+- Senior Data Scientist | Gartner | Sep 2022 – Feb 2024 | Remote
+  · Created AskGartner
+  · AI-powered information retrieval and LLMs for gartner.com
+- Senior Data Scientist | JobTarget | Dec 2021 – Sep 2022 | Remote
+  · Led NLP efforts: job description parsing, job/candidate matching, search & ranking, recommendations
+  · Platforms: Vepsa, Elasticsearch, Milvus
+- Data Scientist | Travelers | Jun 2020 – Dec 2021 | Hartford, CT
+  · NLP: classification, question answering, abstractive summarization for customer service
+- Intern, Human-Autonomy Interaction Lab | Sonalysts, Inc. | Jun 2019 – Aug 2019 | Waterford, CT
+- Research Assistant Co-op | Wentworth Institute of Technology | Sep 2017 – Dec 2017 | Boston
+
+SKILLS:
+- NLP, LLMs, Search & Ranking, Recommendations, Information Retrieval, Python, Elasticsearch, Milvus, ML/DL frameworks, Conversational AI, Chatbots
+
+INTERESTS/ACTIVITY:
+- Conversational AI, Chatbots, AI-powered search, Personalization
+- Actively involved in AskGartner rollout (recognized in Gartner Q2 2025 earnings call)
+- Reposts Gartner AI/ML hiring and product content
+
+--------------------------------------------------------------------------------
+PROFILE 5: ZJ (Zhiheng) Jiang
+--------------------------------------------------------------------------------
+Name:             ZJ (Zhiheng) Jiang
+Current Role:     Data Scientist
+Current Company:  Meta
+Location:         New York, New York, United States
+University:       Columbia University (Master's, Data Science, 2020–2021)
+                  UC San Diego (BS, Physics and Applied Mathematics, 2016–2020)
+
+EXPERIENCE:
+- Data Scientist | Meta | Feb 2025 – Present | New York, US (On-site)
+- Data Scientist | NBCUniversal | Feb 2022 – Jan 2025 | New York, US
+- Data Scientist Intern | Unilever | Jun 2021 – Sep 2021 | Trumbull, CT
+  · Predictive models for consumer experience (R, Python)
+  · Product recommendation model (Python/Django)
+  · JMP script for consumer feedback prediction
+  · ANOVA testing and data processing
+- Undergraduate Researcher | UC San Diego | Apr 2018 – Jun 2020 | La Jolla, CA
+
+SKILLS:
+- Python, Causal Inference, Experimentation, Product Analytics, ML-driven Measurement, Data Analysis, R, Django, JMP, ANOVA
+
+INTERESTS/ACTIVITY:
+- Large-scale product analytics, Revenue & engagement systems, ML measurement, Causal inference
+- Actively exploring new Data Scientist opportunities (comments on job posts)
+
+CERTIFICATIONS:
+- Introduction to Data Science in Python | Coursera (Aug 2019)
+
+================================================================================
+END OF PROFILES
+================================================================================}`
 > 
 > **Node 1 Output:**
-> `{
-}´
+> `{[
+  {
+    "name": "Zixiao Chen",
+    "current_company": "Microsoft",
+    "current_role": "Applied Scientist II",
+    "skills": ["Data Science"],
+    "interests": ["Information integrity"],
+    "university": "New York University"
+  },
+  {
+    "name": "Fábio Maltêz",
+    "current_company": "McKinsey & Company",
+    "current_role": "Product Manager I - Private Capital",
+    "skills": ["AI", "Data", "Innovation", "Python", "Machine Learning", "Deep Reinforcement Learning", "Product Management"],
+    "interests": ["Entrepreneurship", "Strategy", "AI", "Product Management", "Investments", "LLMs", "Agentic AI", "Data Management"],
+    "university": "ISCTE - Instituto Universitário de Lisboa"
+  },
+  {
+    "name": "Aayush Khemka",
+    "current_company": "Amazon Web Services (AWS)",
+    "current_role": "Data Scientist",
+    "skills": ["SAS", "R", "Python", "Tableau", "MS Excel", "PL/SQL", "Hadoop", "Pig", "Hive", "Statistical Analysis", "Exploratory Data Analysis", "Logistic Regression", "Linear Regression", "Random Forest", "Gradient Boosting", "Neural Networks", "Decision Trees", "Ensemble Models", "Bootstrapping"],
+    "interests": ["Data Mining", "Forecasting", "Predictive Modeling", "Text Mining", "Social Network Analysis", "Web Analytics", "Segmentation", "Market Basket Analysis", "Network Modeling"],
+    "university": "University of Connecticut School of Business"
+  },
+  {
+    "name": "Bryon Kucharski",
+    "current_company": "Gartner",
+    "current_role": "Lead Data Scientist",
+    "skills": ["NLP", "Search & Ranking", "Recommendations", "Elasticsearch", "Milvus", "LLMs", "Information Retrieval"],
+    "interests": ["AI-powered information retrieval", "Search", "Chatbots"],
+    "university": "University of Massachusetts Amherst"
+  },
+  {
+    "name": "ZJ (Zhiheng) Jiang",
+    "current_company": "Meta",
+    "current_role": "Data Scientist",
+    "skills": ["Python", "Data Analysis", "R", "Django", "JMP", "ANOVA"],
+    "interests": ["Causal Inference", "Experimentation", "Product Analytics", "ML-driven Measurement", "Revenue", "Engagement"],
+    "university": "Columbia University"
+  }
+]}`
 > 
-> **Node 2 Verdict:** `{}´
+> **Node 2 Verdict:** `{<evaluation>
 
-> **Final Output:** `{}´
+  <lead name="Zixiao Chen">
+    <reasoning>
+      <company_industry>Microsoft is a top-tier tech company — strong signal for technical talent. Relevant industry alignment.</company_industry>
+      <role_similarity>Applied Scientist II is closely aligned with data science and ML-focused roles. Solid match for a data/AI-oriented position.</role_similarity>
+      <skills_alignment>Only "Data Science" is listed — very sparse skill data. Limits confidence in depth of technical expertise, though the role title implies more.</skills_alignment>
+      <university>New York University is a well-regarded research institution with strong data science programs. Positive signal.</university>
+      <interests>Interest in "Information integrity" is niche and somewhat specialized. Could align well with trust/safety or ML fairness roles, but narrow otherwise.</interests>
+    </reasoning>
+    <verdict>Medium</verdict>
+  </lead>
+
+  <lead name="Fábio Maltêz">
+    <reasoning>
+      <company_industry>McKinsey & Company is a prestigious consulting firm — strong pedigree, though not a native tech/product company. Private capital focus adds a finance dimension.</company_industry>
+      <role_similarity>Product Manager I with a private capital focus is a hybrid role. Relevant for product-oriented positions, especially those intersecting AI and finance.</role_similarity>
+      <skills_alignment>Exceptionally well-rounded: AI, Python, Machine Learning, Deep Reinforcement Learning, Product Management, and Data. Strong alignment with technical product or AI roles.</skills_alignment>
+      <university>ISCTE - Instituto Universitário de Lisboa is a solid European institution, less globally prominent but acceptable given the strong skill and experience profile.</university>
+      <interests>Interests in Agentic AI, LLMs, Entrepreneurship, and Product Management are highly contemporary and relevant. Strong forward-looking signal.</interests>
+    </reasoning>
+    <verdict>High</verdict>
+  </lead>
+
+  <lead name="Aayush Khemka">
+    <reasoning>
+      <company_industry>Amazon Web Services is a leading cloud and data platform — excellent industry fit for data-heavy or ML-focused roles.</company_industry>
+      <role_similarity>Data Scientist at AWS is a direct role match for most data science or ML engineering positions.</role_similarity>
+      <skills_alignment>Extremely broad and deep skill set: covers statistical modeling, ML algorithms (Random Forest, Gradient Boosting, Neural Networks), big data tools (Hadoop, Hive, Pig), and multiple programming languages. Strongest technical profile in the set.</skills_alignment>
+      <university>University of Connecticut School of Business — reputable but not a top-tier research university. Slight gap compared to Ivy/top-10 profiles, but offset by strong practical skills.</university>
+      <interests>Interests are highly applied and practical: Predictive Modeling, Text Mining, Web Analytics, Market Basket Analysis. Solid fit for data-intensive product or analytics roles.</interests>
+    </reasoning>
+    <verdict>High</verdict>
+  </lead>
+
+  <lead name="Bryon Kucharski">
+    <reasoning>
+      <company_industry>Gartner is a research and advisory firm — relevant exposure to enterprise technology but not a pure-play tech product company.</company_industry>
+      <role_similarity>Lead Data Scientist is a senior IC role — strong seniority signal. Specialization in search, ranking, and recommendations is highly specific and valuable.</role_similarity>
+      <skills_alignment>NLP, LLMs, Elasticsearch, Milvus, Information Retrieval — a highly specialized and in-demand stack, particularly for AI search or RAG-based product roles.</skills_alignment>
+      <university>University of Massachusetts Amherst has a strong CS and NLP program — solid academic background relevant to the specialization.</university>
+      <interests>Interests in AI-powered information retrieval, search, and chatbots are tightly aligned with modern GenAI product development. Excellent thematic fit.</interests>
+    </reasoning>
+    <verdict>High</verdict>
+  </lead>
+
+  <lead name="ZJ (Zhiheng) Jiang">
+    <reasoning>
+      <company_industry>Meta is a top-tier tech company with strong data culture — positive industry signal.</company_industry>
+      <role_similarity>Data Scientist at Meta typically implies product analytics and experimentation focus. Relevant but more analytics-leaning than ML-engineering.</role_similarity>
+      <skills_alignment>Skills listed (Python, R, Django, JMP, ANOVA) are relatively modest and lean toward statistical analysis rather than ML or AI. Django is an unexpected inclusion for a DS role. Skill breadth is limited compared to peers.</skills_alignment>
+      <university>Columbia University is a top-tier Ivy League institution — strong academic pedigree and a significant positive signal.</university>
+      <interests>Interests in Causal Inference, Experimentation, and Product Analytics are solid for analytics-heavy roles but less compelling for ML/AI engineering or product management roles. Niche but legitimate focus area.</interests>
+    </reasoning>
+    <verdict>Medium</verdict>
+  </lead>
+
+</evaluation>}`
+
+> **Final Output:** `{Here are the lead profile summaries ready for human review:
+
+---
+
+**Zixiao Chen**
+**Company:** Microsoft | **Role:** Applied Scientist II
+**Skills:** Data Science
+**Interests:** Information Integrity
+**University:** New York University
+**Verdict: Medium** — Strong company and role alignment, but sparse skill data limits confidence. Niche interest in information integrity could suit trust/safety roles.
+
+---
+
+**Fábio Maltêz**
+**Company:** McKinsey & Company | **Role:** Product Manager I (Private Capital Focus)
+**Skills:** AI, Python, Machine Learning, Deep Reinforcement Learning, Product Management, Data
+**Interests:** Agentic AI, LLMs, Entrepreneurship, Product Management
+**University:** ISCTE – Instituto Universitário de Lisboa
+**Verdict: High** — Exceptional skill breadth and highly contemporary interests in AI. Strong fit for technical product or AI-focused roles despite a non-native tech company background.
+
+---
+
+**Aayush Khemka**
+**Company:** Amazon Web Services | **Role:** Data Scientist
+**Skills:** Statistical Modeling, ML Algorithms (Random Forest, Gradient Boosting, Neural Networks), Hadoop, Hive, Pig, multiple programming languages
+**Interests:** Predictive Modeling, Text Mining, Web Analytics, Market Basket Analysis
+**University:** University of Connecticut School of Business
+**Verdict: High** — Strongest technical profile in the set. Deep, practical skill stack across ML and big data tools. University is solid but not elite; offset by hands-on expertise and top-tier employer.
+
+---
+
+**Bryon Kucharski**
+**Company:** Gartner | **Role:** Lead Data Scientist
+**Skills:** NLP, LLMs, Elasticsearch, Milvus, Information Retrieval
+**Interests:** AI-Powered Search, Information Retrieval, Chatbots
+**University:** University of Massachusetts Amherst
+**Verdict: High** — Highly specialized and in-demand stack for GenAI/RAG product roles. Senior IC title adds weight. Strong thematic alignment between skills, interests, and modern AI development trends.
+
+---
+
+**ZJ (Zhiheng) Jiang**
+**Company:** Meta | **Role:** Data Scientist
+**Skills:** Python, R, Django, JMP, ANOVA
+**Interests:** Causal Inference, Experimentation, Product Analytics
+**University:** Columbia University (Ivy League)
+**Verdict: Medium** — Top-tier academic pedigree and strong employer, but skill set skews toward statistical analysis rather than ML/AI engineering. Best suited for analytics-heavy or experimentation-focused roles.}`
 
 ---
 
@@ -527,5 +988,8 @@ The goal is to produce a focused lead list who are most likely to have comparabl
 > To audit the prompts or get the outputs: 
  - Step B. Tool A: https://chatgpt.com/share/6994f2a5-8410-8007-9979-18e331a2f22e
  - Step B. Tool B: https://chatgpt.com/share/6994f779-6f10-8007-a498-ab5610a02ac7
- - Step B. Tool C: https://chatgpt.com/share/6994fa79-0aa4-8007-a4f9-72125d5870c5
+ - Step B. Tool C: https://chatgpt.com/share/6994fa79-0aa4-8007-a4f9-72125d5870c5 + https://claude.ai/share/24c14418-a8f5-4119-ad15-5dff6d30a560
+- Step C. Tool A: https://claude.ai/share/8a409764-06b2-4189-9cd6-288a6859ab0f
+- Step C. Tool B: https://claude.ai/share/215c94b8-60d2-4a7d-83ec-df1fcf9f876c
+- Step C. Tool C: https://claude.ai/share/8f90c8d7-b2a9-4096-9257-e795e9d319ba
 ```
