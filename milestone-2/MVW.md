@@ -994,10 +994,13 @@ END OF PROFILES
 **Interests:** Causal Inference, Experimentation, Product Analytics
 **University:** Columbia University (Ivy League)
 **Verdict: Medium** — Top-tier academic pedigree and strong employer, but skill set skews toward statistical analysis rather than ML/AI engineering. Best suited for analytics-heavy or experimentation-focused roles.}`
+```
 
 #### Step D
-> **Input:** 
-> `Here are the lead profile summaries ready for human review:
+**Input:**
+
+```
+Here are the lead profile summaries ready for human review:
 
 ---
 
