@@ -1025,7 +1025,9 @@ END OF PROFILES
 > 
 > **Node 1 Output:**
 > `[
+  [
   {
+    "name": "Zixiao Chen",
     "company": "Microsoft",
     "role": "Applied Scientist II",
     "skills": ["Data Science"],
@@ -1034,6 +1036,7 @@ END OF PROFILES
     "relevance": "Medium"
   },
   {
+    "name": "Fábio Maltêz",
     "company": "McKinsey & Company",
     "role": "Product Manager I (Private Capital Focus)",
     "skills": ["AI", "Python", "Machine Learning", "Deep Reinforcement Learning", "Product Management", "Data"],
@@ -1042,178 +1045,178 @@ END OF PROFILES
     "relevance": "High"
   },
   {
+    "name": "Aayush Khemka",
     "company": "Amazon Web Services",
     "role": "Data Scientist",
-    "skills": ["Statistical Modeling", "Random Forest", "Gradient Boosting", "Neural Networks", "Hadoop", "Hive", "Pig"],
+    "skills": ["Statistical Modeling", "Random Forest", "Gradient Boosting", "Neural Networks", "Hadoop", "Hive", "Pig", "Multiple Programming Languages"],
     "interests": ["Predictive Modeling", "Text Mining", "Web Analytics", "Market Basket Analysis"],
     "university": "University of Connecticut School of Business",
     "relevance": "High"
   },
   {
-    "company": "Gartner",
-    "role": "Lead Data Scientist",
-    "skills": ["NLP", "LLMs", "Elasticsearch", "Milvus", "Information Retrieval"],
-    "interests": ["AI-Powered Search", "Information Retrieval", "Chatbots"],
-    "university": "University of Massachusetts Amherst",
-    "relevance": "High"
-  },
-  {
-    "company": "Meta",
-    "role": "Data Scientist",
-    "skills": ["Python", "R", "Django", "JMP", "ANOVA"],
-    "interests": ["Causal Inference", "Experimentation", "Product Analytics"],
-    "university": "Columbia University",
-    "relevance": "Medium"
-  }
 ]`
 > 
 > **Node 2 Verdict:** ````xml
 <thinking>
-Let me analyze each profile to determine personalization priorities, tone, and persuasive points for message drafting.
+Analyzing each profile for personalization strategy:
 
-**Profile 1: Microsoft – Applied Scientist II**
-- Relevance: Medium
-- Key hooks: NYU (strong brand), Information Integrity interest (niche/meaningful), Data Science skills
-- Tone should be moderate — don't over-invest. Lead with role legitimacy and a light technical hook.
-- Priority ranking: role > university > interests > skills > company
+**Fábio Maltêz (High)** - strongest fit. McKinsey PM with deep AI/ML skills and explicit interest in Agentic AI and LLMs. His hybrid PM+technical background is rare. Lead with LLM/agentic angle, entrepreneurship resonance, and his unique positioning bridging product and ML. Priority: interests > role > skills > company > university.
 
-**Profile 2: McKinsey – Product Manager I (Private Capital Focus)**
-- Relevance: High
-- Key hooks: Rich skill set (AI, ML, DRL, Python), interests in Agentic AI + LLMs + Entrepreneurship — extremely aligned if the outreach is from an AI/tech venture or product context. PM background at McKinsey = strategic thinker. ISCTE is a less recognizable brand — don't lead with university.
-- Tone: Ambitious, forward-looking, entrepreneurial. Speak to the intersection of AI and product.
-- Priority ranking: interests > skills > role > company > university
+**Bryon Kucharski (High)** - excellent technical alignment. Gartner Lead Data Scientist with NLP, LLMs, Elasticsearch, Milvus — directly relevant stack. Interests in AI-powered search and information retrieval are highly specific and matchable. Lead with technical credibility and shared domain. Priority: skills > interests > role > company > university.
 
-**Profile 3: AWS – Data Scientist**
-- Relevance: High
-- Key hooks: Deep technical ML stack (Random Forest, Gradient Boosting, Neural Networks, Hadoop ecosystem), interests in Predictive Modeling + Text Mining + Web Analytics. UConn School of Business = applied, business-minded data scientist. AWS credentialing signals scale and rigor.
-- Tone: Technical and results-oriented. Acknowledge depth and applied nature of work.
-- Priority ranking: skills > company > interests > role > university
+**Aayush Khemka (High)** - AWS Data Scientist with strong classical ML stack (RF, GB, Neural Nets, Hadoop ecosystem). Interests lean toward applied analytics. More traditional DS profile — tone should be practical/impact-focused. Priority: skills > company > role > interests > university.
 
-**Profile 4: Gartner – Lead Data Scientist**
-- Relevance: High
-- Key hooks: NLP + LLMs + Information Retrieval + Elasticsearch/Milvus = highly specialized modern AI stack. Interest in AI-Powered Search and Chatbots = clear alignment with conversational AI or search products. UMass Amherst has a strong CS/NLP program — worth mentioning. Senior-level (Lead).
-- Tone: Peer-level, technically precise. Speak to cutting-edge IR and LLM tooling.
-- Priority ranking: skills > interests > role > university > company
+**Zixiao Chen (Medium)** - Microsoft Applied Scientist, Data Science skills, interest in Information Integrity. Narrower overlap. Keep message concise, anchor on information integrity angle if relevant, don't over-personalize. Priority: role > interests > company > skills > university.
 
-**Profile 5: Meta – Data Scientist**
-- Relevance: Medium
-- Key hooks: Columbia University (prestige — lead with it), Causal Inference + Experimentation interests = rigorous analytical mindset. Python/R/ANOVA skills are solid but generic. Meta signals product scale.
-- Tone: Intellectually curious, research-adjacent. Appeal to rigor and methodology.
-- Priority ranking: university > interests > company > skills > role
+**ZJ Jiang (Medium)** - Meta Data Scientist, causal inference and experimentation focus, Columbia background. Medium relevance. Experimentation/product analytics angle is the hook. Columbia is a strong brand worth mentioning briefly. Priority: interests > university > role > skills > company.
+
+Tone guidelines:
+- High relevance: specific, technically resonant, peer-to-peer, confident
+- Medium relevance: warm but concise, one clear hook, don't oversell
 </thinking>
 
 <verdict>
-  <profile id="1">
-    <company>Microsoft</company>
-    <role>Applied Scientist II</role>
-    <relevance>Medium</relevance>
-    <tone>Professional and measured; do not over-personalize. Acknowledge technical credibility without being effusive.</tone>
-    <priority_ranking>
-      <rank position="1">role</rank>
-      <rank position="2">university</rank>
-      <rank position="3">interests</rank>
-      <rank position="4">skills</rank>
-      <rank position="5">company</rank>
-    </priority_ranking>
-    <recommended_points>
-      <point>Reference the Applied Scientist role as a signal of rigorous, research-grade applied work — frame the outreach as aligned with that standard.</point>
-      <point>NYU is a recognizable brand; a brief, natural mention grounds the message without sounding like flattery.</point>
-      <point>Information Integrity is a niche and values-laden interest — use it as a thematic bridge to demonstrate shared purpose, not just skill match.</point>
-    </recommended_points>
-    <drafting_notes>Keep message concise. Medium relevance means the hook must be earned quickly or the prospect will disengage. One strong opening line tied to Information Integrity + role credibility is sufficient. Avoid listing skills — too generic at this relevance tier.</drafting_notes>
-  </profile>
+  <profiles>
 
-  <profile id="2">
-    <company>McKinsey and Company</company>
-    <role>Product Manager I – Private Capital Focus</role>
-    <relevance>High</relevance>
-    <tone>Entrepreneurial, forward-looking, and intellectually energetic. Peer-to-peer framing. Speak to ambition and the frontier of AI product development.</tone>
-    <priority_ranking>
-      <rank position="1">interests</rank>
-      <rank position="2">skills</rank>
-      <rank position="3">role</rank>
-      <rank position="4">company</rank>
-      <rank position="5">university</rank>
-    </priority_ranking>
-    <recommended_points>
-      <point>Lead with Agentic AI and LLMs — these are not passive interests but active strategic bets; mirror that energy in the message.</point>
-      <point>The combination of Deep Reinforcement Learning + Product Management is rare — explicitly acknowledge this hybrid profile as a differentiator.</point>
-      <point>Entrepreneurship interest signals appetite for ownership and upside — frame the opportunity in terms of impact and agency, not just compensation or title.</point>
-      <point>McKinsey background implies comfort with ambiguity and structured thinking — message should be crisp and proposition-forward.</point>
-    </recommended_points>
-    <drafting_notes>Do not lead with university — ISCTE carries less immediate recognition in most anglophone tech/VC contexts. Omit or mention last. This profile has the richest interest alignment; the message should feel like it was written for this person specifically, not templated. High relevance warrants a slightly longer, more substantive message.</drafting_notes>
-  </profile>
+    <profile>
+      <name>Fábio Maltêz</name>
+      <relevance>High</relevance>
+      <tone>Intellectually engaging, peer-level, entrepreneurial energy — speak to the builder/thinker hybrid</tone>
+      <priority_order>interests, role, skills, company, university</priority_order>
+      <anchor_points>
+        <point priority="1">Explicit interest in Agentic AI and LLMs — lead with this; make the connection direct and specific</point>
+        <point priority="2">Rare PM + deep ML skill combo (DRL, Python, ML) signals he can evaluate both product and technical merit</point>
+        <point priority="3">McKinsey context suggests he values rigor and strategic framing — avoid fluff</point>
+        <point priority="4">Entrepreneurship interest — frame opportunity or conversation in terms of building/impact, not just role</point>
+      </anchor_points>
+      <avoid>Generic AI buzzwords; anything that doesn't acknowledge his technical depth alongside PM identity</avoid>
+    </profile>
 
-  <profile id="3">
-    <company>Amazon Web Services</company>
-    <role>Data Scientist</role>
-    <relevance>High</relevance>
-    <tone>Technical and results-oriented. Respect the depth of the stack. Avoid oversimplification — this person works at scale and knows the difference between surface-level and real ML work.</tone>
-    <priority_ranking>
-      <rank position="1">skills</rank>
-      <rank position="2">company</rank>
-      <rank position="3">interests</rank>
-      <rank position="4">role</rank>
-      <rank position="5">university</rank>
-    </priority_ranking>
-    <recommended_points>
-      <point>Call out specific technical competencies — Random Forest, Gradient Boosting, Neural Networks, and the Hadoop ecosystem — to demonstrate the message is not generic.</point>
-      <point>AWS experience signals comfort with production-scale data pipelines and enterprise-grade reliability requirements; acknowledge this as a valued foundation.</point>
-      <point>Predictive Modeling and Text Mining interests suggest both structured and unstructured data fluency — reference this breadth as a specific asset.</point>
-      <point>UConn School of Business background suggests an applied, business-outcome-driven mindset — frame the opportunity in terms of real-world measurable impact.</point>
-    </recommended_points>
-    <drafting_notes>University is not a prestige anchor here but signals applied, practical orientation — use sparingly if at all. Skills are the primary hook; interests provide supporting color. Message should feel technically literate and purposeful, not vague.</drafting_notes>
-  </profile>
+    <profile>
+      <name>Bryon Kucharski</name>
+      <relevance>High</relevance>
+      <tone>Technical peer, precise, domain-specific — signal that you know his stack</tone>
+      <priority_order>skills, interests, role, company, university</priority_order>
+      <anchor_points>
+        <point priority="1">NLP + LLMs + Elasticsearch + Milvus is a very specific retrieval-augmented stack — reference it directly to establish credibility</point>
+        <point priority="2">AI-Powered Search and Information Retrieval interests align tightly — make the thematic connection explicit</point>
+        <point priority="3">Lead Data Scientist at Gartner implies influence over research direction — speak to thought leadership angle</point>
+        <point priority="4">Chatbot interest could be a secondary hook if contextually relevant</point>
+      </anchor_points>
+      <avoid>Surface-level AI framing; UMass Amherst mention only if there's a genuine connection to leverage</avoid>
+    </profile>
 
-  <profile id="4">
-    <company>Gartner</company>
-    <role>Lead Data Scientist</role>
-    <relevance>High</relevance>
-    <tone>Technically precise and peer-level. This is a senior, specialized profile — the message must signal that the sender understands the domain deeply. Avoid generic AI buzzwords.</tone>
-    <priority_ranking>
-      <rank position="1">skills</rank>
-      <rank position="2">interests</rank>
-      <rank position="3">role</rank>
-      <rank position="4">university</rank>
-      <rank position="5">company</rank>
-    </priority_ranking>
-    <recommended_points>
-      <point>The NLP + LLM + Elasticsearch + Milvus stack is highly specific and modern — name these tools explicitly to demonstrate genuine familiarity, not pattern-matching.</point>
-      <point>Information Retrieval as both a skill and interest signals deep specialization; position the outreach around a problem or opportunity in that exact space.</point>
-      <point>AI-Powered Search and Chatbot interests map cleanly to production LLM applications — frame the opportunity around where these technologies are heading, not where they are.</point>
-      <point>UMass Amherst has a reputable CS and NLP program — worth a brief mention as a credibility nod, particularly if the hiring context is research-adjacent.</point>
-    </recommended_points>
-    <drafting_notes>Lead title signals seniority — message tone must reflect that. Do not explain basic concepts. Gartner context implies experience translating technical work into business intelligence; acknowledge the cross-functional dimension if relevant. Highest technical specificity required of all five profiles.</drafting_notes>
-  </profile>
+    <profile>
+      <name>Aayush Khemka</name>
+      <relevance>High</relevance>
+      <tone>Practical, impact-oriented, grounded in applied ML — avoid hype, emphasize real-world results</tone>
+      <priority_order>skills, company, role, interests, university</priority_order>
+      <anchor_points>
+        <point priority="1">Strong classical ML stack (Random Forest, Gradient Boosting, Neural Networks) + big data tooling (Hadoop, Hive) — acknowledge breadth and applied depth</point>
+        <point priority="2">AWS context signals he operates at scale — frame any value prop around scalability and production-grade thinking</point>
+        <point priority="3">Predictive modeling and text mining interests — connect to concrete use cases rather than abstract capability</point>
+        <point priority="4">UConn School of Business background — subtle signal of applied, business-outcome orientation</point>
+      </anchor_points>
+      <avoid>Overly theoretical framing; deep research positioning that doesn't connect to deployment or impact</avoid>
+    </profile>
 
-  <profile id="5">
-    <company>Meta</company>
-    <role>Data Scientist</role>
-    <relevance>Medium</relevance>
-    <tone>Intellectually curious and methodologically respectful. Appeal to rigor and analytical depth rather than speed or scale. Research-adjacent framing works well here.</tone>
-    <priority_ranking>
-      <rank position="1">university</rank>
-      <rank position="2">interests</rank>
-      <rank position="3">company</rank>
-      <rank position="4">skills</rank>
-      <rank position="5">role</rank>
-    </priority_ranking>
-    <recommended_points>
-      <point>Columbia University is the strongest anchor in this profile — lead with it naturally as a shared reference point or marker of analytical rigor.</point>
-      <point>Causal Inference and Experimentation interests reflect a methodologically serious mindset — message should reflect comfort with that vocabulary (e.g., A/B testing, counterfactuals, treatment effects).</point>
-      <point>Meta context signals experience with product analytics at massive scale — acknowledge the complexity of inference in high-noise, high-volume environments.</point>
-    </recommended_points>
-    <drafting_notes>Medium relevance — keep the message focused and efficient. Skills (Python, R, ANOVA) are relatively standard and should not be the centerpiece. The Causal Inference + Columbia combination is the most distinctive hook; build the message around intellectual alignment rather than skill checklist. Do not over-engineer — a clean, sharp two-paragraph message is optimal here.</drafting_notes>
-  </profile>
+    <profile>
+      <name>Zixiao Chen</name>
+      <relevance>Medium</relevance>
+      <tone>Concise and respectful — one clear hook, no overreach; let the relevance do the work without overselling</tone>
+      <priority_order>role, interests, company, skills, university</priority_order>
+      <anchor_points>
+        <point priority="1">Information Integrity interest is the most differentiated and specific angle — if contextually matchable, lead with it</point>
+        <point priority="2">Applied Scientist II at Microsoft signals research-to-product pipeline experience — acknowledge applied science framing</point>
+        <point priority="3">Keep message shorter than High-relevance profiles; one strong hook is sufficient</point>
+      </anchor_points>
+      <avoid>Forcing connection where relevance is thin; NYU mention only if directly relevant</avoid>
+    </profile>
+
+    <profile>
+      <name>ZJ (Zhiheng) Jiang</name>
+      <relevance>Medium</relevance>
+      <tone>Analytically curious, collegial — appeal to the experimentation mindset; brief and sharp</tone>
+      <priority_order>interests, university, role, skills, company</priority_order>
+      <anchor_points>
+        <point priority="1">Causal inference and experimentation is a distinctive intellectual identity — lead with respect for that rigor</point>
+        <point priority="2">Columbia University is a strong credibility signal worth a light touch if there's a shared connection</point>
+        <point priority="3">Product analytics framing bridges technical and business context — use to position relevance</point>
+        <point priority="4">Meta context implies familiarity with large-scale A/B and experimentation infrastructure</point>
+      </anchor_points>
+      <avoid>Over-indexing on Python/R/Django as hooks — too generic; keep message tight given medium relevance</avoid>
+    </profile>
+
+  </profiles>
 </verdict>
 ```
 ```
 
-> **Final Output:** 
+> **Final Output:**
+> Here are the five drafted messages, ready for your review and edits before sending:
+
+---
+
+**1. Fábio Maltêz — McKinsey & Company | High Relevance**
+
+Hi Fábio,
+
+Your work at McKinsey caught my attention, but honestly it was your background that made me want to reach out — the combination of deep reinforcement learning and product management is genuinely rare, and your interest in agentic AI and LLMs puts you at exactly the intersection I find most compelling right now.
+
+Most people in this space are either building the models or thinking about the product — you seem to be doing both, which makes your perspective unusually valuable.
+
+I'd love to connect and swap thoughts on where agentic systems are heading, especially from someone who's navigating that from inside a firm like McKinsey. Whether there's a concrete opportunity worth discussing or just an interesting conversation to be had, I think it'd be worth 20 minutes.
+
+Would you be open to a quick chat?
+
+---
+
+**2. Bryon Kucharski — Gartner | High Relevance**
+
+Hi Bryon,
+
+I came across your profile and the stack you're working with — NLP, LLMs, Elasticsearch, Milvus — is about as directly relevant to what I'm focused on as it gets. AI-powered search and information retrieval done right is still a hard problem, and it's clear you're working at the serious end of it.
+
+Your work at Gartner in particular is interesting to me. Being a Lead Data Scientist there means you're not just building — you're likely shaping how an influential organization thinks about these capabilities, which is a different kind of leverage.
+
+I'd genuinely enjoy comparing notes on retrieval-augmented approaches and where you see the field moving. Open to a conversation?
+
+---
+
+**3. Aayush Khemka — Amazon Web Services | High Relevance**
+
+Hi Aayush,
+
+Your profile stood out to me — the combination of a strong classical ML foundation (Random Forest, Gradient Boosting, Neural Networks) alongside Hadoop and Hive tells me you're someone who thinks about models in the context of where they actually have to run, which isn't as common as it should be.
+
+Building and deploying at AWS scale is a different discipline than most data science roles, and your applied breadth across predictive modeling and text mining suggests you're focused on outcomes, not just methods.
+
+I'd love to connect — I think there's a real conversation to be had about applied ML work and what's actually moving the needle in production environments. Would you be up for a quick chat?
+
+---
+
+**4. Zixiao Chen — Microsoft | Medium Relevance**
+
+Hi Zixiao,
+
+I came across your profile and your interest in information integrity is what made me want to reach out — it's a problem space I think deserves more serious applied science attention, and your work as an Applied Scientist at Microsoft puts you in a good position to work on it meaningfully.
+
+I'd love to connect and learn more about the direction of your work. Happy to keep it brief — just wanted to put myself on your radar.
+
+---
+
+**5. ZJ (Zhiheng) Jiang — Meta | Medium Relevance**
+
+Hi ZJ,
+
+Your focus on causal inference and experimentation is what caught my eye — it's one of those areas where rigorous thinking genuinely separates good analysis from misleading analysis, and it's clear from your background (including your time at Columbia) that you approach it seriously.
+
+Product analytics at Meta's scale means the experimentation infrastructure you're working with is about as sophisticated as it gets, which makes your perspective on this stuff particularly interesting.
+
 ---
 
 ### 2.5 Value Definition (The KPI Dashboard)
-*How will we measure success?*
+
 
 | Metric Category | Current State (As-Is) | Target State (To-Be) | Estimated Impact |
 | :--- | :--- | :--- | :--- |
@@ -1232,5 +1235,6 @@ Let me analyze each profile to determine personalization priorities, tone, and p
 - Step C. Tool B: https://claude.ai/share/215c94b8-60d2-4a7d-83ec-df1fcf9f876c
 - Step C. Tool C: https://claude.ai/share/8f90c8d7-b2a9-4096-9257-e795e9d319ba
 - Step D. Tool A: https://claude.ai/share/6bc0d4c6-913d-463f-ae59-b42853fc4604
-- Step D. Tool B: https://claude.ai/share/7e9cfd80-0787-4677-882a-1ea61673ae7d
+- Step D. Tool B: https://claude.ai/share/a56879de-0e57-44d2-a3e5-9b7bef2e1fe4
+- Step D. Tool C: https://claude.ai/share/fd899162-04a8-4322-ba99-6ac1bec6b0fd
 ```
