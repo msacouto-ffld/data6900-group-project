@@ -1166,6 +1166,7 @@ Tone guidelines:
 ```
 
 > **Final Output:**
+```
 > Here are the five drafted messages, ready for your review and edits before sending:
 
 ---
@@ -1225,7 +1226,7 @@ Hi ZJ,
 Your focus on causal inference and experimentation is what caught my eye — it's one of those areas where rigorous thinking genuinely separates good analysis from misleading analysis, and it's clear from your background (including your time at Columbia) that you approach it seriously.
 
 Product analytics at Meta's scale means the experimentation infrastructure you're working with is about as sophisticated as it gets, which makes your perspective on this stuff particularly interesting.
-
+```
 ---
 
 ### 2.5 Value Definition (The KPI Dashboard)
