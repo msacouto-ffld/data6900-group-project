@@ -502,7 +502,7 @@ Plain Text
 
 #### **Step D | Tool C: The Worker (Drafting)**
 *   **Goal:** Draft a personalized message.
-*   **Input Variable:** `{{verdict}}`
+*   **Input Variable:** `{{verdict}}` and JSON from Gatekeeper
 *   **Tone/Style:** Text for human review.
 ---
 
