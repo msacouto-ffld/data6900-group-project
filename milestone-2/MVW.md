@@ -423,44 +423,57 @@ Plain Text
 
 #### **Step B | Tool A: The Gatekeeper (Extraction)**
 *   **Goal:** Extract structured data from job posting.
-*   **Input Variable:** `{job posting description}´ (String)
+*   **Input Variable:** `{job posting description}´ (String, unstructured text)
 *   **Output Schema (JSON):**
-    *   `{
-  "company": ,
-  "role": ,
-  "tasks_skills": 
-}´
+    * `company`: (string | null),
+    * `role`: (string | null),
+    * `tasks_skills`: (string | null)
+      
 *   **Failure Mode:** If no information was extracted, output `null` across all fields.
 
 #### **Step B | Tool B: The Judge (Reasoning)**
 *   **Goal:** Establish criteria to find relevant people.
 *   **Input Variable:** `{{json from previous rules}}`
-*   **Context Rules:** Sticking to JSON output from previous node
-*   **Output Schema (XML):** `<thinking>` and `<verdict>`
+*   **Context Rules:**
+*   - Use only the fields provided in `{{extracted_json}}`.
+  - Do NOT infer missing information.
+  - Do NOT introduce new data not present in the JSON.
+  - Base reasoning strictly on:
+    - `company`
+    - `role`
+    - `tasks_skills`
+  - Explicitly explain how job role and required skills translate into:
+    - Target job titles
+    - Target industries
+    - Target skill keywords
+    - Target seniority level (if implied)
+*   **Output Schema (XML):**`<thinking>` and `<verdict>`
 
 #### **Step B | Tool C: The Worker (Drafting)**
 *   **Goal:** Generate the ready-to-paste LinkedIn query.
-*   **Input Variable:** `{{verdict}}`
+*   **Input Variable:** `{{verdict}}` (Search criteria produced by Tool B)
 *   **Tone/Style:** Single Boolean LinkedIn Query
 
 #### **Step C | Tool A: The Gatekeeper (Extraction)**
 *   **Goal:** Extract information from LinkedIn profiles returned in Query.
 *   **Input Variable:** `{list of profiles and information}´ (String)
 *   **Output Schema (JSON):**
-    *   `{
-    "name": "",
-    "current_company": "",
-    "current_role": "",
-    "skills": "",
-    "interests": "",
-    "university": ""}`
+    * `name`: (string | null),
+    * `current_company`: (string | null),
+    * `current_role`: (string | null),
+    * `skills`: (array of strings | null),
+    * `interests`: (array of strings | null),
+    * `university`: (string | null)
+
 *   **Failure Mode:** If no information was extracted, output null across all fields.
 
 #### **Step C | Tool B: The Judge (Reasoning)**
 *   **Goal:** Assign relevance scores to generated leads.
 *   **Input Variable:** `{{json with lead information}}`
 *   **Context Rules:** Sticking to JSON output from previous node
-*   **Output Schema (XML):** `<thinking>` and `<verdict>`
+*   **Output Schema (XML):**
+*   `<thinking>`: reasoning for each evaluated lead
+*   `<verdict>`: structured relevance assignment per lead
 
 #### **Step C | Tool C: The Worker (Drafting)**
 *   **Goal:** Summarize the lead information and relevance assignment for human review.
