@@ -202,13 +202,7 @@ Plain Text
 
 #### Task
 - Receive:
-  - JSON from Gatekeeper
-  - XML from Judge (<verdict>)
-- Combine inputs to generate a single LinkedIn Boolean search string that can be pasted directly into LinkedIn.
-- Ensure the string is fully formed, with no placeholders, and captures all relevant filters: company, role, skills, education, and additional parameters.
-- Maintain clarity and proper Boolean syntax so it runs immediately in LinkedIn.
 
-- Receive:
     - JSON from Gatekeeper
     - XML from Judge (<verdict>)
 - Combine inputs to generate a single LinkedIn People keyword search string that can be pasted directly into LinkedIn.
