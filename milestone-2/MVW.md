@@ -1227,9 +1227,9 @@ Your focus on causal inference and experimentation is what caught my eye — it'
 Product analytics at Meta's scale means the experimentation infrastructure you're working with is about as sophisticated as it gets, which makes your perspective on this stuff particularly interesting.
 
 ---
+---
 
 ### 2.5 Value Definition (The KPI Dashboard)
-
 
 | Metric Category | Current State (As-Is) | Target State (To-Be) | Estimated Impact |
 | :--- | :--- | :--- | :--- |
@@ -1237,8 +1237,8 @@ Product analytics at Meta's scale means the experimentation infrastructure you'r
 | Time per profile analysis | 3–5 min/profile | ~1–2 min/profile (AI summary + human validation) | ~60% reduction in evaluation time |
 | Time per message draft | 7–10 min/message | ~2–3 min/message (AI draft + human refinement) | ~70% reduction in drafting time |
 | Total weekly time on evaluation + drafting | 2–3 hrs/week | 1–1.5 hrs/week | Save ~1–1.5 hrs/week (~50–70% reduction) |
-| Job criteria extraction time | ~3–5 min/posting (benchmark) | ~30–60 sec/posting (AI summarization) | ~85% reduction per posting |
-| Connection prioritization/ranking time | ~5–7 min/search session (benchmark) | ~1–2 min/session (AI-ranked shortlist) | ~70–80% reduction per session |
+| Job criteria extraction time | ~3–5 min/posting *(benchmark)* | ~30–60 sec/posting (AI summarization) | ~85% reduction per posting |
+| Connection prioritization/ranking time | ~5–7 min/search session *(benchmark)* | ~1–2 min/session (AI-ranked shortlist) | ~70–80% reduction per session |
 | Cognitive fatigue (qualitative) | High — repetitive judgment calls | Low — AI handles first-pass decisions | Reduced burnout; more consistent output |
 | Message quality consistency | Variable — degrades with fatigue | Consistent — structured AI prompts + templates | Fewer low-quality sends; better response rates |
 | % of total process time on bottleneck steps | ~70–80% of weekly effort | ~35–45% of weekly effort (estimated) | Bottleneck significantly relieved |
@@ -1246,6 +1246,8 @@ Product analytics at Meta's scale means the experimentation infrastructure you'r
 **Notes on benchmarks used (where PDD data was absent):**
 - *Job criteria extraction:* Industry benchmark for manual job posting parsing is 3–5 min; LLM-based extraction typically runs under 60 seconds.
 - *Connection prioritization:* Manual LinkedIn filtering estimated at 5–7 min per search session based on standard UX research on professional search workflows; AI ranking reduces this to a review-only task.
+
+
 ### ChatGPT logs
 > To generate the RAFT prompts: https://chatgpt.com/share/6993c5ac-8f64-8007-a5ae-5a17a0ba1d65
 >
