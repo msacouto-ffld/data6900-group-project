@@ -1227,10 +1227,9 @@ Your focus on causal inference and experimentation is what caught my eye — it'
 Product analytics at Meta's scale means the experimentation infrastructure you're working with is about as sophisticated as it gets, which makes your perspective on this stuff particularly interesting.
 
 ---
----
 
 ### 2.5 Value Definition (The KPI Dashboard)
-
+```
 | Metric Category | Current State (As-Is) | Target State (To-Be) | Estimated Impact |
 | :--- | :--- | :--- | :--- |
 | Weekly outreach volume | 8–12 connections/week | 8–12+ connections/week (same or higher) | Maintained or increased volume with less effort |
@@ -1242,6 +1241,7 @@ Product analytics at Meta's scale means the experimentation infrastructure you'r
 | Cognitive fatigue (qualitative) | High — repetitive judgment calls | Low — AI handles first-pass decisions | Reduced burnout; more consistent output |
 | Message quality consistency | Variable — degrades with fatigue | Consistent — structured AI prompts + templates | Fewer low-quality sends; better response rates |
 | % of total process time on bottleneck steps | ~70–80% of weekly effort | ~35–45% of weekly effort (estimated) | Bottleneck significantly relieved |
+```
 
 **Notes on benchmarks used (where PDD data was absent):**
 - *Job criteria extraction:* Industry benchmark for manual job posting parsing is 3–5 min; LLM-based extraction typically runs under 60 seconds.
