@@ -1063,7 +1063,7 @@ END OF PROFILES
   {
 ]`
 > 
-> **Node 2 Verdict:** ````xml
+> **Node 2 Verdict:** ```xml
 <thinking>
 Analyzing each profile for personalization strategy:
 
@@ -1157,7 +1157,7 @@ Tone guidelines:
   </profiles>
 </verdict>
 ```
-```
+
 
 > **Final Output:**
 ```
@@ -1221,9 +1221,8 @@ Your focus on causal inference and experimentation is what caught my eye — it'
 
 Product analytics at Meta's scale means the experimentation infrastructure you're working with is about as sophisticated as it gets, which makes your perspective on this stuff particularly interesting.
 ```
----
 
-### 2.5 Value Definition (The KPI Dashboard)
+#### 2.5 Value Definition (The KPI Dashboard)
 ```
 | Metric Category | Current State (As-Is) | Target State (To-Be) | Estimated Impact |
 | :--- | :--- | :--- | :--- |
