@@ -1241,7 +1241,7 @@ Product analytics at Meta's scale means the experimentation infrastructure you'r
 **Notes on benchmarks used (where PDD data was absent):**
 - *Job criteria extraction:* Industry benchmark for manual job posting parsing is 3–5 min; LLM-based extraction typically runs under 60 seconds.
 - *Connection prioritization:* Manual LinkedIn filtering estimated at 5–7 min per search session based on standard UX research on professional search workflows; AI ranking reduces this to a review-only task.
-
+---
 
 ### ChatGPT logs
 > To generate the RAFT prompts: https://chatgpt.com/share/6993c5ac-8f64-8007-a5ae-5a17a0ba1d65
@@ -1258,4 +1258,3 @@ Product analytics at Meta's scale means the experimentation infrastructure you'r
 - Step D. Tool C: https://claude.ai/share/fd899162-04a8-4322-ba99-6ac1bec6b0fd
 > To generate the KPIs
 - Value Analyst: https://claude.ai/share/8ad30c23-1e8b-41b0-b533-186d77b45ae7
-```
