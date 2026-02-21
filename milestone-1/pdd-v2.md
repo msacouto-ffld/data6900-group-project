@@ -1,7 +1,7 @@
 # Process Design Document (PDD) - Milestone 1: Process Analysis
 **Team Name:** Group 2
 **Project Title:** LinkedIn Lead Generator
-**Target Workflow:** Personal Daily Task
+**Target Workflow:** Linkedin Lead Generator
 
 ---
 
@@ -31,7 +31,7 @@ flowchart TD
 *   **The Bottleneck:** The main bottleneck occurs between "Identifying Company + Job Title + School/Common Background", “Analyze Profile” and “Draft Customized Message.” This stage requires reviewing unstructured profile information, exercising judgment about strategic value, and writing a personalized outreach message. It is the most cognitively demanding and time-intensive step, and it must be repeated for every potential connection.
 
 
-*   **The Cost:** The student typically attempts 8–12 outreach connections per week. Profile analysis takes approximately 3–5 minutes per person, and drafting a customized message takes 7–10 minutes. This results in approximately 2–3 hours per week spent primarily on evaluation and message drafting, representing roughly 70–80% of total process time. Additional costs include cognitive fatigue, inconsistent message quality, and reduced outreach volume due to overthinking.
+*   **The Cost:** The student typically attempts 8–12 outreach connections per week. Profile analysis takes approximately 5-10 minutes per person, and drafting a customized message takes 10-15 minutes. This results in approximately 4–5 hours per week spent primarily on evaluation and message drafting, representing roughly 70–80% of total process time. Additional costs include cognitive fatigue, inconsistent message quality, and reduced outreach volume due to overthinking.
 
 ---
 
@@ -53,7 +53,7 @@ flowchart TD
 | Extract company + role + criteria                  | AI / Automation      | AI can quickly summarize job postings and extract structured information needed for targeting relevant professionals. |
 | Search and rank relevant professionals             | AI / Automation      | AI can filter and prioritize candidates based on structured criteria such as company, role, and shared background. |
 | Evaluate profile for relevance                     | AI-assisted (Hybrid) | AI can summarize profile highlights and identify alignment signals, reducing review time while allowing human validation. |
-| Draft personalized message                         | AI-assisted (Hybrid) | AI can generate tailored draft messages using extracted profile data, reducing cognitive load and drafting time. Human review maintains authenticity. |
+| Draft personalized message                         | AI / Automation   | AI can generate tailored draft messages using extracted profile data, reducing cognitive load and drafting time. Human review maintains authenticity. |
 | Send connection request                            | Human                | Final sending remains human-controlled to reduce platform risk and ensure intentional outreach. |
 ---
 
@@ -77,4 +77,4 @@ Summary Table:
 
 
 ### 3.2 The Hypothesis
-*   By automating job criteria extraction, candidate filtering, and first-draft message generation, we expect to reduce the time spent on profile evaluation and drafting by approximately 50–70%. This would reduce total weekly effort from approximately 2–3 hours to approximately 1–1.5 hours per week, while maintaining or improving message quality and consistency through structured AI support and human review.
+*   By automating job criteria extraction, candidate filtering, and first-draft message generation, we expect to reduce the time spent on profile evaluation and drafting by approximately 70–75%. This would reduce total weekly effort from approximately 4-5 hours to approximately 1–1.5 hours per week, while maintaining or improving message quality and consistency through structured AI support and human review.
