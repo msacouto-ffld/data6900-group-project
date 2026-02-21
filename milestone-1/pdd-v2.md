@@ -1,7 +1,7 @@
 # Process Design Document (PDD) - Milestone 1: Process Analysis
 **Team Name:** Group 2
 **Project Title:** LinkedIn Lead Generator
-**Target Workflow:** Linkedin Lead Generator
+**Target Workflow:** Personal Networking Outreach Assistant 
 
 ---
 
