@@ -145,76 +145,53 @@ flowchart TD
 ---
 
 ### 3.4 New Component Definitions (The Modules)
-*Define the Specs and Prompts for the NEW tools you added (Router or Critic). You do not need to redefine the tools from Part 2.*
 
-#### **[Module A: The Router Configuration]**
+Starting with the highest-risk failure node first (D1 silent corruption), then working through the approved pattern assignments.
 
-**Tool Name:** Input Qualification Router
-  *   **Input Variable:**
-      *   `{{transcript}}` (String), `{{vendor_csv}}` (String)
-  *   **Output Categories:** (What are the specific pass/fail criteria?)
-      *   VALID
-        * Required financial facts are explicitly present in authoritative sources (CSV preferred).
-        * Numeric values are concrete (no hedging language).
-      * AMBIGUOUS
-        * Required facts exist but are vague, approximate, or transcript-only.
-        * Extraction is possible only with forced inference flags.
-      * INSUFFICIENT
-        * One or more mandatory fields cannot be grounded in any source.
-        * Downstream automation must fail closed or escalate.
-  *   **R.A.F.T. Prompt Draft:**
-      ```
-      # Role
-      
-      # Audience
+#### **[Module A: Query Construction Router]**
 
-      
-      # Format
-     
-      
-      # Task
-     
-      
-     
-      
-      # Rules
-    
-      ```
+```
+Input Variable: {C3_lead_summary} — plain text lead summary produced by C3 Worker
+| Category   | Condition                                                                                                   | Next Step                                                                                  |
+|------------|-------------------------------------------------------------------------------------------------------------|---------------------------------------------------------------------------------------------|
+| VALID      | All six fields present and profile-sourced (name, company, role, skills, interests, university)            | Pass directly to **D2 Judge**                                                               |
+| CORRUPTED  | Any field contains inferred, rewritten, or hallucinated values not traceable to C3 output                  | Route to **D1 Fallback re-parse**                                                           |
+| INCOMPLETE | One or more fields missing or null                                                                          | Route to **D1 Fallback re-parse** with strict null rules                                    |
+```
 
-#### **[Module B: The Evaluator Configuration]**
+```
+RAFT Prompt:
+#### Role
+Router AI: Field Integrity Validator for Message Drafting Input
 
-*   **Tool Name:** Judge Critic / Evaluator Loop (NEW)
-*   **Input Variable:** 
-    * {{judge_xml_output}} (XML)
-      * <thinking>: Step-by-step reasoning
-      * <verdict>: Proposed decision (APPROVE or REJECT)
-    * {{gatekeeper_json_output}} (JSON)
-      * Structured financial facts, including inferred flags
-*   **Evaluation Rubric:** (What are the specific pass/fail criteria?)
-    | Rule                                    | Description                                                                                                      |
-    | :-------------------------------------- | :--------------------------------------------------------------------------------------------------------------- |
-    | **Mandatory Fields Present**            | All critical fields (`requested_shift_amount`, `target_line_item`, `current_overhead_reference`) must exist.     |
-    | **No Over-Confidence on Inferred Data** | Fields marked `"inferred": true` must trigger a conditional or REJECT verdict if they are critical for approval. |
-    | **Budget Limit Enforcement**            | Requested shift must not exceed $10,000.                                                                         |
-    | **MSA Trigger Rule**                    | Any shift > $5,000 must trigger MSA check.                                                                       |
-    | **Overhead Qualification**              | `target_line_item` must have a validated overhead classification.                                                |
-    | **Fail-Closed Principle**               | If any precondition fails, the final verdict is downgraded to REJECT or NEEDS REVIEW.                            |
+#### Audience
+Machine (routing decision only — no human output)
 
-*   **R.A.F.T. Prompt Draft:**
-    ```
-    # Role
-    
-    # Audience
- 
-    
-    # Format
-    
-    # Task
+#### Format
+JSON:
+{
+  "status": "VALID" | "CORRUPTED" | "INCOMPLETE",
+  "failed_fields": [] | ["skills", "interests", ...],
+  "reason": ""
+}
 
-    
-    # Rules
+#### Task
+- Receive the plain text lead summary from Step C.
+- Verify that all six fields are present and traceable to the summary:
+  name, current_company, current_role, skills, interests, university.
+- For each field, ask internally:
+  "Does this value appear explicitly in the C3 summary — or was it inferred?"
+- If all fields are present and traceable: output status VALID.
+- If any field contains values not present in the C3 summary: output status CORRUPTED
+  and list the affected fields in failed_fields.
+- If any field is missing or empty: output status INCOMPLETE
+  and list the affected fields in failed_fields.
+- Do NOT attempt to fix or fill missing fields.
+- Do NOT pass judgment on relevance or message quality.
+- Output routing decision only.
+```
 
-    ```
+#### **[Next Module]
   
 
 ---
