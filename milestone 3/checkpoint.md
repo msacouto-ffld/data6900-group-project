@@ -1379,7 +1379,6 @@ Product analytics at Meta's scale means the experimentation infrastructure you'r
 
 ```mermaid
 flowchart TD
-
     %% ── ENTRY ──────────────────────────────────────────────
     START([⚡ Job Posting]) --> B1
 
@@ -1392,7 +1391,7 @@ flowchart TD
     B2 --> B_CRITIC[🔍 B2 Critic: Verdict Quality Check]
     B_CRITIC --> B_LOOP{Verdict\nAcceptable?}
     B_LOOP -- No: Too Generic / Too Long --> B2
-    B_LOOP -- Yes --> B_ROUTER{Company &\nUniversity\nSignals Present?}
+    B_LOOP -- Yes --> B_ROUTER{Company and University Signals Present?}
     B_ROUTER -- Yes: Anchor-first path --> B3_A[✍️ B3 Worker: Query with Company + University Anchors]
     B_ROUTER -- No: Skill-first path --> B3_B[✍️ B3 Worker: Query with Skill + Title Focus]
     B3_A --> C1
@@ -1403,13 +1402,13 @@ flowchart TD
     %% ══════════════════════════════════════════════════════
 
     C1[🤖 C1 Gatekeeper: Profile Extraction]
-    C1 --> C_ROUTER{JSON Fields\nComplete?}
+    C1 --> C_ROUTER{JSON Fields Complete?}
     C_ROUTER -- No: Missing / Hallucinated Fields --> C1_FALLBACK[🔄 C1 Fallback: Re-Extraction with Strict Null Rules]
     C1_FALLBACK --> C2
     C_ROUTER -- Yes: Clean JSON --> C2
     C2[⚖️ C2 Judge: Relevance Scoring]
     C2 --> C_CRITIC[🔍 C2 Critic: Tier + Rank Check]
-    C_CRITIC --> C_LOOP{Score Granular\n& Ranked?}
+    C_CRITIC --> C_LOOP{Score Granular and Ranked?}
     C_LOOP -- No: Flat Tiers / Inflation --> C2
     C_LOOP -- Yes --> C3[✍️ C3 Worker: Lead Summary]
 
@@ -1424,7 +1423,7 @@ flowchart TD
     D2[⚖️ D2 Judge: Personalization Strategy]
     D2 --> D3[✍️ D3 Worker: Draft Message]
     D3 --> D_CRITIC[🔍 D3 Critic: Tone + CTA Check]
-    D_CRITIC --> D_LOOP{Professional Tone\n& Clear Ask\nwith Timeline?}
+    D_CRITIC --> D_LOOP{Professional Tone + Clear Ask + with Timeline?}
     D_LOOP -- No: Too Informal / Vague CTA --> D3
     D_LOOP -- Yes --> HUMAN
 
