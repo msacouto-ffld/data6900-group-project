@@ -6,10 +6,11 @@
 ---
 
 ## Part 1: Process Mapping (The "As-Is" State)
-https://github.com/msacouto-ffld/data6900-group-project/blob/main/milestone-1/pdd-v2.md
+
+#### https://github.com/msacouto-ffld/data6900-group-project/blob/main/milestone-1/pdd-v2.md
 ---
 ## [Part 2: The Core Capability (The Linear Worker)]
-https://github.com/msacouto-ffld/data6900-group-project/blob/main/milestone-2/MVW.md
+#### https://github.com/msacouto-ffld/data6900-group-project/blob/main/milestone-2/MVW.md
 ---
 
 ## Part 3: The Intelligent Network (Week 4 Additions)
@@ -232,3 +233,7 @@ flowchart TD
   ```
 * **Observations from Simulation**
   * 
+
+### 3.6 Claude logs:
+#### https://claude.ai/share/6cbc5360-62ad-41d2-ae1e-b333838db0aa
+#### https://claude.ai/share/130e5ea6-54e9-4304-bae9-15071cf22a2d
