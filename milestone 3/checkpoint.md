@@ -1378,7 +1378,87 @@ Product analytics at Meta's scale means the experimentation infrastructure you'r
 *(Update your diagram. It should now contain Diamonds (Decisions) or Circles (Loops) wrapping around your nodes.)*
 
 ```mermaid
+flowchart TD
 
+    %% ── ENTRY ──────────────────────────────────────────────
+    START([⚡ Job Posting]) --> B1
+
+    %% ══════════════════════════════════════════════════════
+    %% STEP B — Identify Company + Job Title + Background
+    %% ══════════════════════════════════════════════════════
+
+    B1[🤖 B1 Gatekeeper: Extraction]
+    B1 --> B2[⚖️ B2 Judge: Reasoning]
+    B2 --> B_CRITIC[🔍 B2 Critic: Verdict Quality Check]
+    B_CRITIC --> B_LOOP{Verdict\nAcceptable?}
+    B_LOOP -- No: Too Generic / Too Long --> B2
+    B_LOOP -- Yes --> B_ROUTER{Company &\nUniversity\nSignals Present?}
+    B_ROUTER -- Yes: Anchor-first path --> B3_A[✍️ B3 Worker: Query with Company + University Anchors]
+    B_ROUTER -- No: Skill-first path --> B3_B[✍️ B3 Worker: Query with Skill + Title Focus]
+    B3_A --> C1
+    B3_B --> C1
+
+    %% ══════════════════════════════════════════════════════
+    %% STEP C — Analyze Profiles for Relevance
+    %% ══════════════════════════════════════════════════════
+
+    C1[🤖 C1 Gatekeeper: Profile Extraction]
+    C1 --> C_ROUTER{JSON Fields\nComplete?}
+    C_ROUTER -- No: Missing / Hallucinated Fields --> C1_FALLBACK[🔄 C1 Fallback: Re-Extraction with Strict Null Rules]
+    C1_FALLBACK --> C2
+    C_ROUTER -- Yes: Clean JSON --> C2
+    C2[⚖️ C2 Judge: Relevance Scoring]
+    C2 --> C_CRITIC[🔍 C2 Critic: Tier + Rank Check]
+    C_CRITIC --> C_LOOP{Score Granular\n& Ranked?}
+    C_LOOP -- No: Flat Tiers / Inflation --> C2
+    C_LOOP -- Yes --> C3[✍️ C3 Worker: Lead Summary]
+
+    %% ══════════════════════════════════════════════════════
+    %% STEP D — Draft Customized Message
+    %% ══════════════════════════════════════════════════════
+
+    C3 --> D_ROUTER{All Key Fields\nIntact?}
+    D_ROUTER -- No: Skills Dropped / Interests Rewritten --> D1_FALLBACK[🔄 D1 Fallback: Re-Parse with Field Validation]
+    D_ROUTER -- Yes: Clean Pass-Through --> D2
+    D1_FALLBACK --> D2
+    D2[⚖️ D2 Judge: Personalization Strategy]
+    D2 --> D3[✍️ D3 Worker: Draft Message]
+    D3 --> D_CRITIC[🔍 D3 Critic: Tone + CTA Check]
+    D_CRITIC --> D_LOOP{Professional Tone\n& Clear Ask\nwith Timeline?}
+    D_LOOP -- No: Too Informal / Vague CTA --> D3
+    D_LOOP -- Yes --> HUMAN
+
+    %% ── EXIT ──────────────────────────────────────────────
+    HUMAN([🛠️ Human Review & Send])
+
+    %% ══════════════════════════════════════════════════════
+    %% STYLING
+    %% ══════════════════════════════════════════════════════
+
+    %% Week 3 nodes — Orange
+    style B1 fill:#FFF4DD,stroke:#E0C070
+    style B2 fill:#FFF4DD,stroke:#E0C070
+    style B3_A fill:#FFF4DD,stroke:#E0C070
+    style B3_B fill:#FFF4DD,stroke:#E0C070
+    style C1 fill:#FFF4DD,stroke:#E0C070
+    style C2 fill:#FFF4DD,stroke:#E0C070
+    style C3 fill:#FFF4DD,stroke:#E0C070
+    style D2 fill:#FFF4DD,stroke:#E0C070
+    style D3 fill:#FFF4DD,stroke:#E0C070
+
+    %% New Router nodes — Green
+    style B_ROUTER fill:#E6FFFA,stroke:#2C7A7B,stroke-width:2px
+    style C_ROUTER fill:#E6FFFA,stroke:#2C7A7B,stroke-width:2px
+    style D_ROUTER fill:#E6FFFA,stroke:#2C7A7B,stroke-width:2px
+
+    %% New Critic nodes — Green
+    style B_CRITIC fill:#E6FFFA,stroke:#2C7A7B,stroke-width:2px
+    style C_CRITIC fill:#E6FFFA,stroke:#2C7A7B,stroke-width:2px
+    style D_CRITIC fill:#E6FFFA,stroke:#2C7A7B,stroke-width:2px
+
+    %% Fallback nodes — Green
+    style C1_FALLBACK fill:#E6FFFA,stroke:#2C7A7B,stroke-width:2px
+    style D1_FALLBACK fill:#E6FFFA,stroke:#2C7A7B,stroke-width:2px
 ```
 
 ### 3.3 The Orchestrator Logic
