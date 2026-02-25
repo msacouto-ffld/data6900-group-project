@@ -27,86 +27,98 @@
 *(Update your diagram. It should now contain Diamonds (Decisions) or Circles (Loops) wrapping around your nodes.)*
 
 ```mermaid
-flowchart TD
-    %% ── ENTRY ──────────────────────────────────────────────
-    START([⚡ Job Posting]) --> B1
+graph TD
 
-    %% ══════════════════════════════════════════════════════
-    %% STEP B — Identify Company + Job Title + Background
-    %% ══════════════════════════════════════════════════════
+%% =========================
+%% STEP B — JOB → QUERY
+%% =========================
 
-    B1[🤖 B1 Gatekeeper: Extraction]
-    B1 --> B2[⚖️ B2 Judge: Reasoning]
-    B2 --> B_CRITIC[🔍 B2 Critic: Verdict Quality Check]
-    B_CRITIC --> B_LOOP{Verdict Acceptable?}
-    B_LOOP -- No: Too Generic / Too Long --> B2
-    B_LOOP -- Yes --> B_ROUTER{Company and University Signals Present?}
-    B_ROUTER -- Yes: Anchor-first path --> B3_A[✍️ B3 Worker: Query with Company + University Anchors]
-    B_ROUTER -- No: Skill-first path --> B3_B[✍️ B3 Worker: Query with Skill + Title Focus]
-    B3_A --> C1
-    B3_B --> C1
+A[⚡ Job Posting]
 
-    %% ══════════════════════════════════════════════════════
-    %% STEP C — Analyze Profiles for Relevance
-    %% ══════════════════════════════════════════════════════
+A --> RB{? Router: Anchor Strategy}
 
-    C1[🤖 C1 Gatekeeper: Profile Extraction]
-    C1 --> C_ROUTER{JSON Fields Complete?}
-    C_ROUTER -- No: Missing / Hallucinated Fields --> C1_FALLBACK[🔄 C1 Fallback: Re-Extraction with Strict Null Rules]
-    C1_FALLBACK --> C2
-    C_ROUTER -- Yes: Clean JSON --> C2
-    C2[⚖️ C2 Judge: Relevance Scoring]
-    C2 --> C_CRITIC[🔍 C2 Critic: Tier + Rank Check]
-    C_CRITIC --> C_LOOP{Score Granular and Ranked?}
-    C_LOOP -- No: Flat Tiers / Inflation --> C2
-    C_LOOP -- Yes --> C3[✍️ C3 Worker: Lead Summary]
+%% Router Styling
+style RB fill:#E6FFFA,stroke:#00A896,stroke-width:3px
 
-    %% ══════════════════════════════════════════════════════
-    %% STEP D — Draft Customized Message
-    %% ══════════════════════════════════════════════════════
+RB --> B1[🤖 Gatekeeper: Extract Job Data]
+style B1 fill:#FFF4DD,stroke-dasharray:5 5
 
-    C3 --> D_ROUTER{All Key Fields Intact?}
-    D_ROUTER -- No: Skills Dropped / Interests Rewritten --> D1_FALLBACK[🔄 D1 Fallback: Re-Parse with Field Validation]
-    D_ROUTER -- Yes: Clean Pass-Through --> D2
-    D1_FALLBACK --> D2
-    D2[⚖️ D2 Judge: Personalization Strategy]
-    D2 --> D3[✍️ D3 Worker: Draft Message]
-    D3 --> D_CRITIC[🔍 D3 Critic: Tone + CTA Check]
-    D_CRITIC --> D_LOOP{Professional Tone + Clear Ask + with Timeline?}
-    D_LOOP -- No: Too Informal / Vague CTA --> D3
-    D_LOOP -- Yes --> HUMAN
+B1 --> B2[⚖️ Judge: Search Strategy Reasoning]
+style B2 fill:#FFF4DD,stroke-dasharray:5 5
 
-    %% ── EXIT ──────────────────────────────────────────────
-    HUMAN([🛠️ Human Review & Send])
+B2 --> CB[🟢 Critic: Title Realism + Anchor Check]
+style CB fill:#E6FFFA,stroke:#00A896,stroke-width:3px
 
-    %% ══════════════════════════════════════════════════════
-    %% STYLING
-    %% ══════════════════════════════════════════════════════
+CB --> DB{? Pass Quality Check}
+style DB fill:#E6FFFA,stroke:#00A896,stroke-width:3px
 
-    %% Week 3 nodes — Orange
-    style B1 fill:#FFF4DD,stroke:#E0C070
-    style B2 fill:#FFF4DD,stroke:#E0C070
-    style B3_A fill:#FFF4DD,stroke:#E0C070
-    style B3_B fill:#FFF4DD,stroke:#E0C070
-    style C1 fill:#FFF4DD,stroke:#E0C070
-    style C2 fill:#FFF4DD,stroke:#E0C070
-    style C3 fill:#FFF4DD,stroke:#E0C070
-    style D2 fill:#FFF4DD,stroke:#E0C070
-    style D3 fill:#FFF4DD,stroke:#E0C070
+DB -- No --> B2
+DB -- Yes --> B3[✍️ Worker: Generate Query]
+style B3 fill:#FFF4DD,stroke-dasharray:5 5
 
-    %% New Router nodes — Green
-    style B_ROUTER fill:#E6FFFA,stroke:#2C7A7B,stroke-width:2px
-    style C_ROUTER fill:#E6FFFA,stroke:#2C7A7B,stroke-width:2px
-    style D_ROUTER fill:#E6FFFA,stroke:#2C7A7B,stroke-width:2px
+B3 --> WB[🟢 Critic: Query Length + Anchor Lock]
+style WB fill:#E6FFFA,stroke:#00A896,stroke-width:3px
 
-    %% New Critic nodes — Green
-    style B_CRITIC fill:#E6FFFA,stroke:#2C7A7B,stroke-width:2px
-    style C_CRITIC fill:#E6FFFA,stroke:#2C7A7B,stroke-width:2px
-    style D_CRITIC fill:#E6FFFA,stroke:#2C7A7B,stroke-width:2px
+WB --> DB2{? Query Valid}
+style DB2 fill:#E6FFFA,stroke:#00A896,stroke-width:3px
 
-    %% Fallback nodes — Green
-    style C1_FALLBACK fill:#E6FFFA,stroke:#2C7A7B,stroke-width:2px
-    style D1_FALLBACK fill:#E6FFFA,stroke:#2C7A7B,stroke-width:2px
+DB2 -- No --> B3
+DB2 -- Yes --> C_INPUT[🔎 LinkedIn Profiles]
+
+%% =========================
+%% STEP C — PROFILES → SUMMARY
+%% =========================
+
+C_INPUT --> RC{? Router: Skill Triage}
+style RC fill:#E6FFFA,stroke:#00A896,stroke-width:3px
+
+RC --> C1[🤖 Gatekeeper: Extract Profile Data]
+style C1 fill:#FFF4DD,stroke-dasharray:5 5
+
+C1 --> C2[⚖️ Judge: Relevance Classification]
+style C2 fill:#FFF4DD,stroke-dasharray:5 5
+
+C2 --> CC[🟢 Critic: Precision Threshold Check]
+style CC fill:#E6FFFA,stroke:#00A896,stroke-width:3px
+
+CC --> DC{? Relevance Calibrated}
+style DC fill:#E6FFFA,stroke:#00A896,stroke-width:3px
+
+DC -- No --> C2
+DC -- Yes --> C3[✍️ Worker: Lead Summary]
+style C3 fill:#FFF4DD,stroke-dasharray:5 5
+
+%% =========================
+%% STEP D — SUMMARY → MESSAGE
+%% =========================
+
+C3 --> RD{? Router: Personalization Strength}
+style RD fill:#E6FFFA,stroke:#00A896,stroke-width:3px
+
+RD --> D1[🤖 Gatekeeper: Structure for Draft]
+style D1 fill:#FFF4DD,stroke-dasharray:5 5
+
+D1 --> D2[⚖️ Judge: Message Strategy]
+style D2 fill:#FFF4DD,stroke-dasharray:5 5
+
+D2 --> CD[🟢 Critic: Anchor Strength Check]
+style CD fill:#E6FFFA,stroke:#00A896,stroke-width:3px
+
+CD --> DD{? Strategy Strong}
+style DD fill:#E6FFFA,stroke:#00A896,stroke-width:3px
+
+DD -- No --> D2
+DD -- Yes --> D3[✍️ Worker: Draft Message]
+style D3 fill:#FFF4DD,stroke-dasharray:5 5
+
+D3 --> WD[🟢 Critic: Tone + Length + CTA Check]
+style WD fill:#E6FFFA,stroke:#00A896,stroke-width:3px
+
+WD --> DD2{? Message Valid}
+style DD2 fill:#E6FFFA,stroke:#00A896,stroke-width:3px
+
+DD2 -- No --> D3
+DD2 -- Yes --> F[📤 Human Review & Send]
 ```
 
 ### 3.3 The Orchestrator Logic
