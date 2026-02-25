@@ -36,17 +36,17 @@ flowchart TD
     %% STEP B — Identify Company + Job Title + Background
     %% ══════════════════════════════════════════════════════
 
-    B1[🤖 B1 Gatekeeper: Structured Job Extraction]
-    B1 --> B2[⚖️ B2 Judge: Search Parameter Reasoning]
+    B1["🤖 B1 Gatekeeper: Structured Job Extraction"]
+    B1 --> B2["⚖️ B2 Judge: Search Parameter Reasoning"]
 
-    B2 --> B_CRITIC[🔍 B2 Critic: Title Realism + Anchor Discipline Audit]
-    B_CRITIC --> B_LOOP{Are Titles Market-Realistic\nAND Is Primary Company Anchor Dominant?}
+    B2 --> B_CRITIC["🔍 B2 Critic: Title Realism + Anchor Discipline Audit"]
+    B_CRITIC --> B_LOOP{"Are titles market-realistic AND is the primary company anchor dominant?"}
 
-    B_LOOP -- No: Rare Titles / Anchor Drift / Over-Broad Scope --> B2
-    B_LOOP -- Yes: Realistic Titles + Clear Primary Anchor --> B_ROUTER{Does Job Include Strong Company Signal\nAND Valid University Match?}
+    B_LOOP -- "No: Rare titles / Anchor drift / Over-broad scope" --> B2
+    B_LOOP -- "Yes: Realistic titles + Clear primary anchor" --> B_ROUTER{"Does the job include a strong company signal AND a valid university match?"}
 
-    B_ROUTER -- Yes: Strong Anchor Signals Present --> B3_A[✍️ B3 Worker: Anchor-First Query (Company Locked + Titles)]
-    B_ROUTER -- No: Weak Anchor Signals --> B3_B[✍️ B3 Worker: Skill-Weighted Query (Titles + Core Skills Only)]
+    B_ROUTER -- "Yes: Strong anchor signals present" --> B3_A["✍️ B3 Worker: Anchor-First Query - Company Locked + Standard Titles"]
+    B_ROUTER -- "No: Weak anchor signals" --> B3_B["✍️ B3 Worker: Skill-Weighted Query - Standard Titles + Core Skills"]
 
     B3_A --> C1
     B3_B --> C1
@@ -55,43 +55,43 @@ flowchart TD
     %% STEP C — Analyze Profiles for Relevance
     %% ══════════════════════════════════════════════════════
 
-    C1[🤖 C1 Gatekeeper: Profile Extraction (Strictly Profile-Bound)]
-    C1 --> C_ROUTER{Are Core Fields Present\n(Name, Role, Company)\nAND No Hallucinated Skills?}
+    C1["🤖 C1 Gatekeeper: Profile Extraction - Strictly Profile-Bound"]
+    C1 --> C_ROUTER{"Are core fields present (Name, Role, Company) AND no hallucinated or excessive tools?"}
 
-    C_ROUTER -- No: Missing Core Data / Tool Over-Extraction --> C1_FALLBACK[🔄 C1 Fallback: Re-Extract with Null Enforcement + Tool Filtering]
+    C_ROUTER -- "No: Missing data / Tool over-extraction" --> C1_FALLBACK["🔄 C1 Fallback: Re-Extract with Null Enforcement + Tool Filtering"]
     C1_FALLBACK --> C2
-    C_ROUTER -- Yes: Clean Structured JSON --> C2
+    C_ROUTER -- "Yes: Clean structured JSON" --> C2
 
-    C2[⚖️ C2 Judge: Calibrated Relevance Scoring]
+    C2["⚖️ C2 Judge: Calibrated Relevance Scoring"]
 
-    C2 --> C_CRITIC[🔍 C2 Critic: Precision Threshold + Inflation Check]
-    C_CRITIC --> C_LOOP{Is "High" Tier Reserved for\nStrong Multi-Signal Alignment?}
+    C2 --> C_CRITIC["🔍 C2 Critic: Precision Threshold + Inflation Check"]
+    C_CRITIC --> C_LOOP{"Is High tier reserved for strong multi-signal alignment?"}
 
-    C_LOOP -- No: Over-Assigned High / Flat Tiering --> C2
-    C_LOOP -- Yes: Clear Tier Separation + Ranking --> C3[✍️ C3 Worker: Structured Lead Summary\n(Core Competency ≠ Tools)]
+    C_LOOP -- "No: Over-assigned High / Flat tiering" --> C2
+    C_LOOP -- "Yes: Clear tier separation + ranking" --> C3["✍️ C3 Worker: Structured Lead Summary - Core Competency separated from Tools"]
 
     %% ══════════════════════════════════════════════════════
     %% STEP D — Draft Customized Message
     %% ══════════════════════════════════════════════════════
 
-    C3 --> D_ROUTER{Are Strong Personalization Anchors Identified\n(Role Match, Company Match, Skill Overlap)?}
+    C3 --> D_ROUTER{"Are strong personalization anchors identified (role match, company match, skill overlap)?"}
 
-    D_ROUTER -- No: Weak or Generic Anchors Selected --> D1_FALLBACK[🔄 D1 Fallback: Re-Rank Anchors by Strength]
-    D_ROUTER -- Yes: High-Signal Anchors Confirmed --> D2
+    D_ROUTER -- "No: Weak or generic anchors selected" --> D1_FALLBACK["🔄 D1 Fallback: Re-rank anchors by signal strength"]
+    D_ROUTER -- "Yes: High-signal anchors confirmed" --> D2
 
     D1_FALLBACK --> D2
 
-    D2[⚖️ D2 Judge: Personalization Strategy (Tone + Priority Order)]
-    D2 --> D3[✍️ D3 Worker: Draft Message]
+    D2["⚖️ D2 Judge: Personalization Strategy - Tone + Priority Order"]
+    D2 --> D3["✍️ D3 Worker: Draft Message"]
 
-    D3 --> D_CRITIC[🔍 D3 Critic: Tone Calibration + Length + Explicit CTA Audit]
-    D_CRITIC --> D_LOOP{Professional Tone?\nConcise Length?\nClear Actionable Ask with Time Horizon?}
+    D3 --> D_CRITIC["🔍 D3 Critic: Tone Calibration + Length + Explicit CTA Audit"]
+    D_CRITIC --> D_LOOP{"Professional tone AND concise length AND clear actionable ask with timeline?"}
 
-    D_LOOP -- No: Overconfident / Too Long / No Clear Ask --> D3
-    D_LOOP -- Yes: Calibrated Tone + Specific CTA --> HUMAN
+    D_LOOP -- "No: Overconfident / Too long / No clear ask" --> D3
+    D_LOOP -- "Yes: Calibrated tone + Specific CTA" --> HUMAN
 
     %% ── EXIT ──────────────────────────────────────────────
-    HUMAN([🛠️ Human Review & Send])
+    HUMAN(["🛠️ Human Review & Send"])
 
     %% ══════════════════════════════════════════════════════
     %% STYLING
@@ -160,19 +160,153 @@ flowchart TD
 
 ### 3.4 New Component Definitions (The Modules)
 
-Starting with the highest-risk failure node first (D1 silent corruption), then working through the approved pattern assignments.
+#### Component 1: B2 Critic — Title Realism + Anchor Discipline Audit
 
-#### **[Module A: Query Construction Router]**
+This is the highest-leverage control point in the system (prevents unrealistic titles + anchor drift).
+
+**Purpose**
+
+Ensure that the Judge (Step B) produces:
+
+Market-realistic LinkedIn titles
+
+A dominant primary company anchor
+
+No secondary-company dilution
+
+No creative/novel title invention
+
+This node prevents:
+
+Rare titles
+
+Anchor dilution
+
+Query drift
+
+Downstream precision collapse
+
+**Input Variable**
+
+    {judge_verdict_xml}
+
+    Specifically:
+
+    - <verdict> section containing:
+
+    - Target companies
+
+    - Target job titles
+
+    - Target skills
+
+**Output Categories**
+
+The Critic returns:
+
+    - VALID
+
+    - REVISE_TITLES (rare/unrealistic titles detected)
+
+    - REVISE_ANCHOR (primary company not dominant)
+
+    - REVISE_SCOPE (too many companies or over-broad strategy)
+
+**Evaluation Rubric (Derived from SCRATCH_PAD Failures)**
+
+The Critic must enforce:
+
+**Rule 1 — Title Realism**
+
+Reject if:
+
+- Titles contain uncommon phrasing (e.g., “Conversational AI Lead”)
+
+- Titles exceed 5 variants
+
+- Titles are creative combinations not standard in LinkedIn autocomplete
+
+Acceptable examples:
+
+- Data Scientist
+
+- Senior Data Scientist
+
+- Applied Scientist
+
+- Product Data Scientist
+
+- AI Product Manager
+
+**Rule 2 — Anchor Discipline**
+
+Reject if:
+
+- More than one company is in the primary search logic
+
+- Secondary companies are presented as OR-equivalent to the primary
+
+- Company anchor is optional instead of dominant
+
+**Rule 3 — Scope Control**
+
+Reject if:
+
+- More than 3–5 titles
+
+- More than 1 primary company
+
+- Skills exceed realistic LinkedIn keyword density
 
 ```
-Input Variable: {C3_lead_summary} — plain text lead summary produced by C3 Worker
-| Category   | Condition                                                                                                   | Next Step                                                                                  |
-|------------|-------------------------------------------------------------------------------------------------------------|---------------------------------------------------------------------------------------------|
-| VALID      | All six fields present and profile-sourced (name, company, role, skills, interests, university)            | Pass directly to **D2 Judge**                                                               |
-| CORRUPTED  | Any field contains inferred, rewritten, or hallucinated values not traceable to C3 output                  | Route to **D1 Fallback re-parse**                                                           |
-| INCOMPLETE | One or more fields missing or null                                                                          | Route to **D1 Fallback re-parse** with strict null rules                                    |
-```
+#### Role
+You are a Quality Control Critic for LinkedIn Search Strategy.
 
+#### Audience
+Machine (Decision Node for Looping)
+
+#### Format
+JSON:
+{
+  "status": "",
+  "reason": "",
+  "action": ""
+}
+
+#### Task
+You will receive a Judge verdict that defines:
+- Target companies
+- Target job titles
+- Target skills
+
+Evaluate the strategy using the following rubric:
+
+1. Title Realism
+- Titles must be common LinkedIn titles.
+- Reject invented, rare, or overly creative titles.
+- Max 5 titles allowed.
+
+2. Anchor Discipline
+- One dominant primary company only.
+- No OR-combined secondary companies.
+- The company anchor must not be diluted.
+
+3. Scope Control
+- No excessive titles or keyword sprawl.
+
+Return:
+
+status:
+- VALID
+- REVISE_TITLES
+- REVISE_ANCHOR
+- REVISE_SCOPE
+
+reason:
+Short explanation of violation.
+
+action:
+Clear instruction to Judge for revision.
 ```
 RAFT Prompt:
 #### Role
