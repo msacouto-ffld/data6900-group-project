@@ -1257,6 +1257,266 @@ Product analytics at Meta's scale means the experimentation infrastructure you'r
 
 ### 3.2 The Advanced Logic Map (Mermaid)
 ---
+```mermaid
+flowchart TD
+
+    %% ── ENTRY ──────────────────────────────────────────────
+    START([⚡ Job Posting]) --> B1
+
+    %% ══════════════════════════════════════════════════════
+    %% STEP B — Identify Company + Job Title + Background
+    %% ══════════════════════════════════════════════════════
+
+    B1["🤖 B1 Gatekeeper: Structured Job Extraction"]
+    B1 --> B2["⚖️ B2 Judge: Search Parameter Reasoning"]
+
+    B2 --> B_CRITIC["🔍 B2 Critic: Title Realism + Anchor Discipline Audit"]
+    B_CRITIC --> B_LOOP{"Are titles market-realistic AND is the primary company anchor dominant?"}
+
+    B_LOOP -- "No: Rare titles / Anchor drift / Over-broad scope" --> B2
+    B_LOOP -- "Yes: Realistic titles + Clear primary anchor" --> B_ROUTER{"Does the job include a strong company signal AND a valid university match?"}
+
+    B_ROUTER -- "Yes: Strong anchor signals present" --> B3_A["✍️ B3 Worker: Anchor-First Query - Company Locked + Standard Titles"]
+    B_ROUTER -- "No: Weak anchor signals" --> B3_B["✍️ B3 Worker: Skill-Weighted Query - Standard Titles + Core Skills"]
+
+    B3_A --> C1
+    B3_B --> C1
+
+    %% ══════════════════════════════════════════════════════
+    %% STEP C — Analyze Profiles for Relevance
+    %% ══════════════════════════════════════════════════════
+
+    C1["🤖 C1 Gatekeeper: Profile Extraction - Strictly Profile-Bound"]
+    C1 --> C_ROUTER{"Are core fields present (Name, Role, Company) AND no hallucinated or excessive tools?"}
+
+    C_ROUTER -- "No: Missing data / Tool over-extraction" --> C1_FALLBACK["🔄 C1 Fallback: Re-Extract with Null Enforcement + Tool Filtering"]
+    C1_FALLBACK --> C2
+    C_ROUTER -- "Yes: Clean structured JSON" --> C2
+
+    C2["⚖️ C2 Judge: Calibrated Relevance Scoring"]
+
+    C2 --> C_CRITIC["🔍 C2 Critic: Precision Threshold + Inflation Check"]
+    C_CRITIC --> C_LOOP{"Is High tier reserved for strong multi-signal alignment?"}
+
+    C_LOOP -- "No: Over-assigned High / Flat tiering" --> C2
+    C_LOOP -- "Yes: Clear tier separation + ranking" --> C3["✍️ C3 Worker: Structured Lead Summary - Core Competency separated from Tools"]
+
+    %% ══════════════════════════════════════════════════════
+    %% STEP D — Draft Customized Message
+    %% ══════════════════════════════════════════════════════
+
+    C3 --> D_ROUTER{"Are strong personalization anchors identified (role match, company match, skill overlap)?"}
+
+    D_ROUTER -- "No: Weak or generic anchors selected" --> D1_FALLBACK["🔄 D1 Fallback: Re-rank anchors by signal strength"]
+    D_ROUTER -- "Yes: High-signal anchors confirmed" --> D2
+
+    D1_FALLBACK --> D2
+
+    D2["⚖️ D2 Judge: Personalization Strategy - Tone + Priority Order"]
+    D2 --> D3["✍️ D3 Worker: Draft Message"]
+
+    D3 --> D_CRITIC["🔍 D3 Critic: Tone Calibration + Length + Explicit CTA Audit"]
+    D_CRITIC --> D_LOOP{"Professional tone AND concise length AND clear actionable ask with timeline?"}
+
+    D_LOOP -- "No: Overconfident / Too long / No clear ask" --> D3
+    D_LOOP -- "Yes: Calibrated tone + Specific CTA" --> HUMAN
+
+    %% ── EXIT ──────────────────────────────────────────────
+    HUMAN(["🛠️ Human Review & Send"])
+
+    %% ══════════════════════════════════════════════════════
+    %% STYLING
+    %% ══════════════════════════════════════════════════════
+
+    %% Week 3 nodes — Orange
+    style B1 fill:#FFF4DD,stroke:#E0C070
+    style B2 fill:#FFF4DD,stroke:#E0C070
+    style B3_A fill:#FFF4DD,stroke:#E0C070
+    style B3_B fill:#FFF4DD,stroke:#E0C070
+    style C1 fill:#FFF4DD,stroke:#E0C070
+    style C2 fill:#FFF4DD,stroke:#E0C070
+    style C3 fill:#FFF4DD,stroke:#E0C070
+    style D2 fill:#FFF4DD,stroke:#E0C070
+    style D3 fill:#FFF4DD,stroke:#E0C070
+
+    %% Router nodes — Green
+    style B_ROUTER fill:#E6FFFA,stroke:#2C7A7B,stroke-width:2px
+    style C_ROUTER fill:#E6FFFA,stroke:#2C7A7B,stroke-width:2px
+    style D_ROUTER fill:#E6FFFA,stroke:#2C7A7B,stroke-width:2px
+
+    %% Critic nodes — Green
+    style B_CRITIC fill:#E6FFFA,stroke:#2C7A7B,stroke-width:2px
+    style C_CRITIC fill:#E6FFFA,stroke:#2C7A7B,stroke-width:2px
+    style D_CRITIC fill:#E6FFFA,stroke:#2C7A7B,stroke-width:2px
+
+    %% Fallback nodes — Green
+    style C1_FALLBACK fill:#E6FFFA,stroke:#2C7A7B,stroke-width:2px
+    style D1_FALLBACK fill:#E6FFFA,stroke:#2C7A7B,stroke-width:2px
+```
+### 3.3 The Orchestrator Logic
+*Define the step-by-step execution plan (The "Operating System"). This replaces the simple "1-2-3" sequence.*
+
+#### WORKFLOW VARIABLES
+```
+# Inputs
+
+
+# Gatekeeper outputs
+
+
+# Judge outputs
+
+
+# Critic outputs
+
+```
+
+#### WORKFLOW CONDITIONS
+##### Router (Pre-Gatekeeper)
+```
+
+```
+
+##### Critic (Post-Judge Evaluator Loop)
+```
+# Initialize loop
+
+
+    # Feedback to Judge
+    
+```
+
+---
+
+### 3.4 New Component Definitions (The Modules)
+
+#### **[Module A: B2 Critic]**
+
+**Tool Name:** Title Realism + Anchor Discipline Audit
+  *   **Input Variable:**
+      *   `{judge_verdict_xml}`
+      *   Specifically <verdict> section containing target companies, target job titles, and target skills
+  *   **Output Categories:** (What are the specific pass/fail criteria?)
+      * VALID
+      * REVISE_TITLES (rare/unrealistic titles detected)
+      * REVISE_ANCHOR (primary company not dominant)
+      * REVISE_SCOPE (too many companies or over-broad strategy)
+   
+  *   **R.A.F.T. Prompt Draft:**
+```
+#### Role
+You are a Quality Control Critic for LinkedIn Search Strategy.
+
+#### Audience
+Machine (Decision Node for Looping)
+
+#### Format
+JSON:
+{
+  "status": "",
+  "reason": "",
+  "action": ""
+}
+
+#### Task
+You will receive a Judge verdict that defines:
+- Target companies
+- Target job titles
+- Target skills
+
+Evaluate the strategy using the following rubric:
+
+1. Title Realism
+- Titles must be common LinkedIn titles.
+- Reject invented, rare, or overly creative titles.
+- Max 5 titles allowed.
+
+2. Anchor Discipline
+- One dominant primary company only.
+- No OR-combined secondary companies.
+- The company anchor must not be diluted.
+
+3. Scope Control
+- No excessive titles or keyword sprawl.
+
+Return:
+
+status:
+- VALID
+- REVISE_TITLES
+- REVISE_ANCHOR
+- REVISE_SCOPE
+
+reason:
+Short explanation of violation.
+
+action:
+Clear instruction to Judge for revision.
+```
+
+#### **[Module B: C2 Critic]**
+
+**Tool Name:** Relevance Precision & Inflation Control
+  *   **Input Variable:**
+      *   `{relevance_verdict_xml}`
+      *   Specifically <thinking> (reasoning per lead) and <verdict> (High / Medium / Low per lead)
+  *   **Output Categories:** (What are the specific pass/fail criteria?)
+      * VALID
+      * REVISE_INFLATION (too many Highs)
+      * REVISE_WEAK_HIGH (High assigned without strong evidence)
+      * REVISE_FLAT_TIERS (no differentiation between leads)
+   
+  *   **R.A.F.T. Prompt Draft:**
+```
+#### Role
+You are a Precision Auditor for Lead Relevance Scoring.
+
+#### Audience
+Machine (Decision Node for Looping)
+
+#### Format
+JSON:
+{
+  "status": "",
+  "reason": "",
+  "action": ""
+}
+
+#### Task
+You will receive relevance evaluations for multiple leads.
+
+Audit the classification using this rubric:
+
+1. High Tier Constraint
+- High must require at least TWO strong alignment signals:
+  (company match, role similarity, core skill overlap, industry match)
+- Tool overlap alone is insufficient.
+
+2. Inflation Check
+- If more than 40% of leads are labeled High, reject.
+
+3. Tier Separation
+- There must be meaningful differentiation between High, Medium, and Low.
+- Reject flat or overly generous scoring.
+
+4. Reasoning Quality
+- The Judge must explicitly justify alignment AND acknowledge gaps.
+
+Return:
+
+status:
+- VALID
+- REVISE_INFLATION
+- REVISE_WEAK_HIGH
+- REVISE_FLAT_TIERS
+
+reason:
+Brief explanation.
+
+action:
+Specific revision instruction for Judge.
+```
+
 
 ---
 
