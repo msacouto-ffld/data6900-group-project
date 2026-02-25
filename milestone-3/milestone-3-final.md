@@ -54,7 +54,7 @@ flowchart TD
 | Extract company + role + criteria                  | AI / Automation      | AI can quickly summarize job postings and extract structured information needed for targeting relevant professionals. |
 | Search and rank relevant professionals             | AI / Automation      | AI can filter and prioritize candidates based on structured criteria such as company, role, and shared background. |
 | Evaluate profile for relevance                     | AI-assisted (Hybrid) | AI can summarize profile highlights and identify alignment signals, reducing review time while allowing human validation. |
-| Draft personalized message                         | AI / Automation   | AI can generate tailored draft messages using extracted profile data, reducing cognitive load and drafting time. Human review maintains authenticity. |
+| Draft personalized message                         | AI-assisted (Hybrid)  | AI can generate tailored draft messages using extracted profile data, reducing cognitive load and drafting time. Human review maintains authenticity. |
 | Send connection request                            | Human                | Final sending remains human-controlled to reduce platform risk and ensure intentional outreach. |
 ---
 
