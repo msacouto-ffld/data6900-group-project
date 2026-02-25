@@ -160,7 +160,7 @@ flowchart TD
 
 ### 3.4 New Component Definitions (The Modules)
 
-#### Component 1: B2 Critic — Title Realism + Anchor Discipline Audit
+#### Module 1: B2 Critic — Title Realism + Anchor Discipline Audit
 
 This is the highest-leverage control point in the system (prevents unrealistic titles + anchor drift).
 
@@ -307,6 +307,7 @@ Short explanation of violation.
 
 action:
 Clear instruction to Judge for revision.
+
 ```
 RAFT Prompt:
 #### Role
@@ -339,7 +340,94 @@ JSON:
 - Output routing decision only.
 ```
 
-#### **[Next Module]
+#### Module 2: C2 Critic — Relevance Precision & Inflation Control
+
+This node addresses a major systemic failure: Judge over-assigns High relevance (low precision threshold).
+
+**Purpose**
+
+Ensure that:
+
+- “High” tier is rare and earned
+
+- Multi-signal alignment is required
+
+- Relevance tiers are granular and ranked
+
+- Flat inflation does not occur
+
+Prevents:
+
+- Everyone marked High
+
+- Weak profiles elevated
+
+- Loss of prioritization power
+
+- Human time wasted reviewing low-value leads
+
+**Input Variable**
+
+{relevance_verdict_xml}
+
+Specifically:
+
+- <thinking> (reasoning per lead)
+
+- <verdict> (High / Medium / Low per lead)
+
+**Output Categories**
+
+Returns:
+
+- VALID
+
+- REVISE_INFLATION (too many Highs)
+
+- REVISE_WEAK_HIGH (High assigned without strong evidence)
+
+- REVISE_FLAT_TIERS (no differentiation between leads)
+
+**Evaluation Rubric (Derived from SCRATCH_PAD)**
+Rule 1 — High Requires Multi-Signal Alignment
+
+- A lead may only be marked High if at least TWO of the following are strongly aligned:
+
+- Same company (primary anchor)
+
+- Strong role similarity
+
+- Direct skill overlap (core competencies, not tools)
+
+- Clear industry match
+
+- If only one weak signal → cannot be High.
+
+Rule 2 — High Tier Scarcity Constraint
+
+- If more than ~30–40% of leads are labeled High → reject.
+
+- The system must behave like a prioritization engine, not a validation engine.
+
+Rule 3 — Core Competency > Tools
+
+If a High verdict is justified primarily by:
+
+- Tool stack overlap
+
+- Generic AI buzzwords
+
+- Reject as weak High.
+
+Rule 4 — Explicit Reasoning
+
+If <thinking> lacks:
+
+- Explicit alignment mapping
+
+- Explicit gap acknowledgment
+
+- Reject as lazy classification.
   
 
 ---
