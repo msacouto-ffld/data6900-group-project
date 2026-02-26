@@ -1857,12 +1857,120 @@ END_PROCESS = TRUE
 
 ```mermaid
 graph TD
-    Input --> Router{Router}
-    Router -- Type A --> Worker[Worker Node]
-    Worker --> Draft(Draft Output)
-    Draft --> Auditor{Auditor Node}
-    Auditor -- Pass --> FinalAction[Send/Save]
-    Auditor -- Fail --> HITL[Resurrection Point: Human Queue]
+
+    %% INPUT
+    In1[📄 Job Description]
+    In2[👤 Candidate Profiles Batch]
+
+    %% ─────────────────────────────────────────────
+    %% NODE 1 — DEFENSE LAYER (Module 1 Upgrade)
+    %% ─────────────────────────────────────────────
+    subgraph Defense_Layer ["🛡️ NODE 1: ROUTER V3 (Signal Defense Layer)"]
+        direction TB
+        D1[📑 Boilerplate Filter]
+        D2[🔁 De-duplication Engine]
+        D3[🎯 Domain Anchor Enforcer]
+        Trash1[⛔ Terminate: Low Signal Integrity]
+
+        D1 --> D2
+        D2 --> D3
+        D1 -- "Institutional Noise Dominant" --> Trash1
+        D3 -- "Ambiguous Domain" --> Trash1
+    end
+
+    style Defense_Layer fill:#fee,stroke:#b91c1c,stroke-width:2px
+    style Trash1 fill:#eee,stroke:#999,stroke-dasharray: 5 5
+
+    In1 --> D1
+    D3 -- "Validated Core Signal" --> B1
+
+    %% ─────────────────────────────────────────────
+    %% NODE 2 — CONTEXT ENGINE (Module 2 + 3)
+    %% ─────────────────────────────────────────────
+    subgraph Context_Engine ["🧠 NODE 2: GATEKEEPER V3 (Query + Skill Integrity)"]
+        direction TB
+        B1[🤖 B Gatekeeper: Criteria Extraction]
+        J2[⚖️ B Judge: Strategy Builder]
+        C2{👮 Module 2 Critic: Structural Query Guard}
+        S1[🧩 Skill Categorizer]
+        S2[📊 Context-Aware Skill Normalizer]
+
+        B1 --> J2
+        J2 --> C2
+        C2 -- "Cross-Family Titles" --> J2
+        C2 -- "Unstructured Keyword Tail" --> J2
+        C2 -- "Anchor Drift" --> J2
+        C2 -- "PASS" --> S1
+        S1 --> S2
+    end
+
+    style Context_Engine fill:#e0f2fe,stroke:#0369a1,stroke-width:2px
+    style C2 fill:#fff,stroke:#b91c1c,stroke-width:2px
+
+    In2 --> S1
+    S2 --> J3
+
+    %% ─────────────────────────────────────────────
+    %% NODE 3 — LOGIC CORE (Module 4 Upgrade)
+    %% ─────────────────────────────────────────────
+    subgraph Logic_Core ["⚖️ NODE 3: JUDGE V3 (Axis-Calibrated Ranking)"]
+        direction TB
+        J3[🔎 Relevance Scoring Engine]
+        C3{👮 Module 4 Critic: Calibration Guard}
+        Reject2[⛔ Terminate: Inflation Detected]
+
+        J3 --> C3
+        C3 -- "Relative Inflation" --> J3
+        C3 -- "Implied Competence" --> J3
+        C3 -- "Axis Misalignment" --> J3
+        C3 -- "Max Retries" --> Reject2
+    end
+
+    style Logic_Core fill:#fff,stroke:#333,stroke-width:1px
+    style C3 fill:#fff,stroke:#b91c1c,stroke-width:2px
+
+    C3 -- "PASS" --> W1
+
+    %% ─────────────────────────────────────────────
+    %% NODE 4 — FIELD INTEGRITY (Module 5 Upgrade)
+    %% ─────────────────────────────────────────────
+    subgraph Field_Integrity ["🔐 NODE 4: ROUTER V3 (Field Specificity Guard)"]
+        direction TB
+        F1{Skill Specificity Check}
+        Reparse1[🔁 Re-parse Summary]
+
+        F1 -- "Generic Skill" --> Reparse1
+    end
+
+    style Field_Integrity fill:#fef9c3,stroke:#ca8a04,stroke-width:2px
+
+    W1[✍️ Lead Summary Generator]
+    W1 --> F1
+    Reparse1 --> W1
+    F1 -- "PASS" --> J4
+
+    %% ─────────────────────────────────────────────
+    %% NODE 5 — MESSAGE ENGINE (Module 6 Upgrade)
+    %% ─────────────────────────────────────────────
+    subgraph ROI_Engine ["💬 NODE 5: CRITIC LOOP V3 (Attention Enforcement)"]
+        direction TB
+        J4[✍️ Message Strategy & Draft]
+        C4{👮 Module 6 Critic}
+        Reject3[⛔ Hard Block]
+
+        J4 --> C4
+        C4 -- "CTA Not Dominant" --> J4
+        C4 -- "Prestige Overuse (Med/Low)" --> J4
+        C4 -- "Anchor Density > Cap" --> J4
+        C4 -- "Max Retries" --> Reject3
+    end
+
+    style ROI_Engine fill:#dcfce7,stroke:#15803d,stroke-width:2px
+    style C4 fill:#fff,stroke:#15803d,stroke-width:2px
+
+    C4 -- "Approved" --> Done
+    Done[✅ Human Review & Send]
+
 ```
 
 ### 4.2 The Risk Radar (Minesweeper)
