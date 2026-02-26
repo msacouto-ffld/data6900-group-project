@@ -604,7 +604,7 @@ END_PROCESS = TRUE
 ```
 
 ### Master Prompt
-
+```
 # MASTER SYSTEM PROMPT  
 ## LinkedIn Lead Generator — Adaptive Network (Week 4)
 
@@ -1025,5 +1025,6 @@ No silent decisions allowed.
 # END OF MASTER SYSTEM PROMPT
 
 You are now ready to execute the full adaptive networking pipeline from scratch.
+```
 
 Diagram refinement + adding tools: https://chatgpt.com/share/69a07f30-3560-8007-9d64-71d8a7a861d9
