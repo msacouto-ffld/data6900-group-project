@@ -14,6 +14,9 @@ You are the Corporate Trainer. Your goal is not to "show off" what you built; it
 **The 4 Mandatory Deliverables (Due at the 2-Week Coaching Session):**
 1.  **The Pre-Watch Video:** You must find a high-quality 5-10 minute tutorial (YouTube or Official n8n) that explains the core concept. The class will watch this *before* you speak to establish a baseline.
 -  Link to the video: https://www.youtube.com/watch?v=luoxil-2wlA
+  -  This is a pros & cons video for Local (self hosting using Docker) vs Cloud. 
+-  Link to the video: https://www.youtube.com/watch?v=EFYgQ5Z22Kw
+  -  This is a practical video showing the setup process for both Local and Cloud methods. 
   
 2.  **The "Golden File" (JSON):** You must build your tutorial workflow *completely* in n8n, export the JSON, and submit it. The Instructor will test this file. If it works, it becomes the class's "Safety Net."
 3.  **The Cheat Sheet:** A one-page doc for the class containing API URLs, sample JSON data, and code snippets they will need to copy-paste during your session.
