@@ -1330,12 +1330,9 @@ flowchart TD
     style C1A fill:#E6FFFA,stroke:#2C7A7B,stroke-width:2px
     style B_ROUTER fill:#E6FFFA,stroke:#2C7A7B,stroke-width:2px
     style B_ROUTER2 fill:#E6FFFA,stroke:#2C7A7B,stroke-width:2px
-    style C_ROUTER fill:#E6FFFA,stroke:#2C7A7B,stroke-width:2px
     style C_LOOP fill:#E6FFFA,stroke:#2C7A7B,stroke-width:2px
     style C_ROUTER1 fill:#E6FFFA,stroke:#2C7A7B,stroke-width:2px
     style D_ROUTER fill:#E6FFFA,stroke:#2C7A7B,stroke-width:2px
-    style C_CRITIC fill:#E6FFFA,stroke:#2C7A7B,stroke-width:2px
-    style D_CRITIC fill:#E6FFFA,stroke:#2C7A7B,stroke-width:2px
     style D1_FALLBACK fill:#E6FFFA,stroke:#2C7A7B,stroke-width:2px
     style D_LOOP fill:#E6FFFA,stroke:#2C7A7B,stroke-width:2px
 ```
