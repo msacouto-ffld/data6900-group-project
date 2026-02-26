@@ -5,93 +5,67 @@
 
 ---
 
-## Part 1: Process Mapping (The "As-Is" State)
-
-#### https://github.com/msacouto-ffld/data6900-group-project/blob/main/milestone-1/pdd-v2.md
----
-## [Part 2: The Core Capability (The Linear Worker)]
-#### https://github.com/msacouto-ffld/data6900-group-project/blob/main/milestone-2/MVW.md
----
-
-## Part 3: The Intelligent Network (Week 4 Additions)
-
-*In Week 4, we wrap the Linear Core in advanced logic to handle variety (Routing) and quality (Looping).*
+## [Part 3: The Intelligent Network]
 
 ### 3.1 The Architecture Strategy
-*Which Advanced Patterns are you deploying to fix the "Real World Complexity"? Check at least one.*
 *   [X] **The Router (Branching):** To handle different types of inputs (e.g., separating Spam from Valid Requests).
 *   [X] **The Evaluator-Optimizer (Looping):** To ensure quality/safety (e.g., checking the Draft before sending).
 *   [ ] **The Orchestrator-Workers (Parallel):** To handle complex, multi-step research.
 
 ### 3.2 The Advanced Logic Map (Mermaid)
-*(Update your diagram. It should now contain Diamonds (Decisions) or Circles (Loops) wrapping around your nodes.)*
-
+---
 ```mermaid
 flowchart TD
 
     %% ── ENTRY ──────────────────────────────────────────────
-    START([⚡ Job Posting]) --> B1
+    START([⚡ Job Posting]) --> B_ROUTER{🧭 Module 1 - B Router: Input sufficient and clean?}
 
     %% ══════════════════════════════════════════════════════
     %% STEP B — Identify Company + Job Title + Background
     %% ══════════════════════════════════════════════════════
-
-    B1["🤖 B1 Gatekeeper: Structured Job Extraction"]
-    B1 --> B2["⚖️ B2 Judge: Search Parameter Reasoning"]
-
-    B2 --> B_CRITIC["🔍 B2 Critic: Title Realism + Anchor Discipline Audit"]
-    B_CRITIC --> B_LOOP{"Are titles market-realistic AND is the primary company anchor dominant?"}
-
-    B_LOOP -- "No: Rare titles / Anchor drift / Over-broad scope" --> B2
-    B_LOOP -- "Yes: Realistic titles + Clear primary anchor" --> B_ROUTER{"Does the job include a strong company signal AND a valid university match?"}
-
-    B_ROUTER -- "Yes: Strong anchor signals present" --> B3_A["✍️ B3 Worker: Anchor-First Query - Company Locked + Standard Titles"]
-    B_ROUTER -- "No: Weak anchor signals" --> B3_B["✍️ B3 Worker: Skill-Weighted Query - Standard Titles + Core Skills"]
-
-    B3_A --> C1
-    B3_B --> C1
+    B_ROUTER -- Yes --> B1[🤖 B1 Gatekeeper: Extraction]
+    B_ROUTER -- No --> B2[Insufficient Data/Escalate]
+    B2 --> E[End process]
+    B1 --> B3[⚖️ B3 Judge: Reasoning]
+    B3 --> B_LOOP{🔍 Module 2 - B Evaluator: Verdict Acceptable?}
+    B_LOOP -- No: Too Generic / Too Long --> B3
+    B_LOOP -- Yes --> B_ROUTER2{University Signals Present in Candidate's Profile?}
+    B_ROUTER2 -- Yes: Anchor-first path --> B3_A[✍️ B3 Worker: Query with Company + University Anchors]
+    B_ROUTER2 -- No: Skill-first path --> B3_B[✍️ B3 Worker: Query with Skill + Title Focus]
+    B3_A --> C_ROUTER1{Module 3 - C Router: Too many skills present?}
+    B3_B --> C_ROUTER1{Module 3 - C Router: Too many skills present?}
 
     %% ══════════════════════════════════════════════════════
     %% STEP C — Analyze Profiles for Relevance
     %% ══════════════════════════════════════════════════════
-
-    C1["🤖 C1 Gatekeeper: Profile Extraction - Strictly Profile-Bound"]
-    C1 --> C_ROUTER{"Are core fields present (Name, Role, Company) AND no hallucinated or excessive tools?"}
-
-    C_ROUTER -- "No: Missing data / Tool over-extraction" --> C1_FALLBACK["🔄 C1 Fallback: Re-Extract with Null Enforcement + Tool Filtering"]
-    C1_FALLBACK --> C2
-    C_ROUTER -- "Yes: Clean structured JSON" --> C2
-
-    C2["⚖️ C2 Judge: Calibrated Relevance Scoring"]
-
-    C2 --> C_CRITIC["🔍 C2 Critic: Precision Threshold + Inflation Check"]
-    C_CRITIC --> C_LOOP{"Is High tier reserved for strong multi-signal alignment?"}
-
-    C_LOOP -- "No: Over-assigned High / Flat tiering" --> C2
-    C_LOOP -- "Yes: Clear tier separation + ranking" --> C3["✍️ C3 Worker: Structured Lead Summary - Core Competency separated from Tools"]
+    C_ROUTER1 -- Yes --> C1A[Select most relevant top 5 skills]
+    C_ROUTER1 -- No --> C1
+    C1A --> C1
+    C1[🤖 C1 Gatekeeper: Profile Extraction]
+    C1 --> C2
+    C2[⚖️ C2 Judge: Relevance Scoring]
+    C2 --> C_LOOP{🔍 Module 4 - C Evaluator: Score Granular and Ranked?}
+    C_LOOP -- No: Flat Tiers / Inflation --> C2
+    C_LOOP -- Yes --> C3[✍️ C3 Worker: Lead Summary]
 
     %% ══════════════════════════════════════════════════════
     %% STEP D — Draft Customized Message
     %% ══════════════════════════════════════════════════════
 
-    C3 --> D_ROUTER{"Are strong personalization anchors identified (role match, company match, skill overlap)?"}
-
-    D_ROUTER -- "No: Weak or generic anchors selected" --> D1_FALLBACK["🔄 D1 Fallback: Re-rank anchors by signal strength"]
-    D_ROUTER -- "Yes: High-signal anchors confirmed" --> D2
-
+    C3 --> D_ROUTER{🧭 Module 5 - D Router: All Key Fields Intact?}
+    D_ROUTER -- No: Skills Dropped / Interests Rewritten --> D1_FALLBACK[Re-Parse with Field Validation]
+    D_ROUTER -- Yes --> D2
     D1_FALLBACK --> D2
-
-    D2["⚖️ D2 Judge: Personalization Strategy - Tone + Priority Order"]
-    D2 --> D3["✍️ D3 Worker: Draft Message"]
-
-    D3 --> D_CRITIC["🔍 D3 Critic: Tone Calibration + Length + Explicit CTA Audit"]
-    D_CRITIC --> D_LOOP{"Professional tone AND concise length AND clear actionable ask with timeline?"}
-
-    D_LOOP -- "No: Overconfident / Too long / No clear ask" --> D3
-    D_LOOP -- "Yes: Calibrated tone + Specific CTA" --> HUMAN
+    D2[⚖️ D2 Judge: Personalization Strategy]
+    D2 --> D_LOOP{🔍 Module 6 - D Evaluator: Clear Ask + with Timeline?}
+    D_LOOP -- No: Too Informal / No Call To Action --> D2
+    D_LOOP -- Yes --> D3[✍️ D3 Worker: Draft Message]
+    D3 --> HUMAN
+    
+    HUMAN --> E[End process]
 
     %% ── EXIT ──────────────────────────────────────────────
-    HUMAN(["🛠️ Human Review & Send"])
+    HUMAN([🛠️ Human Review & Send])
 
     %% ══════════════════════════════════════════════════════
     %% STYLING
@@ -108,345 +82,526 @@ flowchart TD
     style D2 fill:#FFF4DD,stroke:#E0C070
     style D3 fill:#FFF4DD,stroke:#E0C070
 
-    %% Router nodes — Green
+    %% New nodes — Green
+    style B_LOOP fill:#E6FFFA,stroke:#2C7A7B,stroke-width:2px
+    style C1A fill:#E6FFFA,stroke:#2C7A7B,stroke-width:2px
     style B_ROUTER fill:#E6FFFA,stroke:#2C7A7B,stroke-width:2px
-    style C_ROUTER fill:#E6FFFA,stroke:#2C7A7B,stroke-width:2px
+    style B_ROUTER2 fill:#E6FFFA,stroke:#2C7A7B,stroke-width:2px
+    style C_LOOP fill:#E6FFFA,stroke:#2C7A7B,stroke-width:2px
+    style C_ROUTER1 fill:#E6FFFA,stroke:#2C7A7B,stroke-width:2px
     style D_ROUTER fill:#E6FFFA,stroke:#2C7A7B,stroke-width:2px
-
-    %% Critic nodes — Green
-    style B_CRITIC fill:#E6FFFA,stroke:#2C7A7B,stroke-width:2px
-    style C_CRITIC fill:#E6FFFA,stroke:#2C7A7B,stroke-width:2px
-    style D_CRITIC fill:#E6FFFA,stroke:#2C7A7B,stroke-width:2px
-
-    %% Fallback nodes — Green
-    style C1_FALLBACK fill:#E6FFFA,stroke:#2C7A7B,stroke-width:2px
     style D1_FALLBACK fill:#E6FFFA,stroke:#2C7A7B,stroke-width:2px
+    style D_LOOP fill:#E6FFFA,stroke:#2C7A7B,stroke-width:2px
 ```
-
 ### 3.3 The Orchestrator Logic
 *Define the step-by-step execution plan (The "Operating System"). This replaces the simple "1-2-3" sequence.*
 
 #### WORKFLOW VARIABLES
 ```
-# Inputs
+### VARIABLES
 
+#### Core Inputs
+- job_posting_text
+- job_criteria_json
+- judge_verdict_xml
+- profile_skill_array
+- lead_json
+- lead_summary_text
+- message_draft_text
+- relevance_tier
 
-# Gatekeeper outputs
+#### Router Outputs
+- B_input_status ∈ {VALID, INSUFFICIENT, AMBIGUOUS}
+- C_skill_status ∈ {COMPRESS, PROCEED}
+- D_field_status ∈ {PROCEED, REPARSE}
 
+#### Evaluator Outputs
+- B_query_quality ∈ {PASS, FAIL}
+- C_relevance_quality ∈ {PASS, FAIL}
+- D_message_quality ∈ {PASS, FAIL}
 
-# Judge outputs
+#### System State
+- END_PROCESS (Boolean)
+- RETRY_COUNT (Integer)
+- MAX_RETRIES = 3
 
+---
 
-# Critic outputs
+### CONDITIONS
+
+---
+
+## MODULE 1 — B Router (Input Triage)
+
+IF B_input_status == INSUFFICIENT OR AMBIGUOUS
+    → END_PROCESS = TRUE
+    → EXIT
+
+ELSE IF B_input_status == VALID
+    → Proceed to Step B Gatekeeper
+
+---
+
+## MODULE 2 — B Evaluator (Query Quality Loop)
+
+SET RETRY_COUNT = 0
+
+WHILE B_query_quality == FAIL AND RETRY_COUNT < MAX_RETRIES
+    → Send back to B Judge
+    → RETRY_COUNT++
+END WHILE
+
+IF RETRY_COUNT == MAX_RETRIES AND B_query_quality == FAIL
+    → END_PROCESS = TRUE
+    → EXIT
+
+ELSE
+    → Proceed to Query Worker
+
+---
+
+## MODULE 3 — C Router (Skill Compression)
+
+IF C_skill_status == COMPRESS
+    → Select Top 5 Skills
+    → Continue
+
+ELSE IF C_skill_status == PROCEED
+    → Continue
+
+---
+
+## MODULE 4 — C Evaluator (Relevance Calibration Loop)
+
+SET RETRY_COUNT = 0
+
+WHILE C_relevance_quality == FAIL AND RETRY_COUNT < MAX_RETRIES
+    → Send back to C Judge (Re-score profiles)
+    → RETRY_COUNT++
+END WHILE
+
+IF RETRY_COUNT == MAX_RETRIES AND C_relevance_quality == FAIL
+    → END_PROCESS = TRUE
+    → EXIT
+
+ELSE
+    → Proceed to Lead Summary
+
+---
+
+## MODULE 5 — D Router (Field Integrity)
+
+IF D_field_status == REPARSE
+    → Re-Parse Summary
+    → Continue to D Judge
+
+ELSE IF D_field_status == PROCEED
+    → Continue to D Judge
+
+---
+
+## MODULE 6 — D Evaluator (Message Quality Loop)
+
+SET RETRY_COUNT = 0
+
+WHILE D_message_quality == FAIL AND RETRY_COUNT < MAX_RETRIES
+    → Send back to D Judge (Refine strategy)
+    → RETRY_COUNT++
+END WHILE
+
+IF RETRY_COUNT == MAX_RETRIES AND D_message_quality == FAIL
+    → END_PROCESS = TRUE
+    → EXIT
+
+ELSE
+    → Proceed to Worker
+    → Human Review
+    → END_PROCESS = TRUE
 
 ```
-
-#### WORKFLOW CONDITIONS
-##### Router (Pre-Gatekeeper)
-```
-
-```
-
-##### Critic (Post-Judge Evaluator Loop)
-```
-# Initialize loop
-
-
-    # Feedback to Judge
-    
-```
-
 ---
 
 ### 3.4 New Component Definitions (The Modules)
 
-#### Module 1: B2 Critic — Title Realism + Anchor Discipline Audit
+#### **[Module 1: B Router]**
 
-This is the highest-leverage control point in the system (prevents unrealistic titles + anchor drift).
+**Tool Name:** `B_Input_Triage_Router`  
+  *   **Input Variable:** `{job_posting_text}` (String — raw unstructured job posting)  
+  *   **Output Categories:**  
+      - `VALID` — Company + role + concrete responsibilities present → Proceed to B1  
+      - `INSUFFICIENT` — Missing company or role, or text too short → Escalate & End  
+      - `AMBIGUOUS` — Marketing-heavy or unclear role/company → Escalate & End  
 
-**Purpose**
+  *   **R.A.F.T. Prompt Draft:**
+      ```
+      # Role
+      You are a Triage Router responsible for determining whether a job posting contains sufficient structured information to proceed into the AI networking pipeline.
 
-Ensure that the Judge (Step B) produces:
+      # Audience
+      Machine (controls process routing)
 
-Market-realistic LinkedIn titles
+      # Format
+      Return ONLY one of the following uppercase labels:
+      - VALID
+      - INSUFFICIENT
+      - AMBIGUOUS
 
-A dominant primary company anchor
+      # Task
+      Analyze the raw job posting text and determine whether it contains:
+      1. A clearly identifiable company name
+      2. A clearly identifiable role title
+      3. At least 2 concrete responsibilities or required skills
 
-No secondary-company dilution
+      # Rules
+      - Do NOT extract or summarize content.
+      - Do NOT infer missing company names.
+      - If company is implied but not explicitly stated → AMBIGUOUS.
+      - If role title is unclear (e.g., “Exciting AI Opportunity”) → AMBIGUOUS.
+      - If text length < 100 words → INSUFFICIENT.
+      - If core elements (company OR role) missing → INSUFFICIENT.
+      - When in doubt between VALID and AMBIGUOUS → choose AMBIGUOUS.
+      - Output one word only.
+      ```
 
-No creative/novel title invention
+#### **[Module 2: B Evaluator]**
 
-This node prevents:
+*   **Tool Name:** `B_Query_Quality_Evaluator`
+*   **Input Variable:** 
+    * `{judge_verdict_xml}` — XML output from B3 Judge (`<thinking>` + `<verdict>` containing titles, companies, skills, seniority logic)
 
-Rare titles
+*   **Evaluation Rubric:** (Pass/Fail Criteria)
 
-Anchor dilution
+    The evaluator must verify ALL of the following:
 
-Query drift
+    **1. Title Realism Rule**
+    - Titles must be commonly used on LinkedIn.
+    - Reject if titles are overly niche, academic, or invented (e.g., “Conversational AI Lead – Agentic Platform Architect”).
+    - Maximum 5 titles.
+    - Titles must be ≤ 4 words each.
 
-Downstream precision collapse
+    **2. Anchor Protection Rule**
+    - If primary company exists in extracted JSON → it must remain the first priority company.
+    - Secondary companies ≤ 3.
+    - If no primary company → no expansion beyond industry-level logic.
 
-**Input Variable**
+    **3. Keyword Discipline Rule**
+    - Skills limited to 2–3 high-frequency keywords.
+    - No long phrases (>3 words).
+    - No rare tools unless explicitly core to job.
 
-    {judge_verdict_xml}
+    **4. Length & Parsability Rule**
+    - Final query (simulated) must be ≤ 200 characters.
+    - One OR parenthetical block for titles only.
+    - No nested parentheses.
+    - No NOT operators.
 
-    Specifically:
+    **5. Strategic Coherence Rule**
+    - Titles, skills, and companies must align logically with job role.
+    - No drift into adjacent but irrelevant domains.
 
-    - <verdict> section containing:
+    **PASS Condition:** All 5 rule groups satisfied.  
+    **FAIL Condition:** Any rule violated.
 
-    - Target companies
+*   **R.A.F.T. Prompt Draft:**
+    ```
+    # Role
+    You are a Query Quality Evaluator. Your job is to determine whether the Judge's search strategy is realistic, parsable, and strategically coherent.
 
-    - Target job titles
+    # Audience
+    Machine (controls loop back to Judge if necessary)
 
-    - Target skills
+    # Format
+    Return ONLY one of:
+    - PASS
+    - FAIL
 
-**Output Categories**
+    # Task
+    Evaluate the Judge's XML verdict for:
+    - Realistic LinkedIn-native job titles
+    - Proper company anchor protection
+    - Controlled skill keyword usage
+    - Boolean query structural compliance
+    - Strategic coherence with the job role
 
-The Critic returns:
+    # Rules
+    - Do NOT rewrite the query.
+    - Do NOT propose improvements.
+    - If ANY rubric rule is violated → FAIL.
+    - If all rubric rules satisfied → PASS.
+    - Output one word only.
+    ```
 
-    - VALID
+#### **[Module 3: C Router]**
 
-    - REVISE_TITLES (rare/unrealistic titles detected)
+**Tool Name:** `C_Skill_Noise_Router`  
+  *   **Input Variable:** `{profile_skill_array}` — Array of extracted skills from C1 Gatekeeper  
+  *   **Output Categories:**  
+      - `COMPRESS` — More than 5 skills OR contains redundant/low-signal tools → Route to Skill Compression Node  
+      - `PROCEED` — 5 or fewer clearly relevant, high-signal skills → Proceed to C1 Gatekeeper  
 
-    - REVISE_ANCHOR (primary company not dominant)
+  *   **R.A.F.T. Prompt Draft:**
+      ```
+      # Role
+      You are a Skill Noise Router responsible for determining whether the extracted skill list is too long or too noisy to pass directly into relevance scoring.
 
-    - REVISE_SCOPE (too many companies or over-broad strategy)
+      # Audience
+      Machine (controls routing before profile evaluation)
 
-**Evaluation Rubric (Derived from SCRATCH_PAD Failures)**
+      # Format
+      Return ONLY one of:
+      - COMPRESS
+      - PROCEED
 
-The Critic must enforce:
+      # Task
+      Evaluate the extracted skill array and determine:
+      1. Whether the number of skills exceeds 5
+      2. Whether the list contains redundant, generic, or low-signal tools
+      3. Whether the list lacks prioritization (core vs peripheral skills)
 
-**Rule 1 — Title Realism**
+      # Rules
+      - If skill count > 5 → COMPRESS.
+      - If multiple tools from the same category appear (e.g., many ML algorithms listed individually) → COMPRESS.
+      - If skills include generic labels such as "Data", "Technology", "Innovation" → COMPRESS.
+      - If skills are already concise (≤ 5) and clearly high-signal → PROCEED.
+      - Do NOT rank skills.
+      - Do NOT modify the array.
+      - Output one word only.
+      ```
 
-Reject if:
 
-- Titles contain uncommon phrasing (e.g., “Conversational AI Lead”)
+#### **[Module 4: C Evaluator]**
 
-- Titles exceed 5 variants
+*   **Tool Name:** `C_Relevance_Calibration_Evaluator`
+*   **Input Variable:** 
+    * `{lead_json}` — Structured profile output from C1 Gatekeeper  
+    * `{job_criteria_json}` — Extracted job criteria from Step B  
+    * `{judge_verdict_xml}` — XML output from C2 Judge (includes reasoning + High/Medium/Low verdict)
 
-- Titles are creative combinations not standard in LinkedIn autocomplete
+*   **Evaluation Rubric:** (Pass/Fail Criteria)
 
-Acceptable examples:
+    The evaluator must verify ALL of the following:
 
-- Data Scientist
+    **1. Hard Alignment Rule**
+    - If no overlap between required job skills and lead skills → cannot be marked HIGH.
+    - If company does not match and no strong skill alignment → cannot be HIGH.
 
-- Senior Data Scientist
+    **2. Anchor Weight Rule**
+    - Shared company OR shared university adds weight.
+    - Lack of both must lower ceiling to MEDIUM unless skills are extremely strong.
 
-- Applied Scientist
+    **3. Inflation Control Rule**
+    - HIGH tier should represent clear, multi-dimensional alignment.
+    - If reasoning lacks explicit matches across at least 2 of the following:  
+      (Company, Role, Skills, University, Interests) → cannot be HIGH.
 
-- Product Data Scientist
+    **4. Prestige Bias Guard**
+    - Employer brand alone (e.g., Meta, AWS, Microsoft) cannot justify HIGH.
+    - Verdict must reference concrete skill/role alignment.
 
-- AI Product Manager
+    **5. Tier Separation Rule**
+    - HIGH = strong and explicit multi-factor alignment.
+    - MEDIUM = partial alignment or one strong signal.
+    - LOW = weak or minimal alignment.
+    - If verdict reasoning does not clearly justify tier distinction → FAIL.
 
-**Rule 2 — Anchor Discipline**
+    **PASS Condition:** Verdict tier is justified, calibrated, and discriminative.  
+    **FAIL Condition:** Inflation, weak reasoning, or unjustified HIGH.
 
-Reject if:
+*   **R.A.F.T. Prompt Draft:**
+    ```
+    # Role
+    You are a Relevance Calibration Evaluator responsible for preventing score inflation and enforcing strict tier discrimination.
 
-- More than one company is in the primary search logic
+    # Audience
+    Machine (controls loop back to C2 Judge if necessary)
 
-- Secondary companies are presented as OR-equivalent to the primary
+    # Format
+    Return ONLY one of:
+    - PASS
+    - FAIL
 
-- Company anchor is optional instead of dominant
+    # Task
+    Evaluate whether the Judge's relevance verdict is:
+    - Properly calibrated
+    - Free from prestige bias
+    - Explicitly justified with multi-factor alignment
+    - Clearly separated between HIGH, MEDIUM, and LOW tiers
 
-**Rule 3 — Scope Control**
+    # Rules
+    - Do NOT modify the verdict.
+    - Do NOT suggest improvements.
+    - If HIGH is assigned without strong multi-factor evidence → FAIL.
+    - If reasoning lacks explicit alignment references → FAIL.
+    - If verdict tiers appear inflated or compressed → FAIL.
+    - Output one word only.
+    ```
+    
+#### **[Module 5: D Router]**
 
-Reject if:
+**Tool Name:** `D_Field_Integrity_Router`  
+  *   **Input Variable:** `{lead_summary_text}` — Plain text summary generated by C3 Worker  
+  *   **Output Categories:**  
+      - `PROCEED` — All required structured fields are present and intact  
+      - `REPARSE` — One or more key fields missing, malformed, or rewritten  
 
-- More than 3–5 titles
+  *   **R.A.F.T. Prompt Draft:**
+      ```
+      # Role
+      You are a Field Integrity Router responsible for verifying that all structured data required for message personalization is intact before strategy generation.
 
-- More than 1 primary company
+      # Audience
+      Machine (controls routing before D2 Judge)
 
-- Skills exceed realistic LinkedIn keyword density
+      # Format
+      Return ONLY one of:
+      - PROCEED
+      - REPARSE
+
+      # Task
+      Examine the lead summary text and determine whether it clearly contains:
+
+      1. Current Company
+      2. Current Role
+      3. Skills (at least 1 identifiable skill)
+      4. Relevance tier (High, Medium, or Low)
+
+       # Rules
+      - If any of the required fields are missing → REPARSE.
+      - If skills are overly generic (e.g., “Data”, “Technology”) → REPARSE.
+      - If relevance tier is absent → REPARSE.
+      - If company or role is unclear or rewritten beyond recognition → REPARSE.
+      - Do NOT extract or modify content.
+      - Do NOT evaluate message quality.
+      - Output one word only.
+      ```
+#### **[Module 6: Evaluator]**
+
+*   **Tool Name:** `D_Message_Quality_Evaluator`
+*   **Input Variable:** 
+    * `{message_draft_text}` — Plain text output from D3 Worker  
+    * `{relevance_tier}` — High / Medium / Low  
+
+*   **Evaluation Rubric:** (Pass/Fail Criteria)
+
+    The evaluator must verify ALL of the following:
+
+    **1. Clear Call-To-Action Rule**
+    - Message must contain a direct, explicit ask.
+    - Acceptable forms:
+        - “Would you be open to a 15–20 min chat?”
+        - “Would you be available next week?”
+        - “Would you be open to connecting?”
+    - If no actionable request → FAIL.
+
+    **2. Timeline Specificity Rule**
+    - Must contain time anchor (e.g., “next week”, “15–20 minutes”, “brief call”).
+    - Vague phrases like “sometime” → FAIL.
+
+    **3. Length Discipline Rule**
+    - ≤ 220 words.
+    - ≤ 3 paragraphs.
+    - If longer → FAIL.
+
+    **4. Tone Calibration Rule**
+    - Must match relevance tier:
+        - HIGH → peer-level but not arrogant.
+        - MEDIUM → concise and respectful.
+        - LOW → light-touch and brief.
+    - If overly confident, dramatic, or grandiose → FAIL.
+
+    **5. Anchor Strength Rule**
+    - Must reference at least 1 concrete profile-specific signal:
+        - Specific skill
+        - Specific project/theme
+        - Specific role context
+    - Generic AI buzzwords without specificity → FAIL.
+
+    **PASS Condition:** All rubric rules satisfied.  
+    **FAIL Condition:** Any rule violated.
+
+*   **R.A.F.T. Prompt Draft:**
+    ```
+    # Role
+    You are a Message Quality Evaluator responsible for enforcing professional tone, clear calls-to-action, and structural discipline in networking outreach messages.
+
+    # Audience
+    Machine (controls loop back to D2 Judge if necessary)
+
+    # Format
+    Return ONLY one of:
+    - PASS
+    - FAIL
+
+    # Task
+    Evaluate whether the drafted message:
+    - Contains a clear, actionable ask with time specificity
+    - Is structurally concise
+    - Matches tone to relevance tier
+    - References at least one specific profile signal
+    - Avoids overconfidence or dramatic language
+
+    # Rules
+    - Do NOT rewrite the message.
+    - Do NOT suggest edits.
+    - If any rubric rule is violated → FAIL.
+    - If all rubric rules satisfied → PASS.
+    - Output one word only.
+    ```
+---
+
+### 3.5 Master Simulation (Stress Test)
+
+### Stress Scenario:
+Judge in Step C returns ALL profiles as HIGH relevance without discrimination.
 
 ```
-#### Role
-You are a Quality Control Critic for LinkedIn Search Strategy.
 
-#### Audience
-Machine (Decision Node for Looping)
+### TRACE LOG
 
-#### Format
-JSON:
-{
-  "status": "",
-  "reason": "",
-  "action": ""
-}
+[START] → Job Posting Received
 
-#### Task
-You will receive a Judge verdict that defines:
-- Target companies
-- Target job titles
-- Target skills
+[ROUTER B] → VALID  
+[JUDGE B] → Strategy Generated  
+[CRITIC B] → PASS  
+[WORKER B] → Query Generated  
 
-Evaluate the strategy using the following rubric:
+[ROUTER C] → PROCEED  
+[GATEKEEPER C] → Profiles Extracted  
+[JUDGE C] → ALL profiles marked HIGH  
 
-1. Title Realism
-- Titles must be common LinkedIn titles.
-- Reject invented, rare, or overly creative titles.
-- Max 5 titles allowed.
+[CRITIC C] → REJECT  
+Reason: Inflation detected — HIGH assigned without multi-factor justification; flat tier distribution.
 
-2. Anchor Discipline
-- One dominant primary company only.
-- No OR-combined secondary companies.
-- The company anchor must not be diluted.
+[JUDGE C] → RETRY (Recalibrating tiers)  
 
-3. Scope Control
-- No excessive titles or keyword sprawl.
+[JUDGE C] → Updated scoring:
+- 2 HIGH
+- 2 MEDIUM
+- 1 LOW
 
-Return:
+[CRITIC C] → PASS  
+[WORKER C] → Lead Summary Generated  
 
-status:
-- VALID
-- REVISE_TITLES
-- REVISE_ANCHOR
-- REVISE_SCOPE
+[ROUTER D] → PROCEED  
+[JUDGE D] → Message Strategy Created  
 
-reason:
-Short explanation of violation.
+[CRITIC D] → PASS  
+[WORKER D] → Draft Message  
 
-action:
-Clear instruction to Judge for revision.
+[HUMAN] → Review & Send  
 
-```
-RAFT Prompt:
-#### Role
-Router AI: Field Integrity Validator for Message Drafting Input
-
-#### Audience
-Machine (routing decision only — no human output)
-
-#### Format
-JSON:
-{
-  "status": "VALID" | "CORRUPTED" | "INCOMPLETE",
-  "failed_fields": [] | ["skills", "interests", ...],
-  "reason": ""
-}
-
-#### Task
-- Receive the plain text lead summary from Step C.
-- Verify that all six fields are present and traceable to the summary:
-  name, current_company, current_role, skills, interests, university.
-- For each field, ask internally:
-  "Does this value appear explicitly in the C3 summary — or was it inferred?"
-- If all fields are present and traceable: output status VALID.
-- If any field contains values not present in the C3 summary: output status CORRUPTED
-  and list the affected fields in failed_fields.
-- If any field is missing or empty: output status INCOMPLETE
-  and list the affected fields in failed_fields.
-- Do NOT attempt to fix or fill missing fields.
-- Do NOT pass judgment on relevance or message quality.
-- Output routing decision only.
-```
-
-#### Module 2: C2 Critic — Relevance Precision & Inflation Control
-
-This node addresses a major systemic failure: Judge over-assigns High relevance (low precision threshold).
-
-**Purpose**
-
-Ensure that:
-
-- “High” tier is rare and earned
-
-- Multi-signal alignment is required
-
-- Relevance tiers are granular and ranked
-
-- Flat inflation does not occur
-
-Prevents:
-
-- Everyone marked High
-
-- Weak profiles elevated
-
-- Loss of prioritization power
-
-- Human time wasted reviewing low-value leads
-
-**Input Variable**
-
-{relevance_verdict_xml}
-
-Specifically:
-
-- <thinking> (reasoning per lead)
-
-- <verdict> (High / Medium / Low per lead)
-
-**Output Categories**
-
-Returns:
-
-- VALID
-
-- REVISE_INFLATION (too many Highs)
-
-- REVISE_WEAK_HIGH (High assigned without strong evidence)
-
-- REVISE_FLAT_TIERS (no differentiation between leads)
-
-**Evaluation Rubric (Derived from SCRATCH_PAD)**
-Rule 1 — High Requires Multi-Signal Alignment
-
-- A lead may only be marked High if at least TWO of the following are strongly aligned:
-
-- Same company (primary anchor)
-
-- Strong role similarity
-
-- Direct skill overlap (core competencies, not tools)
-
-- Clear industry match
-
-- If only one weak signal → cannot be High.
-
-Rule 2 — High Tier Scarcity Constraint
-
-- If more than ~30–40% of leads are labeled High → reject.
-
-- The system must behave like a prioritization engine, not a validation engine.
-
-Rule 3 — Core Competency > Tools
-
-If a High verdict is justified primarily by:
-
-- Tool stack overlap
-
-- Generic AI buzzwords
-
-- Reject as weak High.
-
-Rule 4 — Explicit Reasoning
-
-If <thinking> lacks:
-
-- Explicit alignment mapping
-
-- Explicit gap acknowledgment
-
-- Reject as lazy classification.
-  
+[RESULT] → Process Completed Successfully  
+END_PROCESS = TRUE
 
 ---
 
-### 3.5 Advanced Simulation Log (Proof of Robustness)
-*Provide a chat log showing the Logic handling a complex case.*
+### Observed System Behavior Under Stress
 
-**Scenario: The Edge Case**
-*   **Input:** 
-  ```
-  
-  ```
-*   **Trace:**
-  ```
-  *
-  ```
-* **Observations from Simulation**
-  * 
+- Inflation was detected automatically.
+- Loop prevented propagation of weak scoring.
+- Calibration restored discrimination.
+- No anchor drift occurred.
+- Message layer executed only after validation.
+```
 
-### 3.6 Claude logs:
-#### https://claude.ai/share/6cbc5360-62ad-41d2-ae1e-b333838db0aa
-#### https://claude.ai/share/130e5ea6-54e9-4304-bae9-15071cf22a2d
+Diagram refinement + adding tools: https://chatgpt.com/share/69a07f30-3560-8007-9d64-71d8a7a861d9
