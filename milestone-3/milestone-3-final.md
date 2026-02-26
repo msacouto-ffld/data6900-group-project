@@ -1341,34 +1341,127 @@ flowchart TD
 
 #### WORKFLOW VARIABLES
 ```
-# Inputs
+### VARIABLES
 
+#### Core Inputs
+- job_posting_text
+- job_criteria_json
+- judge_verdict_xml
+- profile_skill_array
+- lead_json
+- lead_summary_text
+- message_draft_text
+- relevance_tier
 
-# Gatekeeper outputs
+#### Router Outputs
+- B_input_status ∈ {VALID, INSUFFICIENT, AMBIGUOUS}
+- C_skill_status ∈ {COMPRESS, PROCEED}
+- D_field_status ∈ {PROCEED, REPARSE}
 
+#### Evaluator Outputs
+- B_query_quality ∈ {PASS, FAIL}
+- C_relevance_quality ∈ {PASS, FAIL}
+- D_message_quality ∈ {PASS, FAIL}
 
-# Judge outputs
+#### System State
+- END_PROCESS (Boolean)
+- RETRY_COUNT (Integer)
+- MAX_RETRIES = 3
 
+---
 
-# Critic outputs
+### CONDITIONS
+
+---
+
+## MODULE 1 — B Router (Input Triage)
+
+IF B_input_status == INSUFFICIENT OR AMBIGUOUS
+    → END_PROCESS = TRUE
+    → EXIT
+
+ELSE IF B_input_status == VALID
+    → Proceed to Step B Gatekeeper
+
+---
+
+## MODULE 2 — B Evaluator (Query Quality Loop)
+
+SET RETRY_COUNT = 0
+
+WHILE B_query_quality == FAIL AND RETRY_COUNT < MAX_RETRIES
+    → Send back to B Judge
+    → RETRY_COUNT++
+END WHILE
+
+IF RETRY_COUNT == MAX_RETRIES AND B_query_quality == FAIL
+    → END_PROCESS = TRUE
+    → EXIT
+
+ELSE
+    → Proceed to Query Worker
+
+---
+
+## MODULE 3 — C Router (Skill Compression)
+
+IF C_skill_status == COMPRESS
+    → Select Top 5 Skills
+    → Continue
+
+ELSE IF C_skill_status == PROCEED
+    → Continue
+
+---
+
+## MODULE 4 — C Evaluator (Relevance Calibration Loop)
+
+SET RETRY_COUNT = 0
+
+WHILE C_relevance_quality == FAIL AND RETRY_COUNT < MAX_RETRIES
+    → Send back to C Judge (Re-score profiles)
+    → RETRY_COUNT++
+END WHILE
+
+IF RETRY_COUNT == MAX_RETRIES AND C_relevance_quality == FAIL
+    → END_PROCESS = TRUE
+    → EXIT
+
+ELSE
+    → Proceed to Lead Summary
+
+---
+
+## MODULE 5 — D Router (Field Integrity)
+
+IF D_field_status == REPARSE
+    → Re-Parse Summary
+    → Continue to D Judge
+
+ELSE IF D_field_status == PROCEED
+    → Continue to D Judge
+
+---
+
+## MODULE 6 — D Evaluator (Message Quality Loop)
+
+SET RETRY_COUNT = 0
+
+WHILE D_message_quality == FAIL AND RETRY_COUNT < MAX_RETRIES
+    → Send back to D Judge (Refine strategy)
+    → RETRY_COUNT++
+END WHILE
+
+IF RETRY_COUNT == MAX_RETRIES AND D_message_quality == FAIL
+    → END_PROCESS = TRUE
+    → EXIT
+
+ELSE
+    → Proceed to Worker
+    → Human Review
+    → END_PROCESS = TRUE
 
 ```
-
-#### WORKFLOW CONDITIONS
-##### Router (Pre-Gatekeeper)
-```
-
-```
-
-##### Critic (Post-Judge Evaluator Loop)
-```
-# Initialize loop
-
-
-    # Feedback to Judge
-    
-```
-
 ---
 
 ### 3.4 New Component Definitions (The Modules)
@@ -1697,6 +1790,62 @@ flowchart TD
     - If all rubric rules satisfied → PASS.
     - Output one word only.
     ```
+---
+
+### 3.5 Master Simulation (Stress Test)
+
+### Stress Scenario:
+Judge in Step C returns ALL profiles as HIGH relevance without discrimination.
+
+```
+
+### TRACE LOG
+
+[START] → Job Posting Received
+
+[ROUTER B] → VALID  
+[JUDGE B] → Strategy Generated  
+[CRITIC B] → PASS  
+[WORKER B] → Query Generated  
+
+[ROUTER C] → PROCEED  
+[GATEKEEPER C] → Profiles Extracted  
+[JUDGE C] → ALL profiles marked HIGH  
+
+[CRITIC C] → REJECT  
+Reason: Inflation detected — HIGH assigned without multi-factor justification; flat tier distribution.
+
+[JUDGE C] → RETRY (Recalibrating tiers)  
+
+[JUDGE C] → Updated scoring:
+- 2 HIGH
+- 2 MEDIUM
+- 1 LOW
+
+[CRITIC C] → PASS  
+[WORKER C] → Lead Summary Generated  
+
+[ROUTER D] → PROCEED  
+[JUDGE D] → Message Strategy Created  
+
+[CRITIC D] → PASS  
+[WORKER D] → Draft Message  
+
+[HUMAN] → Review & Send  
+
+[RESULT] → Process Completed Successfully  
+END_PROCESS = TRUE
+
+---
+
+### Observed System Behavior Under Stress
+
+- Inflation was detected automatically.
+- Loop prevented propagation of weak scoring.
+- Calibration restored discrimination.
+- No anchor drift occurred.
+- Message layer executed only after validation.
+```
 ---
 
 ## [Part 4: The Control Room (Safety & Governance)]
