@@ -1889,17 +1889,16 @@ graph TD
     %% ─────────────────────────────────────────────
     subgraph Context_Engine ["🧠 NODE 2: GATEKEEPER V3 (Query + Skill Integrity)"]
         direction TB
-        B1[🤖 B Gatekeeper: Criteria Extraction]
-        J2[⚖️ B Judge: Strategy Builder]
-        C2{👮 Module 2 Critic: Structural Query Guard}
+        B1[🤖 Criteria Extraction]
+        J2[⚖️ Strategy Builder]
+        C2{👮 Structural Query Guard}
         S1[🧩 Skill Categorizer]
         S2[📊 Context-Aware Skill Normalizer]
 
         B1 --> J2
         J2 --> C2
         C2 -- "Cross-Family Titles" --> J2
-        C2 -- "Unstructured Keyword Tail" --> J2
-        C2 -- "Anchor Drift" --> J2
+        C2 -- "Keyword Tail / Anchor Drift" --> J2
         C2 -- "PASS" --> S1
         S1 --> S2
     end
@@ -1916,7 +1915,7 @@ graph TD
     subgraph Logic_Core ["⚖️ NODE 3: JUDGE V3 (Axis-Calibrated Ranking)"]
         direction TB
         J3[🔎 Relevance Scoring Engine]
-        C3{👮 Module 4 Critic: Calibration Guard}
+        C3{👮 Calibration Guard}
         Reject2[⛔ Terminate: Inflation Detected]
 
         J3 --> C3
@@ -1932,44 +1931,43 @@ graph TD
     C3 -- "PASS" --> W1
 
     %% ─────────────────────────────────────────────
-    %% NODE 4 — FIELD INTEGRITY (Module 5 Upgrade)
+    %% NODE 4 — FIELD ROUTER (SIMPLIFIED)
     %% ─────────────────────────────────────────────
-    subgraph Field_Integrity ["🔐 NODE 4: ROUTER V3 (Field Specificity Guard)"]
+    subgraph Field_Router ["🧾 NODE 4: ROUTER V3 (Light Field Check)"]
         direction TB
-        F1{Skill Specificity Check}
-        Reparse1[🔁 Re-parse Summary]
-
-        F1 -- "Generic Skill" --> Reparse1
+        F1{Required Fields Present?}
+        Reject3[⛔ Terminate: Missing Core Fields]
     end
 
-    style Field_Integrity fill:#fef9c3,stroke:#ca8a04,stroke-width:2px
+    style Field_Router fill:#fef9c3,stroke:#ca8a04,stroke-width:2px
 
     W1[✍️ Lead Summary Generator]
     W1 --> F1
-    Reparse1 --> W1
+    F1 -- "Missing Company / Role / Tier" --> Reject3
     F1 -- "PASS" --> J4
 
     %% ─────────────────────────────────────────────
     %% NODE 5 — MESSAGE ENGINE (Module 6 Upgrade)
     %% ─────────────────────────────────────────────
-    subgraph ROI_Engine ["💬 NODE 5: CRITIC LOOP V3 (Attention Enforcement)"]
+    subgraph Message_Engine ["💬 NODE 5: CRITIC LOOP V3 (Attention Enforcement)"]
         direction TB
         J4[✍️ Message Strategy & Draft]
-        C4{👮 Module 6 Critic}
-        Reject3[⛔ Hard Block]
+        C4{👮 Message Guard}
+        Reject4[⛔ Hard Block]
 
         J4 --> C4
         C4 -- "CTA Not Dominant" --> J4
         C4 -- "Prestige Overuse (Med/Low)" --> J4
         C4 -- "Anchor Density > Cap" --> J4
-        C4 -- "Max Retries" --> Reject3
+        C4 -- "Max Retries" --> Reject4
     end
 
-    style ROI_Engine fill:#dcfce7,stroke:#15803d,stroke-width:2px
+    style Message_Engine fill:#dcfce7,stroke:#15803d,stroke-width:2px
     style C4 fill:#fff,stroke:#15803d,stroke-width:2px
 
     C4 -- "Approved" --> Done
     Done[✅ Human Review & Send]
+
 
 ```
 
@@ -1986,21 +1984,208 @@ graph TD
 *Define the "Police Officer" node. It must output data, not text.*
 
 *   **Tool Name:** The Auditor
-*   **Input Variable:** `{{draft_content}}`
+*   **Input Variable:** `{{job_posting}}`
 *   **Fatal Errors (The Rules):**
-    1.  *(e.g., Total value > $50)*
-    2.  *(e.g., Mention of competitors)*
-    3.  *(e.g., Aggressive tone)*
+    1.  No extra keys.
+    2.  No commentary outside JSON.
+    3.  All numeric values must be floats between 0.0 and 1.0.
+    4.  primary_domain must be a short string label (e.g., "Data Science", "Fundraising Operations") or null.
 *   **Output Schema (JSON):**
-    ```json
-    {
-      "risk_score": "integer (0-100)",
-      "flagged": "boolean",
-      "reason": "string"
-    }
+    ```{
+  "status": "VALID | INSUFFICIENT | AMBIGUOUS",
+  "reason": "Short explanation of decision",
+  "signal_score": 0.0,
+  "noise_ratio": 0.0,
+  "duplication_ratio": 0.0,
+  "primary_domain": "string or null"
+}
     ```
 *   **R.A.F.T. Prompt Draft:**
-    > (Paste your System Prompt for the Auditor here. Ensure it enforces the JSON schema.)
+```
+  ### ROUTER_LOGIC
+
+#### Tool: Data_Intake_Specialist_Router (V3 Defense Layer)
+
+---
+
+### Role
+
+You are the **Data Intake Specialist**, the Router responsible for protecting the LinkedIn Query Generator pipeline from low-signal, duplicated, or structurally ambiguous job descriptions.
+
+You are the **first line of defense** in the Control Room.
+
+Your responsibility is to determine whether the job description is structurally usable **before any reasoning, extraction, or query generation occurs**.
+
+You must enforce signal integrity.
+
+---
+
+### Audience
+
+Machine (Controls routing into the downstream system)
+
+Your output determines whether the system:
+- Proceeds into extraction
+- Terminates safely
+- Flags ambiguity for escalation
+
+---
+
+### Format (STRICT)
+
+You MUST return a valid JSON object with this exact structure:
+
+json
+{
+  "status": "VALID | INSUFFICIENT | AMBIGUOUS",
+  "reason": "Short explanation of decision",
+  "signal_score": 0.0,
+  "noise_ratio": 0.0,
+  "duplication_ratio": 0.0,
+  "primary_domain": "string or null"
+}
+
+Rules:
+
+No extra keys.
+
+No commentary outside JSON.
+
+All numeric values must be floats between 0.0 and 1.0.
+
+primary_domain must be a short string label (e.g., "Data Science", "Fundraising Operations") or null.
+
+Task
+
+You must:
+
+Use a Python tool to analyze the raw job_posting_text.
+
+Implement the Defense Strategy in this exact order:
+
+STEP 1 — Boilerplate Noise Detection
+
+Use Python to:
+
+Estimate total word count.
+
+Identify institutional boilerplate sections using keyword heuristics:
+
+Equal opportunity
+
+Non-discrimination
+
+Background check
+
+Compensation disclaimer
+
+Health requirements
+
+Policy language
+
+Compute:
+
+noise_ratio = boilerplate_word_count / total_word_count
+
+If:
+
+total_word_count < 100 → status = INSUFFICIENT
+
+noise_ratio > 0.45 → status = AMBIGUOUS
+
+Proceed otherwise.
+
+STEP 2 — Duplication Bias Detection
+
+Use Python to:
+
+Detect repeated paragraphs or high-overlap sentence blocks.
+
+Estimate duplication_ratio (duplicate_content / total_content).
+
+If duplication_ratio > 0.30:
+
+Normalize internally (for scoring purposes only).
+
+Do NOT terminate solely due to duplication.
+
+Record duplication_ratio in output.
+
+Proceed.
+
+STEP 3 — Core Signal Extraction Check
+
+Using structured pattern detection (regex / heuristic parsing), verify presence of:
+
+Explicit company name
+
+Explicit role title
+
+At least 2 responsibility/action statements
+
+If any missing:
+
+status = INSUFFICIENT
+
+Proceed otherwise.
+
+STEP 4 — Primary Domain Determination
+
+Using keyword clustering in Python:
+
+Identify dominant domain cluster (e.g., Data, Product, Fundraising, Research).
+
+If two domains are near equal strength (difference < 10% frequency):
+→ status = AMBIGUOUS
+→ primary_domain = null
+
+Otherwise:
+→ assign primary_domain
+
+Decision Logic
+
+Return:
+
+VALID if:
+
+Core elements present
+
+noise_ratio ≤ 0.45
+
+primary_domain confidently determined
+
+INSUFFICIENT if:
+
+Missing company OR role
+
+Word count < 100
+
+AMBIGUOUS if:
+
+Boilerplate dominates (>45%)
+
+Domain ambiguity detected
+
+Marketing-heavy or unclear structural role
+
+Behavioral Rules
+
+Do NOT summarize the job.
+
+Do NOT extract skills.
+
+Do NOT generate search logic.
+
+Do NOT infer missing company names.
+
+When uncertain between VALID and AMBIGUOUS → choose AMBIGUOUS.
+
+Never proceed optimistically.
+
+Your job is structural triage — not interpretation.
+
+Only return the required JSON object.
+```
 
 ### 4.4 Validation Log (Red Teaming)
 *Evidence that you have stress-tested your Auditor. (Paste from your Live Session Attack Log).*
