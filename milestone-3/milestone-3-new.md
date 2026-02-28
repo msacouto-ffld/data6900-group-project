@@ -2143,57 +2143,28 @@ Structure over language.
 
 ### 5.2 The ROI Analysis (The Math Lab)
 
----------------------------------------------------------------------------
-METRIC                                  | VALUE (BASELINE) | NOTES
----------------------------------------------------------------------------
-
-Monthly Outreach Volume (Leads)         | 40               | 8 batches × 5 leads
-
-Manual Time per 5-Lead Batch (min)      | 50               | Reading + drafting manually
-V3.0 Time per 5-Lead Batch (min)        | 18               | Target automation time
-
-Time Saved per Batch (min)              | 32               | 50 − 18
-Time Saved per Month (hours)            | 4.27             | (32 × 8) ÷ 60
-
-Implied Hourly Value (€)                | 35               | Example professional rate
-Monthly Time Value Created (€)          | 149.45           | 4.27 × 35
-Annual Time Value Created (€)           | 1,793.40         | 149.45 × 12
-
----------------------------------------------------------------------------
-PIPELINE PERFORMANCE IMPACT
----------------------------------------------------------------------------
-
-Baseline Acceptance Rate (Manual)       | 22%              | Conservative cold outreach
-Target Acceptance Rate (V3.0)           | 35%              | Improved targeting
-
-Monthly Connections Accepted (Manual)   | 8.8              | 40 × 22%
-Monthly Connections Accepted (V3.0)     | 14               | 40 × 35%
-
-Incremental Connections per Month       | 5.2              | 14 − 8.8
-Incremental Connections per Year        | 62               | 5.2 × 12
-
-Interview Conversion Rate               | 15%              | Accepted → Interview
-Incremental Interviews per Year         | 9                | 62 × 15%
-
-Estimated Value per Interview (€)       | 500              | Expected career value proxy
-Annual Opportunity Value (€)            | 4,500            | 9 × 500
-
----------------------------------------------------------------------------
-SYSTEM QUALITY METRICS
----------------------------------------------------------------------------
-
-First-Pass Critic Pass Rate Target      | 85%              | Stability threshold
-Stretch Pass Rate Target                | 90%              | High-confidence system
-
----------------------------------------------------------------------------
-TOTAL ESTIMATED ANNUAL VALUE
----------------------------------------------------------------------------
-
-Annual Time Value (€)                   | 1,793
-Annual Opportunity Value (€)            | 4,500
----------------------------------------------------------------------------
-Total Estimated Annual ROI (€)          | 6,293
----------------------------------------------------------------------------
+| **Metric** | **Value** | **Formula / Source** |
+| --- | --- | --- |
+| **1. Human Baseline** |  |  |
+| Hourly Rate (€) | **€35.00** | User Input (Professional Rate) |
+| Mins Per Task (Manual) | **10.0** | 50 mins per 5-lead batch |
+| Weekly Volume (Leads) | **9.23** | 40 leads / 4.33 weeks |
+| **Manual Cost / Transaction** | **€5.83** | `(10 / 60) * €35` |
+|  |  |  |
+| **2. Automation Costs** |  |  |
+| Dev Hourly Rate (€) | **€80.00** | Estimated Freelance Rate |
+| Total Build Hours | **20.0** | Estimated V3.0 Engineering Time |
+| **Total Investment (Capex)** | **€1,600.00** | `20 * €80` |
+| API Cost / Run | **€0.05** | Estimated (GPT-4o / 5-step chain) |
+|  |  |  |
+| **3. The Return (ROI)** |  |  |
+| Weekly Manual Cost | **€53.81** | `€5.83 * 9.23` |
+| Weekly AI Cost (Labor + API) | **€19.85** | `((3.6/60)*35 + 0.05) * 9.23` |
+| Weekly Savings (Time Only) | **€33.96** | `Weekly Manual - Weekly AI` |
+| Weekly Opp. Value | **€86.54** | `(€4,500 annual value / 52)` |
+| **Total Weekly Benefit** | **€120.50** | `Weekly Savings + Weekly Opp. Value` |
+| **Net Value / Year** | **€6,293.40** | `Annual Time + Opp. Value` |
+| **Payback Period** | **13.3 Weeks** | `Investment / Total Weekly Benefit` |
 
 ASSUMPTIONS:
 - 40 leads/month
@@ -2201,8 +2172,6 @@ ASSUMPTIONS:
 - 5 leads per batch
 - 35% acceptance rate
 - 15% interview conversion
-- €35/hour opportunity cost
-- €500 value per interview proxy
 
 ### 5.3 Implementation Strategy
 *   **Build vs. Buy:**
