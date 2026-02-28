@@ -970,13 +970,20 @@ If you’re available, I’d love to schedule a short introductory call to learn
 
 #### 2.5 Value Definition (The KPI Dashboard)
 ```
+| Metric                      | Current (Manual)             | Target (AI)                               | Estimated Impact                                                |
+| --------------------------- | ---------------------------- | ----------------------------------------- | --------------------------------------------------------------- |
+| Outreach Volume (Frequency) | 8–12 leads/week              | 8–12 leads/week (same or higher possible) | Maintains output with less effort; potential to increase volume |
+| Time per Profile Review     | 3–5 min                      | 1–2 min                                   | ~60% reduction                                                  |
+| Time per Message Draft      | 7–10 min                     | 2–4 min                                   | ~60–70% reduction                                               |
+| Total Weekly Time           | 2–3 hrs/week                 | 1–1.5 hrs/week                            | 1–1.5 hrs saved/week (50–70% reduction)                         |
+| Cognitive Load              | High                         | Moderate/Low                              | Reduced fatigue → higher consistency & quality                  |
+| Process Scalability         | Linear (time grows per lead) | Semi-automated                            | Enables 2× throughput with same time                            |
 
 ```
 
 **Notes on benchmarks used (where PDD data was absent):**
-- *Job criteria extraction:* Industry benchmark for manual job posting parsing is 3–5 min; LLM-based extraction typically runs under 60 seconds.
-- *Connection prioritization:* Manual LinkedIn filtering estimated at 5–7 min per search session based on standard UX research on professional search workflows; AI ranking reduces this to a review-only task.
----
+Job criteria extraction: Industry benchmark for manual job posting parsing is 3–5 min; LLM-based extraction typically runs under 60 seconds.
+Connection prioritization: Manual LinkedIn filtering estimated at 5–7 min per search session based on standard UX research on professional search workflows; AI ranking reduces this to a review-only task.
 
 ### ChatGPT/Claude logs
-
+https://chatgpt.com/share/69a24e05-12c0-8007-bde4-d6af6968991f
