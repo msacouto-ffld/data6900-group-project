@@ -1780,12 +1780,76 @@ https://chatgpt.com/share/69a25865-80fc-8007-b289-2e5daa87e517
 
 ```mermaid
 graph TD
-    Input --> Router{Router}
-    Router -- Type A --> Worker[Worker Node]
-    Worker --> Draft(Draft Output)
-    Draft --> Auditor{Auditor Node}
-    Auditor -- Pass --> FinalAction[Send/Save]
-    Auditor -- Fail --> HITL[Resurrection Point: Human Queue]
+    %% INPUTS
+    In1[📄 Candidate Profile PDF + Job Description]
+    In2[📥 5 Profile PDFs]
+
+    %% NODE 1: LEAD IDENTIFICATION (Step B)
+    subgraph Lead_Extraction ["🔍 NODE 1: GATEKEEPER B (Lead Extraction)"]
+        direction TB
+        B1["🤖 Gatekeeper_StepB<br>(Strict Extraction)"]
+    end
+    style Lead_Extraction fill:#e0f2fe,stroke:#0369a1,stroke-width:2px
+
+    %% NODE 2: DETERMINISTIC LOGIC
+    subgraph Logic_Engine_B ["⚖️ NODE 2: JUDGE B (States)"]
+        direction TB
+        B2["⚖️ Judge_StepB<br>(3 Deterministic States)"]
+        B3["✍️ Worker_QueryRenderer"]
+        B4[🔎 LinkedIn Top Search]
+        
+        B2 --> B3
+        B3 --> B4
+    end
+    style Logic_Engine_B fill:#fff,stroke:#333,stroke-width:1px
+    style B2 fill:#fff,stroke:#333,stroke-width:1px
+
+    %% CONNECTIONS B -> D
+    In1 --> B1
+    B1 --> B2
+    B4 --> In2
+
+    %% NODE 3: CONTEXT ENGINE (Step D)
+    subgraph Context_Engine_D ["🧠 NODE 3: GATEKEEPER D (Extraction)"]
+        D1["🤖 Gatekeeper_StepD<br>(Extract ALL Roles)"]
+    end
+    style Context_Engine_D fill:#e0f2fe,stroke:#0369a1,stroke-width:2px
+
+    In2 --> D1
+    D1 --> D2
+
+    %% NODE 4: STRATEGY PLANNING
+    subgraph Strategy_Core ["⚖️ NODE 4: JUDGE D (Planner)"]
+        D2["⚖️ Judge_StepD<br>(Strategy Planner)"]
+    end
+    style Strategy_Core fill:#fff,stroke:#333,stroke-width:1px
+
+    %% NODE 5: DEFENSE LAYER (The Shield)
+    subgraph Defense_Layer ["🛡️ NODE 5: CRITIC (Defense Layer)"]
+        direction TB
+        E1{"🛡️ Defense Check<br><br>1. Field-Bound<br>2. No Seniority<br>3. No Prestige<br>4. No Narrative<br>5. CTA Neutral<br>6. Alumni Equality"}
+    
+    end
+    style Defense_Layer fill:#fee,stroke:#b91c1c,stroke-width:2px
+    style E1 fill:#fff,stroke:#b91c1c,stroke-width:2px
+
+    D2 --> E1
+    E1 -- "FAIL: Hallucination Detected" --> D2
+    
+
+    %% NODE 6: VALUE ENGINE (Messaging)
+    subgraph ROI_Engine ["✍️ NODE 6: WORKER (Messaging)"]
+        F1["✍️ Worker_MessageDraft<br>(Grounded Only)"]
+        G1[👤 Human Review]
+        W2[✅ Process Complete]
+        
+        F1 --> G1
+        G1 --> W2
+    end
+    style ROI_Engine fill:#dcfce7,stroke:#15803d,stroke-width:2px
+    style F1 fill:#fff,stroke:#15803d,stroke-width:2px
+
+    E1 -- "PASS: No Hallucination" --> F1
 ```
 
 ### 4.2 The Risk Radar (Minesweeper)
