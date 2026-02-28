@@ -2166,12 +2166,34 @@ Structure over language.
 | **Net Value / Year** | **€6,293.40** | `Annual Time + Opp. Value` |
 | **Payback Period** | **13.3 Weeks** | `Investment / Total Weekly Benefit` |
 
-ASSUMPTIONS:
-- 40 leads/month
-- 8 batches/month
-- 5 leads per batch
-- 35% acceptance rate
-- 15% interview conversion
+**1. Volume & Time Assumptions**
+Monthly Outreach Volume: 40 leads per month.
+
+Batch Structure: 8 batches per month, with 5 leads processed per batch.
+
+Manual Lead Processing: 10 minutes per lead (Reading profile + drafting a custom query).
+
+AI Lead Processing (V3.0): 3.6 minutes per lead (Reviewing/tweaking AI output).
+
+Annual Duration: Calculations assume consistent usage over 52 weeks (12 months).
+
+**2. Labor & Development Costs**
+User Opportunity Cost: €35/hour. This represents the value of your time if spent on other professional tasks.
+
+Developer Build Rate: €80/hour. This is a mid-market freelance rate for automation engineering.
+
+Project Build Time: 20 hours. This covers prompt engineering, API integration, and testing/iteration.
+
+API Usage: €0.05 per run. Based on current GPT-4o token costs for a multi-step chain.
+
+**3. Pipeline Performance (The "Lift")**
+Manual Acceptance Rate: 22%. Baseline for standard personalized outreach.
+
+V3.0 Acceptance Rate: 35%. Assumes higher resonance through better targeting and "Critic" pass-rate optimization.
+
+Interview Conversion: 15%. The probability that a new connection turns into a formal interview.
+
+Interview Value: €500. A conservative career proxy value (not a cash payment, but the "weight" of the opportunity toward a salary increase or new role).
 
 ### 5.3 Implementation Strategy
 *   **Build vs. Buy:**
