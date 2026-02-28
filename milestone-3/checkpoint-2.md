@@ -92,7 +92,8 @@ Summary Table:
 ### 2.1 The "To-Be" Map
 
 ```mermaid
-graph TD
+flowchart TD
+
     A[⚡ LinkedIn Profiles Identified] --> B_subgraph
     B_subgraph --> H[👤 Human: Download PDFs & Upload to Gatekeeper]
     H --> D_subgraph
