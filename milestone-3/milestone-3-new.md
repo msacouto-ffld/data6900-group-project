@@ -1865,11 +1865,11 @@ graph TD
 *Define the "Police Officer" node. It must output data, not text.*
 
 *   **Tool Name:** The Auditor
-*   **Input Variable:** `{{draft_content}}`
+*   **Input Variable:** `{{judge_stepd_verdict}}`
 *   **Fatal Errors (The Rules):**
-    1.  *(e.g., Total value > $50)*
-    2.  *(e.g., Mention of competitors)*
-    3.  *(e.g., Aggressive tone)*
+    1. Neutrality: No Ranking, No Guessing. All current roles must be treated as a flat list. If the data doesn't say "Senior," the Judge cannot infer it.
+    2. Structure: Extraction is strictly limited to structured Experience line items.If a company name isn't the primary employer listed in a role entry, it does not exist for the draft.
+    3. No Qualitative Narrative. Messaging is legally "caged" to five specific fields: Name, Company, Role, Skills, and University. Judge cannot create "impact" statements (e.g., "transformative leadership").
 *   **Output Schema (JSON):**
     ```json
     {
