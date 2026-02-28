@@ -2141,6 +2141,13 @@ Structure over language.
 *   **The SMART Goal:**
     > "Reduce [Metric] from [Baseline] to [Target] by [Date]."
 
+| KPI | Value Driver | SMART Score (1-5) | Critique/Refinement |
+|---------------|--------------|-------------------|---------------------|
+| **Lead Acceptance Rate (%)** | Message Quality + Relevance | 5 | S: Clear % metric. M: Measurable via LinkedIn. A: Yes. R: Directly impacts job pipeline. T: Monthly. → **Primary ROI KPI.** |
+| **First-Pass Critic Pass Rate (%)** | Hallucination Prevention + Rework Reduction | 4 | S: % passing without retry. M: Yes (loop counter logs). A: Yes. R: Impacts efficiency & trust. T: Per run / monthly. → **Add target (e.g., >85%).** |
+| **Avg. Time per Outreach Batch (min)** | Automation Time Savings | 4 | S: Clear. M: Track start-to-send time. A: Yes. R: Impacts productivity. T: Per batch. → **Benchmark against manual baseline.** |
+
+
 ### 5.2 The ROI Analysis (The Math Lab)
 *Summarize the data from your ROI Excel Template.*
 > Use the [ROI Calculator](https://docs.google.com/spreadsheets/d/1zlx3lEMb58CJn8vYik4nDZPEhxNS0QWVE_yxcFMABh8/edit?usp=sharing) for help.
@@ -2163,4 +2170,150 @@ Structure over language.
 ---
 
 ### [Appendix]
-*(Attach your full prompt library or large data schemas here to keep the main document clean.)*
+# 📊 KPI MEASUREMENT STRATEGY & BENCHMARKS — PROJECT LINKEDIN QUERY GENERATOR (V3.0)
+
+---
+
+## 🧮 1. Lead Acceptance Rate (%)
+
+**📌 Definition**  
+This KPI measures how many LinkedIn connection requests are accepted. It is a core indicator of message relevance and targeting quality.
+
+**🧾 Formula**  
+```
+text
+Lead Acceptance Rate (%) =
+  (Connections Accepted ÷ Connection Requests Sent) × 100
+```
+
+**📊 Required Data from Logs**
+From the Segment 4 logs per month:
+
+Number of connection requests sent
+
+Number of accepted connections
+
+**📈 Benchmark Data (2025–2026)**
+
+Healthy acceptance rates typically range 25%–45% for well-targeted outreach.
+
+Warm/pre-engaged leads can achieve 60%+ acceptance.
+
+Less than 20% acceptance signals poor targeting or messaging.
+
+🎯 Baseline Assumptions for Project
+
+Target Acceptance ≥ 30%
+
+Stretch Target (warm/alumni): ≥ 50%
+
+## 🧮 2. First-Pass Critic Pass Rate (%)
+
+📌 Definition
+The percentage of strategies that pass the Defense Layer on first submission (no retry needed). It reflects specification clarity and hallucination control.
+
+🧾 Formula
+
+First-Pass Critic Pass Rate (%) =
+  (Strategies Passing Without Retry ÷ Total Strategies Generated) × 100
+
+📊 Required Data from Logs
+From Segment 4 logs:
+
+Number of strategies that passed on first try
+
+Number of total strategies generated
+
+📈 Benchmark Data
+There is no established industry benchmark for internal model defense pass rates — this is a system-specific KPI.
+However:
+
+A pass rate ≥ 85% is considered solid
+
+≥ 90% indicates strong spec alignment
+
+< 80% indicates logic mismatch and requires iteration
+
+🎯 Baseline Assumptions for Project
+
+Target Pass Rate ≥ 85%
+
+Stretch Target ≥ 90%
+
+## 🧮 3. Avg. Time per Outreach Batch (minutes)
+
+**📌 Definition**
+Measures the average time to generate a ready-to-send outreach batch of 5 leads (end-to-end: from input start to message draft ready).
+
+**🧾 Formula**
+
+Avg. Time per Outreach Batch =
+  (Total Duration for Batch ÷ Number of Leads in Batch)
+
+**📊 Required Data from Logs**
+From Segment 4 logs:
+
+Start timestamp of batch execution
+
+End timestamp of worker message output
+
+Total # of leads in batch
+
+**📈 Benchmark Data (Outreach Efficiency)**
+While detailed industry benchmarks for LinkedIn automation time are sparse, manual outreach workflows typically take:
+
+45–60 minutes per 5 leads (reading + drafting) as a human baseline.
+Automated tools can compress this significantly.
+
+**🎯 Baseline Assumptions for Project**
+
+Target Avg. Time per 5-Lead Batch ≤ 20 minutes
+
+Stretch Target ≤ 15 minutes
+
+Efficiency Gain vs Manual: ≥ 60% time saved
+
+**🧯 Summary Table (Measurement Inputs Needed)**
+KPI	Required Log Fields	Source
+Lead Acceptance Rate (%)	# Sent, # Accepted	Segment 4 Outreach Log
+First-Pass Critic Pass Rate (%)	# Pass First Try, Total Strategies	Critic Logs
+Avg. Time per Outreach Batch	Start Time, End Time, # Leads	Batch Time Log
+📌 Example Tracking Schema
+
+You could set up a sheet like:
+
+Outreach Log
+Batch ID	Sent	Accepted	Acceptance %	Time Start	Time End	Duration (min)
+Critic Log
+
+| Batch ID | Total Strategies | Passed First | First-Pass % |
+
+**📅 Reporting and Monitoring**
+
+Cadence
+
+Weekly: Time per batch tracking
+
+Monthly: Acceptance & first-pass rates
+
+Quarterly: Trend analysis & KPI refinement
+
+Targets
+
+Acceptance ≥ 30%
+
+First-Pass Pass Rate ≥ 85%
+
+Avg Time ≤ 20 minutes per 5 leads
+
+**📌 Key Benchmark References**
+
+LinkedIn outreach acceptance/reply benchmarks
+
+Healthy connection acceptance rates often range 25%–45% in cold LinkedIn outreach.
+
+Warm engagement and pre-warm sequences can see 70%+ acceptance.
+
+LinkedIn messaging reply rates generally average around 10%, and with strong personalization can exceed 30%.
+
+This strategy equips you to measure, benchmark, and optimize automation effectiveness with clear, evidence-based metrics.
