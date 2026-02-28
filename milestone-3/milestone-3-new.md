@@ -2131,15 +2131,8 @@ Structure over language.
 
 ## Part 5: The Business Case (Strategy)
 
-*In Week 6, we justify the investment using the "Iceberg" framework.*
-
 ### 5.1 The Pain Audit (SMART KPIs)
-*Define the Real Metric, not the Vanity Metric.*
 
-*   **The Pain:** *(e.g., "I hate working on Sundays.")*
-*   **The Proxy Metric:** *(e.g., "Personal Hours Reclaimed.")*
-*   **The SMART Goal:**
-    > "Reduce [Metric] from [Baseline] to [Target] by [Date]."
 
 | KPI | Value Driver | SMART Score (1-5) | Critique/Refinement |
 |---------------|--------------|-------------------|---------------------|
@@ -2149,23 +2142,151 @@ Structure over language.
 
 
 ### 5.2 The ROI Analysis (The Math Lab)
-*Summarize the data from your ROI Excel Template.*
-> Use the [ROI Calculator](https://docs.google.com/spreadsheets/d/1zlx3lEMb58CJn8vYik4nDZPEhxNS0QWVE_yxcFMABh8/edit?usp=sharing) for help.
 
-*   **Total Cost of Ownership (Year 1):** $ \_\_\_\_\_\_\_\_\_\_
-    *   *(Includes Dev Time + Maintenance + API Costs)*
-*   **Total Value Generated (Year 1):** $ \_\_\_\_\_\_\_\_\_\_
-    *   *(Hours Saved $\times$ Hourly Rate)*
-*   **Net Profit:** $ \_\_\_\_\_\_\_\_\_\_
-*   **The Break-Even Point:** \_\_\_\_\_\_\_\_\_\_ Runs
+---------------------------------------------------------------------------
+METRIC                                  | VALUE (BASELINE) | NOTES
+---------------------------------------------------------------------------
+
+Monthly Outreach Volume (Leads)         | 40               | 8 batches × 5 leads
+
+Manual Time per 5-Lead Batch (min)      | 50               | Reading + drafting manually
+V3.0 Time per 5-Lead Batch (min)        | 18               | Target automation time
+
+Time Saved per Batch (min)              | 32               | 50 − 18
+Time Saved per Month (hours)            | 4.27             | (32 × 8) ÷ 60
+
+Implied Hourly Value (€)                | 35               | Example professional rate
+Monthly Time Value Created (€)          | 149.45           | 4.27 × 35
+Annual Time Value Created (€)           | 1,793.40         | 149.45 × 12
+
+---------------------------------------------------------------------------
+PIPELINE PERFORMANCE IMPACT
+---------------------------------------------------------------------------
+
+Baseline Acceptance Rate (Manual)       | 22%              | Conservative cold outreach
+Target Acceptance Rate (V3.0)           | 35%              | Improved targeting
+
+Monthly Connections Accepted (Manual)   | 8.8              | 40 × 22%
+Monthly Connections Accepted (V3.0)     | 14               | 40 × 35%
+
+Incremental Connections per Month       | 5.2              | 14 − 8.8
+Incremental Connections per Year        | 62               | 5.2 × 12
+
+Interview Conversion Rate               | 15%              | Accepted → Interview
+Incremental Interviews per Year         | 9                | 62 × 15%
+
+Estimated Value per Interview (€)       | 500              | Expected career value proxy
+Annual Opportunity Value (€)            | 4,500            | 9 × 500
+
+---------------------------------------------------------------------------
+SYSTEM QUALITY METRICS
+---------------------------------------------------------------------------
+
+First-Pass Critic Pass Rate Target      | 85%              | Stability threshold
+Stretch Pass Rate Target                | 90%              | High-confidence system
+
+---------------------------------------------------------------------------
+TOTAL ESTIMATED ANNUAL VALUE
+---------------------------------------------------------------------------
+
+Annual Time Value (€)                   | 1,793
+Annual Opportunity Value (€)            | 4,500
+---------------------------------------------------------------------------
+Total Estimated Annual ROI (€)          | 6,293
+---------------------------------------------------------------------------
+
+ASSUMPTIONS:
+- 40 leads/month
+- 8 batches/month
+- 5 leads per batch
+- 35% acceptance rate
+- 15% interview conversion
+- €35/hour opportunity cost
+- €500 value per interview proxy
 
 ### 5.3 Implementation Strategy
-*   **Build vs. Buy:** Why are we building this in n8n/LLM instead of buying off-the-shelf software?
-    *   *(Your reasoning here)*
+*   **Build vs. Buy:**
+
+    *   **Contextual Intelligence:**  
+        Off-the-shelf automation or outreach platforms are rule-based and field-driven. They cannot interpret a complex Job Description, extract structured requirements, align them with a Candidate profile, generate deterministic search states (Step B), and enforce hallucination-safe outreach messaging (Step D).  
+        Our Custom AI Agent architecture (Gatekeeper → Judge → Critic → Worker) provides contextual reasoning, structured extraction, deterministic logic, and defense-layer validation — capabilities that traditional SaaS workflow tools do not natively support.
+
+    *   **Constraint Control & Spec Enforcement:**  
+        Step B requires robust constraints (e.g., strict OR logic, character limits, no nested parentheses). Step D requires alumni equality checks and strict field-bound messaging.  
+        Standard AP/automation tools cannot enforce these nuanced, rule-based AI governance layers. Our custom implementation allows precise prompt engineering and Python-based validation logic to prevent hallucination and tone violations.
+
+    *   **Cost Efficiency:**  
+        Estimated OpenAI API cost per run: ~$0.05  
+        Estimated 100 runs/month: ~$5  
+        Annual API cost: ~$60  
+
+        Comparable enterprise SaaS automation license: ~$5,000/month  
+        Annual SaaS cost: ~$60,000  
+
+        → Custom build delivers ~99.9% cost reduction while maintaining control and extensibility.
+
+    *   **Agility & Iteration Speed:**  
+        Prompt updates can be deployed immediately (same-day iteration).  
+        Vendor-based SaaS changes require feature requests, roadmap prioritization, and release cycles.  
+        With Custom AI Agents, logic changes (e.g., new defense rules, stricter Gatekeeper constraints, expanded university extraction logic) can be implemented in minutes — not quarters.
+
+    *   **Data Governance & Security:**  
+        Self-hosted n8n infrastructure ensures:
+        - Full control over API keys
+        - No third-party storage of candidate PDFs
+        - No vendor dependency for sensitive career-search data
+        - Full auditability of logs (Critic loop, retries, performance KPIs)
+
+---
+
 *   **Next Steps:**
-    1.  *(e.g., Secure API Keys)*
-    2.  *(e.g., Set up n8n Account)*
-    3.  *(e.g., Run Pilot with 5 users)*
+
+    1. **Infrastructure Setup (Foundation Layer)**
+        - Secure OpenAI API keys (restricted usage, environment variables).
+        - Deploy self-hosted n8n instance (Docker or cloud VM).
+        - Configure encrypted credential storage.
+        - Implement structured logging database for:
+            - Strategy attempts
+            - Critic verdicts
+            - Execution timestamps
+            - KPI measurement
+
+    2. **System Integration & Hardening**
+        - Connect n8n to Google Drive (or secure storage) for PDF ingestion.
+        - Implement PDF-to-text extraction node.
+        - Upgrade Gatekeeper logic:
+            - Extract ALL universities where a DEGREE was obtained.
+            - Ignore certifications, bootcamps, and short courses.
+            - Support multiple degree entries per lead.
+        - Add Step B constraint enforcement:
+            - Character length validator.
+            - OR-block structure validator.
+            - Title count enforcement.
+        - Embed Python validation node for Critic logic inside n8n workflow.
+
+    3. **Pilot Deployment (Shadow Mode)**
+        - Run 15–20 real job descriptions through system.
+        - Compare:
+            - Manual vs Automated query quality.
+            - Acceptance rate.
+            - Time saved.
+            - First-pass critic rate.
+        - Operate in "Shadow Mode" (AI generates, human approves).
+        - Collect KPI data for 30 days.
+        - Refine prompts based on failure logs.
+        - Approve transition to production mode after:
+            - ≥ 85% first-pass critic rate.
+            - ≥ 30% acceptance rate.
+            - ≤ 20 min per 5-lead batch.
+
+---
+
+This implementation strategy ensures:
+- Cost-efficient scalability
+- Governance-first AI deployment
+- Rapid iteration capability
+- Full observability and KPI tracking
+- Enterprise-grade production readiness
 
 ---
 
