@@ -81,40 +81,44 @@ Summary Table:
 *   By automating job criteria extraction, candidate filtering, and first-draft message generation, we expect to reduce the time spent on profile evaluation and drafting by approximately 70–75%. This would reduce total weekly effort from approximately 4-5 hours to approximately 1–1.5 hours per week, while maintaining or improving message quality and consistency through structured AI support and human review.
 ---
 ## [Part 2: The Core Capability (The Linear Worker)]
+## Part 2: The "To-Be" Solution (Milestone 2)
+
 ### 2.1 The "To-Be" Map
 
 ```mermaid
 flowchart TD
-    A[⚡ Job Posting] --> B_subgraph[Automated AI Pipeline: Identify Company + Job Title + School/Common Background]
-    B_subgraph --> C_subgraph[Automated AI Pipeline: Analyze Profile for Relevance]
-    C_subgraph --> D_subgraph[Automated AI Pipeline: Draft Customized Message]
-    D_subgraph --> F[🛠️ Send Connection]
 
-    %% Automated AI Pipelines
-    subgraph B_subgraph["Automated AI Pipeline: Identify Company + Job Title + School/Common Background"]
-        B1[🤖 Gatekeeper: Extraction] --> B2[⚖️ Judge: Reasoning] --> B3[✍️ Worker: Drafting]
+    A[⚡ LinkedIn Profiles Identified] --> B_subgraph
+    B_subgraph --> H[👤 Human: Download PDFs & Upload to Gatekeeper]
+    H --> D_subgraph
+    D_subgraph --> F[🛠️ Human Review & Send]
+
+    %% Automated AI Pipeline 1
+    subgraph B_subgraph["Automated AI Pipeline: Identify Leads"]
+        B1[🤖 Gatekeeper: Extract Company / Title / School / Skills] --> 
+        B2[⚖️ Judge: Query Generating Strategies] --> 
+        B3[✍️ Worker: Output LinkedIn Query]
     end
 
-    subgraph C_subgraph["Automated AI Pipeline: Analyze Profile for Relevance"]
-        C1[🤖 Gatekeeper: Extraction] --> C2[⚖️ Judge: Reasoning] --> C3[✍️ Worker: Drafting]
+    %% Automated AI Pipeline 2
+    subgraph D_subgraph["Automated AI Pipeline: Batch Extraction + Messaging"]
+        D1[🤖 Gatekeeper: Extract Structured Leads JSON from PDFs] --> 
+        D2[⚖️ Judge: Define Tone + CTA per Lead] --> 
+        D3[✍️ Worker: Generate Personalized Messages]
     end
 
-    subgraph D_subgraph["Automated AI Pipeline: Draft Customized Message"]
-        D1[🤖 Gatekeeper: Extraction] --> D2[⚖️ Judge: Reasoning] --> D3[✍️ Worker: Drafting]
-    end
-
-    %% Styling for each node
+    %% Styling for AI nodes
     style B1 fill:#FFF4DD,stroke-dasharray:5 5
     style B2 fill:#FFF4DD,stroke-dasharray:5 5
     style B3 fill:#FFF4DD,stroke-dasharray:5 5
 
-    style C1 fill:#FFF4DD,stroke-dasharray:5 5
-    style C2 fill:#FFF4DD,stroke-dasharray:5 5
-    style C3 fill:#FFF4DD,stroke-dasharray:5 5
-
     style D1 fill:#FFF4DD,stroke-dasharray:5 5
     style D2 fill:#FFF4DD,stroke-dasharray:5 5
     style D3 fill:#FFF4DD,stroke-dasharray:5 5
+
+    %% Styling for Human nodes
+    style H fill:#E8F0FE
+    style F fill:#E8F0FE
 ```
 ---
 
@@ -125,7 +129,7 @@ flowchart TD
 **Prompt 1 (Gatekeeper):**
 ```
 #### Role
-Gatekeeper AI: Extractor of relevant job posting information
+Gatekeeper AI: Structured Extractor for Search Strategy
 
 #### Audience
 Machine (downstream Judge node)
@@ -133,201 +137,201 @@ Machine (downstream Judge node)
 #### Format
 JSON:
 {
-  "company": "",
-  "role": "",
-  "tasks_skills": ""
+  "candidate": {
+    "name": "",
+    "university": "",
+    "current_company": "",
+    "current_role": "",
+    "skills": []
+  },
+  "job": {
+    "company": "",
+    "role": "",
+    "skills": []
+  }
 }
 
 #### Task
-- Receive the unstructured text of a job posting.
-- Extract all relevant information required to identify potential leads:
-  - Company name
-  - Type of role
-  - Key tasks and skills required
-- Output the extracted information in JSON format.
-- Do not make assumptions; extract only explicit or strongly implied information from the job posting.
+- Receive:
+    1. PDF of candidate LinkedIn profile
+    2. Text of LinkedIn job posting
+- Extract ONLY explicitly stated information.
+- Do NOT infer missing values.
+- If a field is not explicitly present, return null.
+- Skills must be explicitly listed, not inferred.
+- University must come from Education section only.
+- Company must not confuse Education with Experience.
+- Do NOT calculate years of experience.
+- Do NOT infer seniority.
 
 ```
 **Prompt 2 (Judge):**
 ```
-#### Role
-Judge AI: Reasoning engine to determine best parameters for identifying leads
+#### Role  
+Judge AI: Search Strategy Generator (State-Based)
 
-#### Audience
+#### Audience  
 Machine (downstream Worker node)
 
-#### Format
-XML with tags:
-<thinking> ... </thinking>
-<verdict> ... </verdict>
+#### Format  
+XML with tags:  
+<thinking> ... </thinking>  
+<verdict> ... </verdict>  
 
-#### Task
-- Receive JSON output from Gatekeeper (company, role, tasks/skills).
-- Receive the unstructured text of a LinkedIn profile (student searching for people to network with)
-- Determine the most effective parameters to identify relevant leads, including:
-  - People at the same company or related industry
-  - Shared university
-  - Similar skills as described in the job posting
-- Explain reasoning in the <thinking> tag.
-- Provide final recommended search parameters in the <verdict> tag.
-- Ensure all reasoning is explicit to prevent skipping logic.
+---
 
+#### Task  
+
+You will receive structured JSON from the Gatekeeper with the following fields:
+
+- candidate.university  
+- job.company  
+- job.role  
+
+Your responsibility is to generate THREE deterministic search states.
+
+You must NOT output Boolean queries.  
+You must output structured anchor points and titles per state.
+
+---
+
+### Deterministic Title Logic
+
+If job.role = "Data Scientist", use the following fixed title sets:
+
+Primary Title Set:
+- Data Scientist  
+- Machine Learning Engineer  
+- AI Engineer  
+
+Broader Title Set:
+- Senior Data Scientist  
+- Data Science Manager  
+- Machine Learning Specialist  
+
+These title sets are fixed and must NOT be regenerated dynamically.
+
+---
+
+### Required States
+
+STATE 1  
+Anchors:
+- Company = job.company  
+- University = candidate.university  
+
+Titles:
+- Use the 3 Primary Title Set  
+
+STATE 2  
+Anchors:
+- Company = job.company  
+- University = candidate.university  
+
+Titles:
+- Use the 3 Broader Title Set  
+
+STATE 3  
+Anchors:
+- Company = job.company  
+
+Titles:
+- Use the same 3 Broader Title Set (identical to State 2)
+
+---
+
+### Rules
+
+- Always include candidate.university in State 1 and State 2.  
+- Do NOT add anchors beyond company and university.  
+- Exactly 3 titles per state.  
+- Titles must be common LinkedIn titles (no niche variants).  
+- Do NOT dynamically reinterpret the role.  
+- Do NOT regenerate titles per retry.  
+- Generate all 3 states in a single deterministic pass.
+
+---
+
+### Output Structure
+
+<thinking>
+- Identify extracted company
+- Identify extracted university
+- Confirm fixed primary title set
+- Confirm fixed broader title set
+</thinking>
+
+<verdict>
+
+STATE 1
+Anchors:
+- Company: {job.company}
+- University: {candidate.university}
+
+Titles:
+- Data Scientist
+- Machine Learning Engineer
+- AI Engineer
+
+
+STATE 2
+Anchors:
+- Company: {job.company}
+- University: {candidate.university}
+
+Titles:
+- Senior Data Scientist
+- Data Science Manager
+- Machine Learning Specialist
+
+
+STATE 3
+Anchors:
+- Company: {job.company}
+
+Titles:
+- Senior Data Scientist
+- Data Science Manager
+- Machine Learning Specialist
+
+</verdict>
 ```
 **Prompt 3 (Worker):**
 ```
 #### Role
-Worker AI: Lead Search Query Generator
+Worker AI: LinkedIn Query Renderer
 
 #### Audience
-Human or Machine (ready-to-use LinkedIn search)
+Human (manual execution on LinkedIn)
 
 #### Format
 Plain Text
 
 #### Task
-- Receive:
+- Receive one selected state from Judge.
+- Render a single LinkedIn People keyword search string.
 
-    - JSON from Gatekeeper
-    - XML from Judge (<verdict>)
-- Combine inputs to generate a single LinkedIn People keyword search string that can be pasted directly into LinkedIn.
-- The output must be bullet-proof for LinkedIn parsing and return results without requiring manual filters.
-- LinkedIn Parsing Constraints (MANDATORY)
-    - Maximum length: ≤ 200 characters.
-- Structure:
-    - One parenthetical OR block for job titles only. Followed by space-separated keywords (no additional parentheses).
-- Boolean rules:
-    - DO NOT use nested parentheses.
-    - DO NOT use multiple AND operators.
-    - DO NOT use NOT.
-    - Use spaces as implicit AND.
+MANDATORY Constraints:
+- ≤ 200 characters
+- One parenthetical OR block (job titles only)
+- Anchors placed outside parentheses
+- No nested parentheses
+- No NOT
+- No explicit AND
+- Use spaces as implicit AND
 
-- Content prioritization:
-    - Include 3–5 realistic LinkedIn job titles derived from the verdict.
-    - Include 2–3 high-frequency skills that commonly co-occur in profiles (e.g., Python, LLM, NLP, chatbot, generative AI).
-    - Avoid rare tools, long phrases, or education terms.
-
-- Language normalization: Prefer terms people actually write on profiles (e.g., LLM instead of “large language model”, chatbot instead of “conversational AI system”).
-
-- Output rules:
-    - Output one single line
-    - No explanations
-    - No labels
-    - No filters
-    - No placeholders
-
+Output:
+- One single line
+- No explanations
+- No labels
+- No placeholders
 ```
-**Automating Step C: Analyze Profiles for Relevance**
-**Prompt 1 (Gatekeeper):**
-```
-#### Role
-Gatekeeper AI: Extractor of lead profile information
 
-#### Audience
-Machine (downstream Judge node)
-
-#### Format
-JSON:
-{
-  "name": "",
-  "current_company": "",
-  "current_role": "",
-  "skills": [],
-  "interests": [],
-  "university": ""
-}
-
-#### Task
-- Receive a list of LinkedIn profiles and info generated from a query 
-  (Headline, Activity, Job Experience, Skills, Education).
-- Extract structured facts relevant for evaluating lead relevance:
-  - Name
-  - Current company
-  - Current role
-  - Skills
-  - Interests
-  - University
-- Output as JSON for downstream reasoning.
-
-#### Grounding Guardrail — STRICT PROFILE-BOUND EXTRACTION
-- ONLY extract words, phrases, and concepts that appear verbatim or are 
-  directly and explicitly stated in the individual's profile text 
-  (headline, experience descriptions, skills section, education, and 
-  their own posts/comments).
-- DO NOT infer, inherit, or import any terms from the search query, 
-  job postings, reposts, or other people's content that appears in 
-  the profile's activity feed.
-- If a field cannot be populated with profile-sourced data, return null 
-  rather than inferring a plausible value.
-- Before writing any value, ask internally: 
-  "Did THIS person write or claim this — or did it come from somewhere else?"
-
-#### Source Hierarchy (in order of trust)
-1. Profile headline
-2. Own experience descriptions
-3. Skills section (explicitly listed)
-4. Education section
-5. The person's OWN posts and comments
-6. Reposts of others' content — DO NOT use as a source
-7. Search query terms — DO NOT use as a source
-
-```
-**Prompt 2 (Judge):**
-```
-#### Role
-Judge AI: Evaluate lead relevance
-
-#### Audience
-Machine (downstream Worker node)
-
-#### Format
-XML with tags:
-<thinking> ... </thinking>
-<verdict> ... </verdict>
-
-#### Task
-- Receive JSON from Gatekeeper.
-- Compare lead profile with job posting criteria and search parameters.
-- Provide reasoning in <thinking>, highlighting matches and gaps in:
-  - Company/industry
-  - Role similarity
-  - Skills alignment
-  - University/education
-  - Interests
-- Provide final relevance verdict in <verdict> as High, Medium, or Low.
-- Ensure explicit reasoning to prevent skipping steps.
-
-
-```
-**Prompt 3 (Worker):**
-```
-#### Role
-Worker AI: Lead Profile Summarizer
-
-#### Audience
-Human (review for prioritization)
-
-#### Format
-Plain Text
-
-#### Task
-- Receive:
-  - JSON from Gatekeeper
-  - XML from Judge (<thinking> + <verdict>)
-- Combine inputs to generate a concise, human-readable summary of the lead profile:
-  - Current Company
-  - Current Role
-  - Skills
-  - Interests
-  - University
-  - Relevance verdict
-- Output should be easy to read and ready for human review.
-
-```
 **Automating Step D: Draft Customized Message**
 **Prompt 1 (Gatekeeper):**
 ```
 #### Role
-Gatekeeper AI: Extractor for message drafting
+Gatekeeper AI: Batch Profile Extractor
 
 #### Audience
 Machine (downstream Judge node)
@@ -335,25 +339,32 @@ Machine (downstream Judge node)
 #### Format
 JSON:
 {
-  "company": "",
-  "role": "",
-  "skills": [],
-  "interests": [],
-  "university": "",
-  "relevance": ""
+  "leads": [
+    {
+      "name": "",
+      "company": "",
+      "role": "",
+      "skills": [],
+      "university": ""
+    }
+  ]
 }
 
 #### Task
-- Receive Lead Summary from Step C (Plain Text).
-- Parse and structure all relevant fields for message drafting:
-  - Company, Role, Skills, Interests, University, Relevance
-- Output as JSON for downstream Judge and Worker nodes.
-
+- Receive 5 LinkedIn profile PDFs.
+- Extract explicitly stated information only.
+- Process all profiles in one batch.
+- Each profile must be independent in structure.
+- If a field is not present, return null.
+- Do NOT infer interests.
+- Do NOT calculate years of experience.
+- Do NOT assign relevance.
+- Strict profile-bound extraction.
 ```
 **Prompt 2 (Judge):**
 ```
 #### Role
-Judge AI: Message Personalization Strategist
+Judge AI: Messaging Strategy Planner
 
 #### Audience
 Machine (downstream Worker node)
@@ -364,13 +375,18 @@ XML with tags:
 <verdict> ... </verdict>
 
 #### Task
-- Receive JSON from Gatekeeper.
-- Determine:
-  1. Which profile points are most persuasive to include.
-  2. Appropriate tone/focus based on relevance.
-  3. Rank personalization priorities (university, skills, role, company, interests).
-- Provide detailed reasoning in <thinking>.
-- Output recommended points and tone in <verdict> for message drafting.
+- Receive batch JSON from Gatekeeper.
+- Define a messaging strategy for each leads.
+
+Rules:
+- message must contain a specific call to action
+- tone must be one of:
+    "professional_peer"
+    "warm_alumni"
+    "curious_explorer"
+
+- Do NOT rank leads.
+- Do NOT evaluate relevance.
 
 
 ```
@@ -380,108 +396,254 @@ XML with tags:
 Worker AI: Personalized Message Generator
 
 #### Audience
-Human (to review before sending)
+Human
 
 #### Format
 Plain Text
 
 #### Task
 - Receive:
-  - JSON from Gatekeeper
-  - XML from Judge (<thinking> + <verdict>)
-- Generate a fully drafted, human-friendly, ready-to-send personalized message:
-  - Include highlighted persuasive points (university, skills, role, company)
-  - Apply tone recommended by Judge
-- Output should be immediately readable, editable, and ready for human review before sending.
+    - JSON (leads array)
+    - verdict from judge
+- Generate 5 independent personalized messages.
+- Loop internally over leads array.
+- Each message must:
+    - Reference fields according to priority_order
+    - Apply selected tone
+    - Avoid fabrications
+    - Avoid referencing missing/null fields
+- Messages must be clearly separated.
+- Ready for human review.
 ```
 
 ---
 
 ### 2.3 The Tool Specifications (The Engineer's Audit)
 
-#### **Step B | Tool A: The Gatekeeper (Extraction)**
-*   **Goal:** Extract structured data from job posting.
-*   **Input Variable:** `{job posting description}´ (String, unstructured text)
-*   **Output Schema (JSON):**
-    * `company`: (string | null),
-    * `role`: (string | null),
-    * `tasks_skills`: (string | null)
-      
-*   **Failure Mode:** If no information was extracted, output `null` across all fields.
+## Step B | Tool A: Gatekeeper (Extraction)
 
-#### **Step B | Tool B: The Judge (Reasoning)**
-*   **Goal:** Establish criteria to find relevant people.
-*   **Input Variable:** `{{json from previous rules}}`
-*   **Context Rules:**
-*   - Use only the fields provided in `{{extracted_json}}`.
-  - Do NOT infer missing information.
-  - Do NOT introduce new data not present in the JSON.
-  - Base reasoning strictly on:
-    - `company`
-    - `role`
-    - `tasks_skills`
-  - Explicitly explain how job role and required skills translate into:
-    - Target job titles
-    - Target industries
-    - Target skill keywords
-    - Target seniority level (if implied)
-*   **Output Schema (XML):**`<thinking>` and `<verdict>`
+**Goal:**  
+Extract structured candidate + job data.
 
-#### **Step B | Tool C: The Worker (Drafting)**
-*   **Goal:** Generate the ready-to-paste LinkedIn query.
-*   **Input Variable:** `{{verdict}}` (Search criteria produced by Tool B)
-*   **Tone/Style:** Single Boolean LinkedIn Query
+**Input Variables:**
+- `{candidate_profile_pdf}`
+- `{job_posting_text}`
 
-#### **Step C | Tool A: The Gatekeeper (Extraction)**
-*   **Goal:** Extract information from LinkedIn profiles returned in Query.
-*   **Input Variable:** `{list of profiles and information}´ (String)
-*   **Output Schema (JSON):**
-    * `name`: (string | null),
-    * `current_company`: (string | null),
-    * `current_role`: (string | null),
-    * `skills`: (array of strings | null),
-    * `interests`: (array of strings | null),
-    * `university`: (string | null)
+**Output Schema:**
+```json
+{
+  "candidate": {
+    "name": "string | null",
+    "university": "string | null",
+    "current_company": "string | null",
+    "current_role": "string | null",
+    "skills": "array | null"
+  },
+  "job": {
+    "company": "string | null",
+    "role": "string | null",
+    "skills": "array | null"
+  }
+}
 
-*   **Failure Mode:** If no information was extracted, output null across all fields.
+Failure Mode:
+If nothing extracted → return null across all fields.
+```
 
-#### **Step C | Tool B: The Judge (Reasoning)**
-*   **Goal:** Assign relevance scores to generated leads.
-*   **Input Variable:** `{{json with lead information}}`
-*   **Context Rules:** Sticking to JSON output from previous node
-*   **Output Schema (XML):**
-*   `<thinking>`: reasoning for each evaluated lead
-*   `<verdict>`: structured relevance assignment per lead
+## Step B | Tool B: Judge (Strategy Generator)
 
-#### **Step C | Tool C: The Worker (Drafting)**
-*   **Goal:** Summarize the lead information and relevance assignment for human review.
-*   **Input Variable:** `{{verdict}}`
-*   **Tone/Style:** Text for human review, straightforward.
+**Goal:**  
+Precompute 3 deterministic query states.
 
-#### **Step D | Tool A: The Gatekeeper (Extraction)**
-*   **Goal:** Extract information from the final text with the main conclusions about the leads.
-*   **Input Variable:** `{list of profiles and information}´ (String)
-*   **Output Schema (JSON):**
-    *   `{
-    "name": "",
-    "current_company": "",
-    "current_role": "",
-    "skills": "",
-    "interests": "",
-    "university": "",
-    "relevance": "",}`
-*   **Failure Mode:** If no information was extracted, output null across all fields.
+**Input:**  
+JSON from Tool A.
 
-#### **Step D | Tool B: The Judge (Reasoning)**
-*   **Goal:** Decide which profile points are most persuasive to include and appropriate tone/focus based on relevance..
-*   **Input Variable:** `{{json with profile points}}`
-*   **Context Rules:** Sticking to JSON output from previous node
-*   **Output Schema (XML):** `<thinking>` and `<verdict>`
+**Output:**  
+3-state structured JSON.
 
-#### **Step D | Tool C: The Worker (Drafting)**
-*   **Goal:** Draft a personalized message.
-*   **Input Variable:** `{{verdict}}` and JSON from Gatekeeper
-*   **Tone/Style:** Text for human review.
+**Constraints:**
+- Exactly 3 titles per state.
+- State 1 & 2 must include university anchor.
+- State 3 drops university.
+- No additional anchors.
+- No inference beyond extracted data.
+
+---
+
+## Step B | Tool C: Worker (Query Rendering)
+
+**Goal:**  
+Render the ready-to-paste LinkedIn People Boolean query.
+
+**Input:**  
+Selected state JSON from Tool B (containing `anchors` and `titles`).
+
+**Output:**  
+Single-line LinkedIn People keyword search string (plain text).
+
+**Output Requirements:**
+- Exactly **one line**.
+- No explanations.
+- No labels.
+- No placeholders.
+- No line breaks.
+
+**Structure Rules:**
+- One parenthetical OR block for job titles only.
+- Anchors (e.g., company, university) must appear outside parentheses.
+- Anchors must be space-separated (implicit AND).
+
+**Boolean Constraints:**
+- ≤ 200 characters total.
+- No nested parentheses.
+- No `NOT`.
+- No explicit `AND`.
+- Use spaces as implicit AND.
+- Only one OR block (for titles).
+
+- 
+# Step D | Tool A: Gatekeeper (Batch Extraction)
+
+**Goal:**  
+Extract structured data from 5 LinkedIn profile PDFs.
+
+**Input:**  
+`{5 profile PDFs}`
+
+**Output Schema:**
+
+```json
+{
+  "leads": [
+    {
+      "name": "string | null",
+      "company": "string | null",
+      "role": "string | null",
+      "skills": "array | null",
+      "university": "string | null"
+    }
+  ]
+}
+
+Rules:
+
+Strictly extractive.
+
+No inference.
+
+No enrichment.
+
+No relevance scoring.
+
+Each lead must be independently structured.
+
+If a field is not explicitly present → return null.
+
+Do NOT calculate years of experience.
+
+Do NOT infer interests.
+
+Do NOT derive seniority.
+
+Failure Mode:
+If nothing extracted for a profile → return null across that profile’s fields.
+
+## Step D | Tool B: Judge (Strategy Planner)
+
+**Goal:**  
+Define one shared messaging strategy to be applied uniformly across all 5 leads.
+
+**Input:**  
+`leads[]` JSON from Tool A.
+
+**Output Schema:**
+```json
+{
+  "{
+  "message_strategy": {
+    "ask": [],
+    "tone": ""
+  }
+  }
+}
+
+Rules:
+
+Define a strategy for each lead.
+
+Do NOT rank leads.
+
+Base strategy only on fields present in leads[].
+
+"university"
+
+"company"
+
+"role"
+
+"skills"
+
+tone must be one of:
+
+"professional_peer"
+
+"warm_alumni"
+
+"curious_explorer"
+
+## Step D | Tool C: Worker (Message Drafting)
+
+**Goal:**  
+Generate 5 independent personalized outreach messages.
+
+**Input:**  
+- `leads[]` (JSON from Tool A)  
+- `message_strategy` (JSON from Tool B)
+
+**Output:**  
+Plain text containing 5 clearly separated personalized messages.
+
+---
+
+### Behavioral Rules
+
+- Generate exactly one message per lead.
+- Internally iterate over the `leads[]` array.
+- Apply the selected `tone` consistently in all messages.
+- Reference only fields that are **not null**.
+- Do NOT fabricate information.
+- Do NOT infer missing data.
+- Do NOT mention fields that are null.
+- Do NOT include internal reasoning.
+
+---
+
+### Structural Rules
+
+- Messages must be clearly separated (e.g., numbered or spaced).
+- No JSON in the output.
+- No explanations.
+- No placeholders.
+- No variable labels.
+- Ready for human review and editing.
+
+---
+
+### Tone Guidance
+
+- `professional_peer` → concise, respectful, direct.
+- `warm_alumni` → friendly, connection-focused.
+- `curious_explorer` → inquisitive, learning-oriented.
+
+---
+
+### Determinism Requirements
+
+- Stateless rendering.
+- No cross-profile contamination.
+- No variation in tone between leads.
+- Uniform application of the shared strategy.
+
 ---
 
 ### 2.4 "Proof of Life" (Simulation Log)
@@ -493,1359 +655,756 @@ Plain Text
 **Node 1 Output:**
 ```
 {
-"company": "Gartner",
-"role": "Data Scientist – Conversational AI / LLM",
-"tasks_skills": "Lead end-to-end data science projects; architect and build AI-powered chatbot systems; develop conversational AI  tools (intelligent search, recommendation engines, context-aware content retrieval); design and implement MCP servers for AI agent integration; build user profiling and personalization models; optimize and productionize ML/LLM models; collaborate with data engineering, product, and business stakeholders; influence senior leadership and define AI strategy; mentor junior data scientists; stay current with LLMs and agentic AI. Required skills include LLMs and generative AI, NLP, chatbot/dialogue systems, prompt engineering, LLM fine-tuning, AI agents and orchestration, MCP, Python, scikit-learn, PyTorch/TensorFlow, Hugging Face, LangChain/LlamaIndex, SQL/NoSQL, vector databases (Pinecone/Weaviate), Spark, Linux, AWS/Azure ML, strong communication, and product/ML lifecycle knowledge."
+  "candidate": {
+    "name": "Margarida Martins Sacouto",
+    "university": "Fairfield University",
+    "current_company": "Fairfield University Charles F. Dolan School of Business",
+    "current_role": "Graduate Assistant",
+    "skills": [
+      "AI Agents",
+      "Sports Analytics",
+      "Competitor Analysis"
+    ]
+  },
+  "job": {
+    "company": "Gartner",
+    "role": "Data Scientist",
+    "skills": [
+      "Large Language Models (LLMs)",
+      "Generative AI",
+      "Conversational AI",
+      "chatbot development",
+      "dialogue systems",
+      "Natural Language Processing",
+      "text mining",
+      "Search systems",
+      "Recommendation systems",
+      "Prompt engineering",
+      "LLM fine-tuning",
+      "model optimization",
+      "AI agent architectures",
+      "orchestration",
+      "Model Context Protocol (MCP)",
+      "Python",
+      "scikit-learn",
+      "spacy",
+      "nltk",
+      "pytorch",
+      "tensorflow",
+      "huggingface",
+      "LangChain",
+      "LlamaIndex",
+      "SQL",
+      "Oracle",
+      "MongoDB",
+      "graph database",
+      "Pinecone",
+      "Weaviate",
+      "spark",
+      "Linux",
+      "shell scripting",
+      "AWS",
+      "Azure ML"
+    ]
+  }
 }
 ```
 **Node 2 Verdict:** 
 ```xml
 <thinking>
-I will integrate both inputs: (1) job requirements and (2) job searcher profile, then derive lead identification parameters.
+Anchors identified:
+- Company: Gartner
+- University: Fairfield University
 
-STEP 1 — Target Role Analysis
-The Gartner role is a highly technical Data Scientist position focused on:
-- Conversational AI, LLMs, NLP
-- Recommendation/search systems
-- AI architecture and ML engineering stack
-- Product-facing data science
-- Cross-functional leadership
-This implies leads should be technically senior and embedded in AI product environments.
+Primary high-frequency titles aligned with role:
+- Data Scientist
+- Machine Learning Engineer
+- AI Engineer
 
-STEP 2 — Job Searcher Profile Analysis
-The candidate is NOT a hands-on ML engineer but a:
-- Senior Product Developer (E-mobility digital products)
-- Data & AI Strategy Consultant (operating models, governance, AI use-case identification)
-- Business-facing, cross-functional, stakeholder-heavy roles
-- Currently pursuing MS in Business Analytics with Python/SQL exposure
-Strengths:
-- Product management for digital/AI-adjacent products
-- AI strategy, governance, operating models
-- Workshops, C-level communication, roadmap definition
-- Utilities and energy domain
-- Analytics education (in progress)
-
-Gap vs role:
-- Limited evidence of hands-on LLM/NLP model building
-- Strong in product + AI strategy layer, not deep ML engineering
-
-Therefore, optimal leads are NOT only pure Data Scientists, but:
-- Product Data Scientists
-- Applied AI Product Managers
-- Conversational AI Product Leads
-- AI Strategy leaders inside technical teams
-These profiles bridge product + AI and are more likely to respond and provide referrals.
-
-STEP 3 — Company Targeting Logic
-Primary:
-- Gartner (direct internal referrals)
-
-Secondary (industry adjacency):
-Companies with:
-- AI-powered products
-- Conversational AI platforms
-- Strong product-data collaboration
-Examples: Microsoft, Amazon, Google, Salesforce, ServiceNow, IBM, OpenAI, startups in conversational AI.
-These environments mirror Gartner’s product data science org.
-
-STEP 4 — Skill Overlap Matching
-We should match on:
-From job:
-- Conversational AI, LLMs, NLP, recommendation systems
-From candidate:
-- AI strategy, product roadmaps, cross-functional AI delivery, data governance, analytics
-Intersection leads to:
-- Product-facing AI roles
-- AI platform product teams
-- Data science teams working with PMs
-
-STEP 5 — University Signal
-Candidate universities:
-- Fairfield University (current MS)
-- KU Leuven (MSc Economics)
-Shared university filters increase response probability, especially:
-- Fairfield alumni in tech/data roles in US
-- KU Leuven alumni in AI/data in Europe/US
-
-STEP 6 — Seniority Band
-Role requires 6–8 years experience.
-Candidate has ~6+ years total.
-Therefore leads should be:
+Broader higher-frequency variations:
 - Senior Data Scientist
-- Staff/Lead Data Scientist
-- AI Product Manager
-- Principal DS (not Directors)
+- Data Science Manager
+- Machine Learning Specialist
 
-Peer-level increases response likelihood.
-
-STEP 7 — Functional Context Filters
-High-priority environments:
-- AI product teams
-- Data science within product orgs
-- Personalization/search/recommendation teams
-- Conversational AI platforms
-
-STEP 8 — Outreach Relevance Logic
-Leads most likely to engage:
-- Product + Data hybrid backgrounds
-- Former consultants now in DS/product
-- Utilities/energy AI teams (domain overlap)
-- People who transitioned from strategy to technical AI roles
-
-This alignment creates a credible narrative for the candidate.
-
-FINAL PARAMETER PRIORITIZATION (by weight):
-1. Same company (Gartner) in Data Science, AI Product, or Product Analytics
-2. Product-facing Data Scientists in conversational AI / NLP / personalization
-3. AI Product Managers in LLM or chatbot platforms
-4. Shared universities (Fairfield, KU Leuven)
-5. Former consultants now in DS/AI roles
-6. Utilities/energy AI product teams
-7. Seniority: Senior IC (5–9 years experience)
-
-This produces high-relevance, high-response-probability leads.
+States structured deterministically per instructions.
 </thinking>
+
 <verdict>
-SEARCH PARAMETERS:
 
-Company:
-- Gartner (primary)
-- Microsoft, Amazon, Google, Salesforce, ServiceNow, IBM, OpenAI, conversational AI startups (secondary)
+STATE 1
+Anchors:
+- Company: Gartner
+- University: Fairfield University
 
-Roles:
-- Senior Data Scientist (Product / Personalization / NLP / Conversational AI)
-- Product Data Scientist
-- Applied Scientist (Conversational AI / LLM)
-- AI Product Manager (LLM / Chatbots / Personalization)
-- Machine Learning Scientist in product teams
+Titles:
+- Data Scientist
+- Machine Learning Engineer
+- AI Engineer
 
-Skills Keywords:
-- Conversational AI, LLMs, NLP
-- Recommendation systems, search, personalization
-- Python, SQL, ML frameworks
-- LangChain, LlamaIndex, vector databases
-- AI product analytics, experimentation
-- AI platform product development
 
-Background Signals:
-- Product + Data cross-functional experience
-- Former consultants now in AI/data roles
-- Experience translating business needs into ML products
-- Mentorship or tech leadership at IC level
+STATE 2
+Anchors:
+- Company: Gartner
+- University: Fairfield University
 
-Education Filters:
-- Fairfield University alumni in tech/data roles
-- KU Leuven alumni in data/AI/analytics roles
-- Master’s or PhD in analytics, data science, AI, statistics, economics
+Titles:
+- Senior Data Scientist
+- Data Science Manager
+- Machine Learning Specialist
 
-Industry Filters:
-- AI product companies
-- SaaS platforms with conversational AI features
-- Utilities/energy AI teams (for domain overlap)
 
-Seniority:
-- 5–9 years experience
-- Senior IC (not Director/VP)
+STATE 3
+Anchors:
+- Company: Gartner
 
-Geography:
-- United States (primary)
-- Europe (secondary for KU Leuven network)
+Titles:
+- Senior Data Scientist
+- Data Science Manager
+- Machine Learning Specialist
+
 </verdict>
 ```
 
 
 **Final Output:**
 ```
-("Data Scientist" OR "Applied Scientist" OR "AI Product Manager" OR "Product Data Scientist" OR "Conversational AI Lead") LLM NLP chatbot personalization Gartner
+Gartner Fairfield University ("Data Scientist" OR "Machine Learning Engineer" OR "AI Engineer")
 ```
 
-#### Step C
-**Input:** 
-```
-{================================================================================
-LINKEDIN PROFILES - MERGED
-Query: "Data Scientist" OR "Applied Scientist" OR "AI Product Manager" OR 
-"Product Data Scientist" OR "Conversational AI Lead") LLM NLP chatbot personalization Gartner
-================================================================================
-
---------------------------------------------------------------------------------
-PROFILE 1: Zixiao Chen
---------------------------------------------------------------------------------
-Name:             Zixiao Chen
-Current Role:     Applied Scientist II
-Current Company:  Microsoft
-Location:         New York, New York, United States
-University:       New York University (MS, Data Science, 2020–2022)
-                  Rotterdam School of Management, Erasmus University (MS, Business Information Management, 2019–2020)
-
-EXPERIENCE:
-- Applied Scientist II | Microsoft | Dec 2024 – Present | New York, US
-- Data Scientist II | McKinsey & Company | Jul 2022 – Nov 2024 | New York, US
-- Research Intern | NYU Langone Health | Aug 2021 – Nov 2021 | New York, US
-- Research Intern | New York University | May 2021 – Aug 2021 | New York, US
-- Intern | Microsoft | Sep 2018 – Nov 2018 | Beijing
-
-SKILLS:
-- Data Science, Machine Learning, NLP
-
-INTERESTS/ACTIVITY:
-- AI/ML research, Information integrity, Recommender systems
-- Reposted content on AI and information integrity research
-- Announced Applied Scientist II role at Microsoft (Dec 2024)
-
---------------------------------------------------------------------------------
-PROFILE 2: Fábio Maltêz
---------------------------------------------------------------------------------
-Name:             Fábio Maltêz
-Current Role:     Product Manager I - Private Capital
-Current Company:  McKinsey & Company
-Location:         New York, New York, United States
-University:       ISCTE - Instituto Universitário de Lisboa (MSc, Data Science, 2020–2022, Grade: 18/20)
-                  ISCTE Business School (Bachelor's, Management, 2017–2020, Grade: 17/20)
-
-EXPERIENCE:
-- Product Manager I - Private Capital | McKinsey & Company | May 2025 – Present | New York, US
-- Senior Product Analyst - Private Capital | McKinsey & Company | Mar 2024 – May 2025 | Lisbon, Portugal
-- Private Equity Senior Analyst | McKinsey & Company | Nov 2023 – Mar 2024 | Lisbon, Portugal
-- Private Equity Analyst | McKinsey & Company | May 2022 – Nov 2023 | Lisbon, Portugal
-- Intern Data Analyst | Portland Hill Capital | Apr 2021 – Apr 2022 | Lisbon, Portugal
-- Monitor, Dept. of Quantitative Methods | ISCTE | Sep 2020 – Jun 2021
-- FSO Assistant | EY | Jan 2021 – Feb 2021 | Lisbon, Portugal
-- Board President | ITIC - ISCTE Trading & Investment Club | Jun 2019 – Jun 2020
-
-SKILLS:
-- AI Product Management, LLMs, Agentic AI, Deep Reinforcement Learning, Python, Data Science, Product Analytics, Product Management, Excel Modeling
-
-INTERESTS/ACTIVITY:
-- AI in Finance, LLMs for investment workflows, Private Equity tech, AI ethics
-- Shared research on Agentic AI, LLMs and data management in investment contexts (Man Group, Bridgewater, CFA Institute, Two Sigma publications)
-- Recently completed DeepLearning.AI certifications: Neural Networks & Deep Learning; Hyperparameter Tuning, Regularization and Optimization
-
-CERTIFICATIONS:
-- Neural Networks and Deep Learning | DeepLearning.AI
-- Improving Deep Neural Networks: Hyperparameter Tuning, Regularization and Optimization | DeepLearning.AI
-
---------------------------------------------------------------------------------
-PROFILE 3: Aayush Khemka
---------------------------------------------------------------------------------
-Name:             Aayush Khemka
-Current Role:     Data Scientist
-Current Company:  Amazon Web Services (AWS)
-Location:         New York City Metropolitan Area
-University:       University of Connecticut School of Business (MS, Business Analytics and Project Management, 2015–2016)
-                  Jadavpur University (B.Tech, Information Technology, 2007–2011)
-
-EXPERIENCE:
-- Data Scientist | Amazon Web Services (AWS) | Aug 2021 – Present | Seattle, WA
-- Senior Manager, Data Science | PepsiCo | Mar 2020 – Aug 2021 | Plano, TX
-- Manager, Data Science | PepsiCo | Jan 2018 – Mar 2020 | Fayetteville, AR
-- Associate Manager, Advanced Analytics | PepsiCo | Aug 2016 – Jan 2018 | New York, US
-- Business Analyst | GENPACT | May 2013 – Jul 2015 | Bengaluru, India
-- Senior Business Analyst | Mu Sigma | Jun 2011 – Apr 2013 | Bangalore, India
-
-SKILLS:
-- Machine Learning, Statistical Analysis, Predictive Modeling, Python, R, SAS (Base, E.Guide, Miner, JMP), Tableau, NLP, Text Mining, Hadoop, Pig, Hive, PL/SQL, MS Excel
-- Logistic/Linear Regression, Random Forest, Gradient Boosting, Neural Networks, Decision Trees, Ensemble Models, Bootstrapping
-- Data Mining, Forecasting, Segmentation, Market Basket Analysis, Web Analytics, Network Modeling, Scenario Planning
-
-INTERESTS/ACTIVITY:
-- Predictive Modeling, Forecasting, Consumer Segmentation, Demand Space analysis, Cross-sell/Up-sell analytics
-
---------------------------------------------------------------------------------
-PROFILE 4: Bryon Kucharski
---------------------------------------------------------------------------------
-Name:             Bryon Kucharski
-Current Role:     Lead Data Scientist
-Current Company:  Gartner
-Location:         New Haven, Connecticut, United States
-University:       University of Massachusetts Amherst (MS, Computer Science, 2018–2020)
-                  Wentworth Institute of Technology (BS, Computer Engineering, 2014–2018, GPA: 3.82)
-
-EXPERIENCE:
-- Lead Data Scientist | Gartner | Feb 2024 – Present | Remote
-  · Lead DS on AskGartner (AI-powered tool for Gartner insights access)
-  · Tech lead for search and retrieval projects on gartner.com
-- Senior Data Scientist | Gartner | Sep 2022 – Feb 2024 | Remote
-  · Created AskGartner
-  · AI-powered information retrieval and LLMs for gartner.com
-- Senior Data Scientist | JobTarget | Dec 2021 – Sep 2022 | Remote
-  · Led NLP efforts: job description parsing, job/candidate matching, search & ranking, recommendations
-  · Platforms: Vepsa, Elasticsearch, Milvus
-- Data Scientist | Travelers | Jun 2020 – Dec 2021 | Hartford, CT
-  · NLP: classification, question answering, abstractive summarization for customer service
-- Intern, Human-Autonomy Interaction Lab | Sonalysts, Inc. | Jun 2019 – Aug 2019 | Waterford, CT
-- Research Assistant Co-op | Wentworth Institute of Technology | Sep 2017 – Dec 2017 | Boston
-
-SKILLS:
-- NLP, LLMs, Search & Ranking, Recommendations, Information Retrieval, Python, Elasticsearch, Milvus, ML/DL frameworks, Conversational AI, Chatbots
-
-INTERESTS/ACTIVITY:
-- Conversational AI, Chatbots, AI-powered search, Personalization
-- Actively involved in AskGartner rollout (recognized in Gartner Q2 2025 earnings call)
-- Reposts Gartner AI/ML hiring and product content
-
---------------------------------------------------------------------------------
-PROFILE 5: ZJ (Zhiheng) Jiang
---------------------------------------------------------------------------------
-Name:             ZJ (Zhiheng) Jiang
-Current Role:     Data Scientist
-Current Company:  Meta
-Location:         New York, New York, United States
-University:       Columbia University (Master's, Data Science, 2020–2021)
-                  UC San Diego (BS, Physics and Applied Mathematics, 2016–2020)
-
-EXPERIENCE:
-- Data Scientist | Meta | Feb 2025 – Present | New York, US (On-site)
-- Data Scientist | NBCUniversal | Feb 2022 – Jan 2025 | New York, US
-- Data Scientist Intern | Unilever | Jun 2021 – Sep 2021 | Trumbull, CT
-  · Predictive models for consumer experience (R, Python)
-  · Product recommendation model (Python/Django)
-  · JMP script for consumer feedback prediction
-  · ANOVA testing and data processing
-- Undergraduate Researcher | UC San Diego | Apr 2018 – Jun 2020 | La Jolla, CA
-
-SKILLS:
-- Python, Causal Inference, Experimentation, Product Analytics, ML-driven Measurement, Data Analysis, R, Django, JMP, ANOVA
-
-INTERESTS/ACTIVITY:
-- Large-scale product analytics, Revenue & engagement systems, ML measurement, Causal inference
-- Actively exploring new Data Scientist opportunities (comments on job posts)
-
-CERTIFICATIONS:
-- Introduction to Data Science in Python | Coursera (Aug 2019)
-
-================================================================================
-END OF PROFILES
-================================================================================}`
-
-```
-
-
-**Node 1 Output:**
-```
-{[
-  {
-    "name": "Zixiao Chen",
-    "current_company": "Microsoft",
-    "current_role": "Applied Scientist II",
-    "skills": ["Data Science"],
-    "interests": ["Information integrity"],
-    "university": "New York University"
-  },
-  {
-    "name": "Fábio Maltêz",
-    "current_company": "McKinsey & Company",
-    "current_role": "Product Manager I - Private Capital",
-    "skills": ["AI", "Data", "Innovation", "Python", "Machine Learning", "Deep Reinforcement Learning", "Product Management"],
-    "interests": ["Entrepreneurship", "Strategy", "AI", "Product Management", "Investments", "LLMs", "Agentic AI", "Data Management"],
-    "university": "ISCTE - Instituto Universitário de Lisboa"
-  },
-  {
-    "name": "Aayush Khemka",
-    "current_company": "Amazon Web Services (AWS)",
-    "current_role": "Data Scientist",
-    "skills": ["SAS", "R", "Python", "Tableau", "MS Excel", "PL/SQL", "Hadoop", "Pig", "Hive", "Statistical Analysis", "Exploratory Data Analysis", "Logistic Regression", "Linear Regression", "Random Forest", "Gradient Boosting", "Neural Networks", "Decision Trees", "Ensemble Models", "Bootstrapping"],
-    "interests": ["Data Mining", "Forecasting", "Predictive Modeling", "Text Mining", "Social Network Analysis", "Web Analytics", "Segmentation", "Market Basket Analysis", "Network Modeling"],
-    "university": "University of Connecticut School of Business"
-  },
-  {
-    "name": "Bryon Kucharski",
-    "current_company": "Gartner",
-    "current_role": "Lead Data Scientist",
-    "skills": ["NLP", "Search & Ranking", "Recommendations", "Elasticsearch", "Milvus", "LLMs", "Information Retrieval"],
-    "interests": ["AI-powered information retrieval", "Search", "Chatbots"],
-    "university": "University of Massachusetts Amherst"
-  },
-  {
-    "name": "ZJ (Zhiheng) Jiang",
-    "current_company": "Meta",
-    "current_role": "Data Scientist",
-    "skills": ["Python", "Data Analysis", "R", "Django", "JMP", "ANOVA"],
-    "interests": ["Causal Inference", "Experimentation", "Product Analytics", "ML-driven Measurement", "Revenue", "Engagement"],
-    "university": "Columbia University"
-  }
-]}
-```
- 
-**Node 2 Verdict:** 
-```xml
-{<evaluation>
-
-  <lead name="Zixiao Chen">
-    <reasoning>
-      <company_industry>Microsoft is a top-tier tech company — strong signal for technical talent. Relevant industry alignment.</company_industry>
-      <role_similarity>Applied Scientist II is closely aligned with data science and ML-focused roles. Solid match for a data/AI-oriented position.</role_similarity>
-      <skills_alignment>Only "Data Science" is listed — very sparse skill data. Limits confidence in depth of technical expertise, though the role title implies more.</skills_alignment>
-      <university>New York University is a well-regarded research institution with strong data science programs. Positive signal.</university>
-      <interests>Interest in "Information integrity" is niche and somewhat specialized. Could align well with trust/safety or ML fairness roles, but narrow otherwise.</interests>
-    </reasoning>
-    <verdict>Medium</verdict>
-  </lead>
-
-  <lead name="Fábio Maltêz">
-    <reasoning>
-      <company_industry>McKinsey & Company is a prestigious consulting firm — strong pedigree, though not a native tech/product company. Private capital focus adds a finance dimension.</company_industry>
-      <role_similarity>Product Manager I with a private capital focus is a hybrid role. Relevant for product-oriented positions, especially those intersecting AI and finance.</role_similarity>
-      <skills_alignment>Exceptionally well-rounded: AI, Python, Machine Learning, Deep Reinforcement Learning, Product Management, and Data. Strong alignment with technical product or AI roles.</skills_alignment>
-      <university>ISCTE - Instituto Universitário de Lisboa is a solid European institution, less globally prominent but acceptable given the strong skill and experience profile.</university>
-      <interests>Interests in Agentic AI, LLMs, Entrepreneurship, and Product Management are highly contemporary and relevant. Strong forward-looking signal.</interests>
-    </reasoning>
-    <verdict>High</verdict>
-  </lead>
-
-  <lead name="Aayush Khemka">
-    <reasoning>
-      <company_industry>Amazon Web Services is a leading cloud and data platform — excellent industry fit for data-heavy or ML-focused roles.</company_industry>
-      <role_similarity>Data Scientist at AWS is a direct role match for most data science or ML engineering positions.</role_similarity>
-      <skills_alignment>Extremely broad and deep skill set: covers statistical modeling, ML algorithms (Random Forest, Gradient Boosting, Neural Networks), big data tools (Hadoop, Hive, Pig), and multiple programming languages. Strongest technical profile in the set.</skills_alignment>
-      <university>University of Connecticut School of Business — reputable but not a top-tier research university. Slight gap compared to Ivy/top-10 profiles, but offset by strong practical skills.</university>
-      <interests>Interests are highly applied and practical: Predictive Modeling, Text Mining, Web Analytics, Market Basket Analysis. Solid fit for data-intensive product or analytics roles.</interests>
-    </reasoning>
-    <verdict>High</verdict>
-  </lead>
-
-  <lead name="Bryon Kucharski">
-    <reasoning>
-      <company_industry>Gartner is a research and advisory firm — relevant exposure to enterprise technology but not a pure-play tech product company.</company_industry>
-      <role_similarity>Lead Data Scientist is a senior IC role — strong seniority signal. Specialization in search, ranking, and recommendations is highly specific and valuable.</role_similarity>
-      <skills_alignment>NLP, LLMs, Elasticsearch, Milvus, Information Retrieval — a highly specialized and in-demand stack, particularly for AI search or RAG-based product roles.</skills_alignment>
-      <university>University of Massachusetts Amherst has a strong CS and NLP program — solid academic background relevant to the specialization.</university>
-      <interests>Interests in AI-powered information retrieval, search, and chatbots are tightly aligned with modern GenAI product development. Excellent thematic fit.</interests>
-    </reasoning>
-    <verdict>High</verdict>
-  </lead>
-
-  <lead name="ZJ (Zhiheng) Jiang">
-    <reasoning>
-      <company_industry>Meta is a top-tier tech company with strong data culture — positive industry signal.</company_industry>
-      <role_similarity>Data Scientist at Meta typically implies product analytics and experimentation focus. Relevant but more analytics-leaning than ML-engineering.</role_similarity>
-      <skills_alignment>Skills listed (Python, R, Django, JMP, ANOVA) are relatively modest and lean toward statistical analysis rather than ML or AI. Django is an unexpected inclusion for a DS role. Skill breadth is limited compared to peers.</skills_alignment>
-      <university>Columbia University is a top-tier Ivy League institution — strong academic pedigree and a significant positive signal.</university>
-      <interests>Interests in Causal Inference, Experimentation, and Product Analytics are solid for analytics-heavy roles but less compelling for ML/AI engineering or product management roles. Niche but legitimate focus area.</interests>
-    </reasoning>
-    <verdict>Medium</verdict>
-  </lead>
-
-</evaluation>}
-
-```
-
-**Final Output:** 
-```
-{Here are the lead profile summaries ready for human review:
-
----
-
-**Zixiao Chen**
-**Company:** Microsoft | **Role:** Applied Scientist II
-**Skills:** Data Science
-**Interests:** Information Integrity
-**University:** New York University
-**Verdict: Medium** — Strong company and role alignment, but sparse skill data limits confidence. Niche interest in information integrity could suit trust/safety roles.
-
----
-
-**Fábio Maltêz**
-**Company:** McKinsey & Company | **Role:** Product Manager I (Private Capital Focus)
-**Skills:** AI, Python, Machine Learning, Deep Reinforcement Learning, Product Management, Data
-**Interests:** Agentic AI, LLMs, Entrepreneurship, Product Management
-**University:** ISCTE – Instituto Universitário de Lisboa
-**Verdict: High** — Exceptional skill breadth and highly contemporary interests in AI. Strong fit for technical product or AI-focused roles despite a non-native tech company background.
-
----
-
-**Aayush Khemka**
-**Company:** Amazon Web Services | **Role:** Data Scientist
-**Skills:** Statistical Modeling, ML Algorithms (Random Forest, Gradient Boosting, Neural Networks), Hadoop, Hive, Pig, multiple programming languages
-**Interests:** Predictive Modeling, Text Mining, Web Analytics, Market Basket Analysis
-**University:** University of Connecticut School of Business
-**Verdict: High** — Strongest technical profile in the set. Deep, practical skill stack across ML and big data tools. University is solid but not elite; offset by hands-on expertise and top-tier employer.
-
----
-
-**Bryon Kucharski**
-**Company:** Gartner | **Role:** Lead Data Scientist
-**Skills:** NLP, LLMs, Elasticsearch, Milvus, Information Retrieval
-**Interests:** AI-Powered Search, Information Retrieval, Chatbots
-**University:** University of Massachusetts Amherst
-**Verdict: High** — Highly specialized and in-demand stack for GenAI/RAG product roles. Senior IC title adds weight. Strong thematic alignment between skills, interests, and modern AI development trends.
-
----
-
-**ZJ (Zhiheng) Jiang**
-**Company:** Meta | **Role:** Data Scientist
-**Skills:** Python, R, Django, JMP, ANOVA
-**Interests:** Causal Inference, Experimentation, Product Analytics
-**University:** Columbia University (Ivy League)
-**Verdict: Medium** — Top-tier academic pedigree and strong employer, but skill set skews toward statistical analysis rather than ML/AI engineering. Best suited for analytics-heavy or experimentation-focused roles.}`
-```
 
 #### Step D
 **Input:**
 
 ```
-Here are the lead profile summaries ready for human review:
-
----
-
-**Zixiao Chen**
-**Company:** Microsoft | **Role:** Applied Scientist II
-**Skills:** Data Science
-**Interests:** Information Integrity
-**University:** New York University
-**Verdict: Medium** — Strong company and role alignment, but sparse skill data limits confidence. Niche interest in information integrity could suit trust/safety roles.
-
----
-
-**Fábio Maltêz**
-**Company:** McKinsey & Company | **Role:** Product Manager I (Private Capital Focus)
-**Skills:** AI, Python, Machine Learning, Deep Reinforcement Learning, Product Management, Data
-**Interests:** Agentic AI, LLMs, Entrepreneurship, Product Management
-**University:** ISCTE – Instituto Universitário de Lisboa
-**Verdict: High** — Exceptional skill breadth and highly contemporary interests in AI. Strong fit for technical product or AI-focused roles despite a non-native tech company background.
-
----
-
-**Aayush Khemka**
-**Company:** Amazon Web Services | **Role:** Data Scientist
-**Skills:** Statistical Modeling, ML Algorithms (Random Forest, Gradient Boosting, Neural Networks), Hadoop, Hive, Pig, multiple programming languages
-**Interests:** Predictive Modeling, Text Mining, Web Analytics, Market Basket Analysis
-**University:** University of Connecticut School of Business
-**Verdict: High** — Strongest technical profile in the set. Deep, practical skill stack across ML and big data tools. University is solid but not elite; offset by hands-on expertise and top-tier employer.
-
----
-
-**Bryon Kucharski**
-**Company:** Gartner | **Role:** Lead Data Scientist
-**Skills:** NLP, LLMs, Elasticsearch, Milvus, Information Retrieval
-**Interests:** AI-Powered Search, Information Retrieval, Chatbots
-**University:** University of Massachusetts Amherst
-**Verdict: High** — Highly specialized and in-demand stack for GenAI/RAG product roles. Senior IC title adds weight. Strong thematic alignment between skills, interests, and modern AI development trends.
-
----
-
-**ZJ (Zhiheng) Jiang**
-**Company:** Meta | **Role:** Data Scientist
-**Skills:** Python, R, Django, JMP, ANOVA
-**Interests:** Causal Inference, Experimentation, Product Analytics
-**University:** Columbia University (Ivy League)
-**Verdict: Medium** — Top-tier academic pedigree and strong employer, but skill set skews toward statistical analysis rather than ML/AI engineering. Best suited for analytics-heavy or experimentation-focused roles.}``
-
+5 PDFs of query returned profiles
 ```
 
 **Node 1 Output:**
  ```
- [
-  [
-  {
-    "name": "Zixiao Chen",
-    "company": "Microsoft",
-    "role": "Applied Scientist II",
-    "skills": ["Data Science"],
-    "interests": ["Information Integrity"],
-    "university": "New York University",
-    "relevance": "Medium"
-  },
-  {
-    "name": "Fábio Maltêz",
-    "company": "McKinsey & Company",
-    "role": "Product Manager I (Private Capital Focus)",
-    "skills": ["AI", "Python", "Machine Learning", "Deep Reinforcement Learning", "Product Management", "Data"],
-    "interests": ["Agentic AI", "LLMs", "Entrepreneurship", "Product Management"],
-    "university": "ISCTE – Instituto Universitário de Lisboa",
-    "relevance": "High"
-  },
-  {
-    "name": "Aayush Khemka",
-    "company": "Amazon Web Services",
-    "role": "Data Scientist",
-    "skills": ["Statistical Modeling", "Random Forest", "Gradient Boosting", "Neural Networks", "Hadoop", "Hive", "Pig", "Multiple Programming Languages"],
-    "interests": ["Predictive Modeling", "Text Mining", "Web Analytics", "Market Basket Analysis"],
-    "university": "University of Connecticut School of Business",
-    "relevance": "High"
-  },
-  {
-]
+{
+  "leads": [
+    {
+      "name": "Dylan Meyer",
+      "company": "Gartner",
+      "role": "Director, Data Science",
+      "skills": [
+        "Generative AI",
+        "Natural Language Processing (NLP)",
+        "Strategic Roadmaps"
+      ],
+      "university": "Fairfield University"
+    },
+    {
+      "name": "Thi Hong Thinh DOAN",
+      "company": "Self Employed",
+      "role": "Economic consultant",
+      "skills": [
+        "Creative Writing",
+        "Research Skills",
+        "Economic Research"
+      ],
+      "university": "Aix-Marseille University"
+    },
+    {
+      "name": "Aaron Tobias",
+      "company": "SWBC",
+      "role": "Principal Software Engineer, Security",
+      "skills": [
+        "Requirements Gathering",
+        "User Provisioning",
+        "Security Assertion Markup Language (SAML)"
+      ],
+      "university": "Rensselaer Polytechnic Institute"
+    },
+    {
+      "name": "Adam Ware",
+      "company": "Analytic-Aware LLC",
+      "role": "Consultant & Founder - Data Strategy & Viz Leader, Analytics Advisor, Insights Expert",
+      "skills": [
+        "Design Thinking",
+        "Quantitative Analytics",
+        "Cross-functional Team Leadership"
+      ],
+      "university": "Cornell University"
+    },
+    {
+      "name": "Jessica Hawthorne-Castro",
+      "company": "Hawthorne Advertising",
+      "role": "Chief Executive Officer",
+      "skills": [
+        "Media Buying",
+        "Direct Response",
+        "Integrated Marketing"
+      ],
+      "university": "Loyola Marymount University"
+    }
+  ]
+}
 ```
 
 **Node 2 Verdict:** 
 ```xml
 <thinking>
-Analyzing each profile for personalization strategy:
-
-**Fábio Maltêz (High)** - strongest fit. McKinsey PM with deep AI/ML skills and explicit interest in Agentic AI and LLMs. His hybrid PM+technical background is rare. Lead with LLM/agentic angle, entrepreneurship resonance, and his unique positioning bridging product and ML. Priority: interests > role > skills > company > university.
-
-**Bryon Kucharski (High)** - excellent technical alignment. Gartner Lead Data Scientist with NLP, LLMs, Elasticsearch, Milvus — directly relevant stack. Interests in AI-powered search and information retrieval are highly specific and matchable. Lead with technical credibility and shared domain. Priority: skills > interests > role > company > university.
-
-**Aayush Khemka (High)** - AWS Data Scientist with strong classical ML stack (RF, GB, Neural Nets, Hadoop ecosystem). Interests lean toward applied analytics. More traditional DS profile — tone should be practical/impact-focused. Priority: skills > company > role > interests > university.
-
-**Zixiao Chen (Medium)** - Microsoft Applied Scientist, Data Science skills, interest in Information Integrity. Narrower overlap. Keep message concise, anchor on information integrity angle if relevant, don't over-personalize. Priority: role > interests > company > skills > university.
-
-**ZJ Jiang (Medium)** - Meta Data Scientist, causal inference and experimentation focus, Columbia background. Medium relevance. Experimentation/product analytics angle is the hook. Columbia is a strong brand worth mentioning briefly. Priority: interests > university > role > skills > company.
-
-Tone guidelines:
-- High relevance: specific, technically resonant, peer-to-peer, confident
-- Medium relevance: warm but concise, one clear hook, don't oversell
+Received 5 independent leads.
+For each lead:
+- Define tone (one of allowed values).
+- Provide concise outreach angle.
+- Include explicit call to action (e.g., 15-min chat, quick call, brief conversation).
+- No ranking or relevance commentary.
 </thinking>
 
 <verdict>
-  <profiles>
 
-    <profile>
-      <name>Fábio Maltêz</name>
-      <relevance>High</relevance>
-      <tone>Intellectually engaging, peer-level, entrepreneurial energy — speak to the builder/thinker hybrid</tone>
-      <priority_order>interests, role, skills, company, university</priority_order>
-      <anchor_points>
-        <point priority="1">Explicit interest in Agentic AI and LLMs — lead with this; make the connection direct and specific</point>
-        <point priority="2">Rare PM + deep ML skill combo (DRL, Python, ML) signals he can evaluate both product and technical merit</point>
-        <point priority="3">McKinsey context suggests he values rigor and strategic framing — avoid fluff</point>
-        <point priority="4">Entrepreneurship interest — frame opportunity or conversation in terms of building/impact, not just role</point>
-      </anchor_points>
-      <avoid>Generic AI buzzwords; anything that doesn't acknowledge his technical depth alongside PM identity</avoid>
-    </profile>
+<lead>
+  <name>Dylan Meyer</name>
+  <tone>professional_peer</tone>
+  <strategy>
+    Reference his leadership in Data Science and Generative AI initiatives at Gartner.
+    Position outreach around shared interest in AI applications and data science impact.
+    Call to action: Ask for a 15-minute conversation to learn about his journey to Director level and advice on growing within data science leadership.
+  </strategy>
+</lead>
 
-    <profile>
-      <name>Bryon Kucharski</name>
-      <relevance>High</relevance>
-      <tone>Technical peer, precise, domain-specific — signal that you know his stack</tone>
-      <priority_order>skills, interests, role, company, university</priority_order>
-      <anchor_points>
-        <point priority="1">NLP + LLMs + Elasticsearch + Milvus is a very specific retrieval-augmented stack — reference it directly to establish credibility</point>
-        <point priority="2">AI-Powered Search and Information Retrieval interests align tightly — make the thematic connection explicit</point>
-        <point priority="3">Lead Data Scientist at Gartner implies influence over research direction — speak to thought leadership angle</point>
-        <point priority="4">Chatbot interest could be a secondary hook if contextually relevant</point>
-      </anchor_points>
-      <avoid>Surface-level AI framing; UMass Amherst mention only if there's a genuine connection to leverage</avoid>
-    </profile>
+<lead>
+  <name>Thi Hong Thinh DOAN</name>
+  <tone>curious_explorer</tone>
+  <strategy>
+    Highlight her background in economics, modeling, and data science across academia and consulting.
+    Express curiosity about transitioning between research and applied quantitative roles.
+    Call to action: Request a short virtual coffee chat to understand how she navigates academic and consulting work.
+  </strategy>
+</lead>
 
-    <profile>
-      <name>Aayush Khemka</name>
-      <relevance>High</relevance>
-      <tone>Practical, impact-oriented, grounded in applied ML — avoid hype, emphasize real-world results</tone>
-      <priority_order>skills, company, role, interests, university</priority_order>
-      <anchor_points>
-        <point priority="1">Strong classical ML stack (Random Forest, Gradient Boosting, Neural Networks) + big data tooling (Hadoop, Hive) — acknowledge breadth and applied depth</point>
-        <point priority="2">AWS context signals he operates at scale — frame any value prop around scalability and production-grade thinking</point>
-        <point priority="3">Predictive modeling and text mining interests — connect to concrete use cases rather than abstract capability</point>
-        <point priority="4">UConn School of Business background — subtle signal of applied, business-outcome orientation</point>
-      </anchor_points>
-      <avoid>Overly theoretical framing; deep research positioning that doesn't connect to deployment or impact</avoid>
-    </profile>
+<lead>
+  <name>Aaron Tobias</name>
+  <tone>professional_peer</tone>
+  <strategy>
+    Acknowledge his work in security engineering, decentralized identity, and AI/LLM integration.
+    Connect around technical innovation and applied AI systems.
+    Call to action: Invite him to a brief 20-minute discussion to exchange perspectives on AI and secure system architecture.
+  </strategy>
+</lead>
 
-    <profile>
-      <name>Zixiao Chen</name>
-      <relevance>Medium</relevance>
-      <tone>Concise and respectful — one clear hook, no overreach; let the relevance do the work without overselling</tone>
-      <priority_order>role, interests, company, skills, university</priority_order>
-      <anchor_points>
-        <point priority="1">Information Integrity interest is the most differentiated and specific angle — if contextually matchable, lead with it</point>
-        <point priority="2">Applied Scientist II at Microsoft signals research-to-product pipeline experience — acknowledge applied science framing</point>
-        <point priority="3">Keep message shorter than High-relevance profiles; one strong hook is sufficient</point>
-      </anchor_points>
-      <avoid>Forcing connection where relevance is thin; NYU mention only if directly relevant</avoid>
-    </profile>
+<lead>
+  <name>Adam Ware</name>
+  <tone>warm_alumni</tone>
+  <strategy>
+    Reference shared academic affiliation and his experience spanning Gartner, consulting, and analytics leadership.
+    Emphasize interest in analytics transformation and executive data storytelling.
+    Call to action: Ask for a 15-minute alumni conversation to hear about his transition into advisory and consulting leadership.
+  </strategy>
+</lead>
 
-    <profile>
-      <name>ZJ (Zhiheng) Jiang</name>
-      <relevance>Medium</relevance>
-      <tone>Analytically curious, collegial — appeal to the experimentation mindset; brief and sharp</tone>
-      <priority_order>interests, university, role, skills, company</priority_order>
-      <anchor_points>
-        <point priority="1">Causal inference and experimentation is a distinctive intellectual identity — lead with respect for that rigor</point>
-        <point priority="2">Columbia University is a strong credibility signal worth a light touch if there's a shared connection</point>
-        <point priority="3">Product analytics framing bridges technical and business context — use to position relevance</point>
-        <point priority="4">Meta context implies familiarity with large-scale A/B and experimentation infrastructure</point>
-      </anchor_points>
-      <avoid>Over-indexing on Python/R/Django as hooks — too generic; keep message tight given medium relevance</avoid>
-    </profile>
+<lead>
+  <name>Jessica Hawthorne-Castro</name>
+  <tone>curious_explorer</tone>
+  <strategy>
+    Recognize her leadership in performance-driven marketing and data-informed strategy.
+    Express interest in how analytics and executive leadership intersect in agency environments.
+    Call to action: Request a short introductory call to learn how she integrates data science into marketing strategy at scale.
+  </strategy>
+</lead>
 
-  </profiles>
 </verdict>
 ```
 
 
 > **Final Output:**
 ```
-> Here are the five drafted messages, ready for your review and edits before sending:
+Hi Dylan,
+
+I came across your work as Director of Data Science at Gartner and was particularly interested in your focus on Generative AI and NLP. It’s impressive to see how you’ve evolved within the organization into a leadership role in data science. I’m currently exploring how to grow toward more senior data science leadership positions and would really value your perspective.
+
+Would you be open to a 15-minute conversation to share a bit about your journey and any advice you might have?
 
 ---
 
-**1. Fábio Maltêz — McKinsey & Company | High Relevance**
+Hi Thi Hong Thinh,
 
-Hi Fábio,
+Your background combining economics, research, and data science caught my attention—especially your work spanning consulting and academic research. I’m fascinated by professionals who bridge rigorous economic modeling with applied analytics.
 
-Your work at McKinsey caught my attention, but honestly it was your background that made me want to reach out — the combination of deep reinforcement learning and product management is genuinely rare, and your interest in agentic AI and LLMs puts you at exactly the intersection I find most compelling right now.
-
-Most people in this space are either building the models or thinking about the product — you seem to be doing both, which makes your perspective unusually valuable.
-
-I'd love to connect and swap thoughts on where agentic systems are heading, especially from someone who's navigating that from inside a firm like McKinsey. Whether there's a concrete opportunity worth discussing or just an interesting conversation to be had, I think it'd be worth 20 minutes.
-
-Would you be open to a quick chat?
+If you’re open to it, I’d love to schedule a short virtual coffee chat to learn more about how you’ve navigated between research and consulting roles and what you’ve found most impactful along the way.
 
 ---
 
-**2. Bryon Kucharski — Gartner | High Relevance**
+Hi Aaron,
 
-Hi Bryon,
+I was really interested in your work in security engineering and your involvement with decentralized identity and AI/LLM-focused innovation. It’s exciting to see how these areas are converging in practice.
 
-I came across your profile and the stack you're working with — NLP, LLMs, Elasticsearch, Milvus — is about as directly relevant to what I'm focused on as it gets. AI-powered search and information retrieval done right is still a hard problem, and it's clear you're working at the serious end of it.
-
-Your work at Gartner in particular is interesting to me. Being a Lead Data Scientist there means you're not just building — you're likely shaping how an influential organization thinks about these capabilities, which is a different kind of leverage.
-
-I'd genuinely enjoy comparing notes on retrieval-augmented approaches and where you see the field moving. Open to a conversation?
+If you’re open to it, I’d appreciate a brief 20-minute conversation to exchange perspectives on building secure systems while integrating emerging AI capabilities.
 
 ---
 
-**3. Aayush Khemka — Amazon Web Services | High Relevance**
+Hi Adam,
 
-Hi Aayush,
+I noticed your background spanning analytics leadership, consulting, and work with Gartner, along with your strong focus on data visualization and quantitative analytics. It’s inspiring to see how you’ve built a career around translating complex data into strategic insight.
 
-Your profile stood out to me — the combination of a strong classical ML foundation (Random Forest, Gradient Boosting, Neural Networks) alongside Hadoop and Hive tells me you're someone who thinks about models in the context of where they actually have to run, which isn't as common as it should be.
-
-Building and deploying at AWS scale is a different discipline than most data science roles, and your applied breadth across predictive modeling and text mining suggests you're focused on outcomes, not just methods.
-
-I'd love to connect — I think there's a real conversation to be had about applied ML work and what's actually moving the needle in production environments. Would you be up for a quick chat?
+As a fellow academic alum, I’d really value the chance to connect. Would you be open to a 15-minute conversation to share how you transitioned into advisory and analytics leadership?
 
 ---
 
-**4. Zixiao Chen — Microsoft | Medium Relevance**
+Hi Jessica,
 
-Hi Zixiao,
+I’ve been following your leadership at Hawthorne Advertising and was struck by how strongly you emphasize blending storytelling with advanced data science to drive measurable performance. That integration of analytics and executive strategy is something I’m very interested in.
 
-I came across your profile and your interest in information integrity is what made me want to reach out — it's a problem space I think deserves more serious applied science attention, and your work as an Applied Scientist at Microsoft puts you in a good position to work on it meaningfully.
+If you’re available, I’d love to schedule a short introductory call to learn more about how you incorporate data-driven thinking into marketing strategy at scale.
 
-I'd love to connect and learn more about the direction of your work. Happy to keep it brief — just wanted to put myself on your radar.
 
 ---
 
-**5. ZJ (Zhiheng) Jiang — Meta | Medium Relevance**
 
-Hi ZJ,
-
-Your focus on causal inference and experimentation is what caught my eye — it's one of those areas where rigorous thinking genuinely separates good analysis from misleading analysis, and it's clear from your background (including your time at Columbia) that you approach it seriously.
-
-Product analytics at Meta's scale means the experimentation infrastructure you're working with is about as sophisticated as it gets, which makes your perspective on this stuff particularly interesting.
 ```
 
 #### 2.5 Value Definition (The KPI Dashboard)
 ```
-| Metric Category | Current State (As-Is) | Target State (To-Be) | Estimated Impact |
-| :--- | :--- | :--- | :--- |
-| Weekly outreach volume | 8–12 connections/week | 8–12+ connections/week (same or higher) | Maintained or increased volume with less effort |
-| Time per profile analysis | 3–5 min/profile | ~1–2 min/profile (AI summary + human validation) | ~60% reduction in evaluation time |
-| Time per message draft | 7–10 min/message | ~2–3 min/message (AI draft + human refinement) | ~70% reduction in drafting time |
-| Total weekly time on evaluation + drafting | 2–3 hrs/week | 1–1.5 hrs/week | Save ~1–1.5 hrs/week (~50–70% reduction) |
-| Job criteria extraction time | ~3–5 min/posting *(benchmark)* | ~30–60 sec/posting (AI summarization) | ~85% reduction per posting |
-| Connection prioritization/ranking time | ~5–7 min/search session *(benchmark)* | ~1–2 min/session (AI-ranked shortlist) | ~70–80% reduction per session |
-| Cognitive fatigue (qualitative) | High — repetitive judgment calls | Low — AI handles first-pass decisions | Reduced burnout; more consistent output |
-| Message quality consistency | Variable — degrades with fatigue | Consistent — structured AI prompts + templates | Fewer low-quality sends; better response rates |
-| % of total process time on bottleneck steps | ~70–80% of weekly effort | ~35–45% of weekly effort (estimated) | Bottleneck significantly relieved |
+| Metric                      | Current (Manual)             | Target (AI)                               | Estimated Impact                                                |
+| --------------------------- | ---------------------------- | ----------------------------------------- | --------------------------------------------------------------- |
+| Outreach Volume (Frequency) | 8–12 leads/week              | 8–12 leads/week (same or higher possible) | Maintains output with less effort; potential to increase volume |
+| Time per Profile Review     | 3–5 min                      | 1–2 min                                   | ~60% reduction                                                  |
+| Time per Message Draft      | 7–10 min                     | 2–4 min                                   | ~60–70% reduction                                               |
+| Total Weekly Time           | 2–3 hrs/week                 | 1–1.5 hrs/week                            | 1–1.5 hrs saved/week (50–70% reduction)                         |
+| Cognitive Load              | High                         | Moderate/Low                              | Reduced fatigue → higher consistency & quality                  |
+| Process Scalability         | Linear (time grows per lead) | Semi-automated                            | Enables 2× throughput with same time                            |
+
 ```
 
 **Notes on benchmarks used (where PDD data was absent):**
-- *Job criteria extraction:* Industry benchmark for manual job posting parsing is 3–5 min; LLM-based extraction typically runs under 60 seconds.
-- *Connection prioritization:* Manual LinkedIn filtering estimated at 5–7 min per search session based on standard UX research on professional search workflows; AI ranking reduces this to a review-only task.
+Job criteria extraction: Industry benchmark for manual job posting parsing is 3–5 min; LLM-based extraction typically runs under 60 seconds.
+Connection prioritization: Manual LinkedIn filtering estimated at 5–7 min per search session based on standard UX research on professional search workflows; AI ranking reduces this to a review-only task.
+
+### ChatGPT/Claude logs
+https://chatgpt.com/share/69a24e05-12c0-8007-bde4-d6af6968991f
 ---
 
-## [Part 3: The Intelligent Network]
+
+## Part 3: The Intelligent Network (Week 4 Additions)
+
+*In Week 4, we wrap the Linear Core in advanced logic to handle variety (Routing) and quality (Looping).*
 
 ### 3.1 The Architecture Strategy
-*   [X] **The Router (Branching):** To handle different types of inputs (e.g., separating Spam from Valid Requests).
-*   [X] **The Evaluator-Optimizer (Looping):** To ensure quality/safety (e.g., checking the Draft before sending).
+*Which Advanced Patterns are you deploying to fix the "Real World Complexity"? Check at least one.*
+*   [ ] **The Router (Branching):** To handle different types of inputs (e.g., separating Spam from Valid Requests).
+*   [x] **The Evaluator-Optimizer (Looping):** To ensure quality/safety (e.g., checking the Draft before sending).
 *   [ ] **The Orchestrator-Workers (Parallel):** To handle complex, multi-step research.
 
 ### 3.2 The Advanced Logic Map (Mermaid)
----
+*(Update your diagram. It should now contain Diamonds (Decisions) or Circles (Loops) wrapping around your nodes.)*
+
 ```mermaid
-flowchart TD
+graph TD
 
-    %% ── ENTRY ──────────────────────────────────────────────
-    START([⚡ Job Posting]) --> B_ROUTER{🧭 Module 1 - B Router: Input sufficient and clean?}
+    %% =========================
+    %% STEP B — IDENTIFY LEADS
+    %% =========================
 
-    %% ══════════════════════════════════════════════════════
-    %% STEP B — Identify Company + Job Title + Background
-    %% ══════════════════════════════════════════════════════
-    B_ROUTER -- Yes --> B1[🤖 B1 Gatekeeper: Extraction]
-    B_ROUTER -- No --> B2[Insufficient Data/Escalate]
-    B2 --> E[End process]
-    B1 --> B3[⚖️ B3 Judge: Reasoning]
-    B3 --> B_LOOP{🔍 Module 2 - B Evaluator: Verdict Acceptable?}
-    B_LOOP -- No: Too Generic / Too Long --> B3
-    B_LOOP -- Yes --> B_ROUTER2{University Signals Present in Candidate's Profile?}
-    B_ROUTER2 -- Yes: Anchor-first path --> B3_A[✍️ B3 Worker: Query with Company + University Anchors]
-    B_ROUTER2 -- No: Skill-first path --> B3_B[✍️ B3 Worker: Query with Skill + Title Focus]
-    B3_A --> C_ROUTER1{Module 3 - C Router: Too many skills present?}
-    B3_B --> C_ROUTER1{Module 3 - C Router: Too many skills present?}
+    A[⚡ Candidate PDF + Job Posting] --> B1
+    B1[🤖 Gatekeeper (Extraction)] --> B2
+    B2[⚖️ Judge (3-State Strategy)] --> B3
+    B3[✍️ Worker (Query Renderer)] --> B4[🔎 LinkedIn Top Search]
+    B4 --> C
 
-    %% ══════════════════════════════════════════════════════
-    %% STEP C — Analyze Profiles for Relevance
-    %% ══════════════════════════════════════════════════════
-    C_ROUTER1 -- Yes --> C1A[Select most relevant top 5 skills]
-    C_ROUTER1 -- No --> C1
-    C1A --> C1
-    C1[🤖 C1 Gatekeeper: Profile Extraction]
-    C1 --> C2
-    C2[⚖️ C2 Judge: Relevance Scoring]
-    C2 --> C_LOOP{🔍 Module 4 - C Evaluator: Score Granular and Ranked?}
-    C_LOOP -- No: Flat Tiers / Inflation --> C2
-    C_LOOP -- Yes --> C3[✍️ C3 Worker: Lead Summary]
+    %% =========================
+    %% STEP D — MESSAGING PIPELINE
+    %% =========================
 
-    %% ══════════════════════════════════════════════════════
-    %% STEP D — Draft Customized Message
-    %% ══════════════════════════════════════════════════════
+    C[📥 5 Profile PDFs] --> D1
+    D1[🤖 Gatekeeper (Batch Extraction)] --> D2
+    D2[⚖️ Judge (Messaging Strategy)] --> D4
 
-    C3 --> D_ROUTER{🧭 Module 5 - D Router: All Key Fields Intact?}
-    D_ROUTER -- No: Skills Dropped / Interests Rewritten --> D1_FALLBACK[Re-Parse with Field Validation]
-    D_ROUTER -- Yes --> D2
-    D1_FALLBACK --> D2
-    D2[⚖️ D2 Judge: Personalization Strategy]
-    D2 --> D_LOOP{🔍 Module 6 - D Evaluator: Clear Ask + with Timeline?}
-    D_LOOP -- No: Too Informal / No Call To Action --> D2
-    D_LOOP -- Yes --> D3[✍️ D3 Worker: Draft Message]
-    D3 --> HUMAN
-    
-    HUMAN --> E[End process]
+    %% --- WEEK 4 CONTENT VALIDATION LOOP ---
 
-    %% ── EXIT ──────────────────────────────────────────────
-    HUMAN([🛠️ Human Review & Send])
+    D4{🔎 Strategy References<br>Only Gatekeeper Fields?}
 
-    %% ══════════════════════════════════════════════════════
+    D4 -->|Yes → Grounded| D7
+    D4 -->|No → Regenerate Strategy| D2
+
+    D7[✍️ Worker (Message Drafting)] --> D8[👤 Human Review & Send]
+
+    %% =========================
     %% STYLING
-    %% ══════════════════════════════════════════════════════
+    %% =========================
 
-    %% Week 3 nodes — Orange
-    style B1 fill:#FFF4DD,stroke:#E0C070
-    style B2 fill:#FFF4DD,stroke:#E0C070
-    style B3_A fill:#FFF4DD,stroke:#E0C070
-    style B3_B fill:#FFF4DD,stroke:#E0C070
-    style C1 fill:#FFF4DD,stroke:#E0C070
-    style C2 fill:#FFF4DD,stroke:#E0C070
-    style C3 fill:#FFF4DD,stroke:#E0C070
-    style D2 fill:#FFF4DD,stroke:#E0C070
-    style D3 fill:#FFF4DD,stroke:#E0C070
+    %% Week 3 AI Nodes (Orange)
+    style B1 fill:#FFF4DD,stroke-dasharray:5 5
+    style B2 fill:#FFF4DD,stroke-dasharray:5 5
+    style B3 fill:#FFF4DD,stroke-dasharray:5 5
+    style D1 fill:#FFF4DD,stroke-dasharray:5 5
+    style D2 fill:#FFF4DD,stroke-dasharray:5 5
+    style D7 fill:#FFF4DD,stroke-dasharray:5 5
 
-    %% New nodes — Green
-    style B_LOOP fill:#E6FFFA,stroke:#2C7A7B,stroke-width:2px
-    style C1A fill:#E6FFFA,stroke:#2C7A7B,stroke-width:2px
-    style B_ROUTER fill:#E6FFFA,stroke:#2C7A7B,stroke-width:2px
-    style B_ROUTER2 fill:#E6FFFA,stroke:#2C7A7B,stroke-width:2px
-    style C_LOOP fill:#E6FFFA,stroke:#2C7A7B,stroke-width:2px
-    style C_ROUTER1 fill:#E6FFFA,stroke:#2C7A7B,stroke-width:2px
-    style D_ROUTER fill:#E6FFFA,stroke:#2C7A7B,stroke-width:2px
-    style D1_FALLBACK fill:#E6FFFA,stroke:#2C7A7B,stroke-width:2px
-    style D_LOOP fill:#E6FFFA,stroke:#2C7A7B,stroke-width:2px
+    %% New Critic Node (Green, Distinct Border)
+    style D4 fill:#E6FFFA,stroke:#00B894,stroke-width:3px
 ```
+
 ### 3.3 The Orchestrator Logic
 *Define the step-by-step execution plan (The "Operating System"). This replaces the simple "1-2-3" sequence.*
-
-#### WORKFLOW VARIABLES
-```
 ### VARIABLES
 
-#### Core Inputs
-- job_posting_text
-- job_criteria_json
-- judge_verdict_xml
-- profile_skill_array
-- lead_json
-- lead_summary_text
-- message_draft_text
-- relevance_tier
+Inputs
 
-#### Router Outputs
-- B_input_status ∈ {VALID, INSUFFICIENT, AMBIGUOUS}
-- C_skill_status ∈ {COMPRESS, PROCEED}
-- D_field_status ∈ {PROCEED, REPARSE}
+candidate_profile_pdf
 
-#### Evaluator Outputs
-- B_query_quality ∈ {PASS, FAIL}
-- C_relevance_quality ∈ {PASS, FAIL}
-- D_message_quality ∈ {PASS, FAIL}
+job_posting_text
 
-#### System State
-- END_PROCESS (Boolean)
-- RETRY_COUNT (Integer)
-- MAX_RETRIES = 3
+profile_pdfs[] (5 profiles from LinkedIn search)
 
----
+Structured Outputs
+
+candidate_json
+
+job_json
+
+leads_json
+
+search_states
+
+selected_state
+
+linkedin_query
+
+messaging_strategy
+
+critic_verdict
+
+Control Variables
+
+loop_counter = 0
+
+MAX_RETRIES = 1
+
+execution_surface = "LinkedIn_Top_Search"
+
+grounding_status = PASS | FAIL
 
 ### CONDITIONS
+STEP B — IDENTIFY LEADS PIPELINE
 
----
+Ingest candidate_profile_pdf + job_posting_text.
 
-## MODULE 1 — B Router (Input Triage)
+Call Gatekeeper_StepB.
 
-IF B_input_status == INSUFFICIENT OR AMBIGUOUS
-    → END_PROCESS = TRUE
-    → EXIT
+Output → candidate_json, job_json.
 
-ELSE IF B_input_status == VALID
-    → Proceed to Step B Gatekeeper
+Call Judge_StepB.
 
----
+Output → search_states.
 
-## MODULE 2 — B Evaluator (Query Quality Loop)
+Select selected_state.
 
-SET RETRY_COUNT = 0
+Call Worker_QueryRenderer.
 
-WHILE B_query_quality == FAIL AND RETRY_COUNT < MAX_RETRIES
-    → Send back to B Judge
-    → RETRY_COUNT++
-END WHILE
+Output → linkedin_query.
 
-IF RETRY_COUNT == MAX_RETRIES AND B_query_quality == FAIL
-    → END_PROCESS = TRUE
-    → EXIT
+Execute query in LinkedIn Top Search (manual).
 
+Download 5 resulting profile PDFs → profile_pdfs[].
+
+STEP D — MESSAGING PIPELINE
+
+Call Gatekeeper_StepD.
+
+Input: profile_pdfs[]
+
+Output → leads_json.
+
+Call Judge_StepD.
+
+Output → messaging_strategy.
+
+CRITIC LOOP (Content Grounding Validator)
+
+WHILE loop_counter <= MAX_RETRIES:
+
+Call Content_Grounding_Critic.
+
+Input:
+
+leads_json
+
+messaging_strategy
+
+Output → critic_verdict
+
+IF critic_verdict == PASS:
+
+Set grounding_status = PASS
+
+BREAK loop
+
+ELSE IF critic_verdict == FAIL:
+
+Increment loop_counter += 1
+
+IF loop_counter > MAX_RETRIES:
+
+Terminate with error: "Strategy grounding failed"
 ELSE
-    → Proceed to Query Worker
 
----
+Re-call Judge_StepD with violation feedback
 
-## MODULE 3 — C Router (Skill Compression)
+Regenerate messaging_strategy
 
-IF C_skill_status == COMPRESS
-    → Select Top 5 Skills
-    → Continue
+Continue loop
 
-ELSE IF C_skill_status == PROCEED
-    → Continue
+FINALIZATION
 
----
+IF grounding_status == PASS:
 
-## MODULE 4 — C Evaluator (Relevance Calibration Loop)
+Call Worker_MessageDraft.
 
-SET RETRY_COUNT = 0
+Output → final_messages.
 
-WHILE C_relevance_quality == FAIL AND RETRY_COUNT < MAX_RETRIES
-    → Send back to C Judge (Re-score profiles)
-    → RETRY_COUNT++
-END WHILE
+Human Review.
 
-IF RETRY_COUNT == MAX_RETRIES AND C_relevance_quality == FAIL
-    → END_PROCESS = TRUE
-    → EXIT
+Send Connection Requests.
 
-ELSE
-    → Proceed to Lead Summary
-
----
-
-## MODULE 5 — D Router (Field Integrity)
-
-IF D_field_status == REPARSE
-    → Re-Parse Summary
-    → Continue to D Judge
-
-ELSE IF D_field_status == PROCEED
-    → Continue to D Judge
-
----
-
-## MODULE 6 — D Evaluator (Message Quality Loop)
-
-SET RETRY_COUNT = 0
-
-WHILE D_message_quality == FAIL AND RETRY_COUNT < MAX_RETRIES
-    → Send back to D Judge (Refine strategy)
-    → RETRY_COUNT++
-END WHILE
-
-IF RETRY_COUNT == MAX_RETRIES AND D_message_quality == FAIL
-    → END_PROCESS = TRUE
-    → EXIT
-
-ELSE
-    → Proceed to Worker
-    → Human Review
-    → END_PROCESS = TRUE
-
-```
 ---
 
 ### 3.4 New Component Definitions (The Modules)
 
-#### **[Module 1: B Router]**
-
-**Tool Name:** `B_Input_Triage_Router`  
-  *   **Input Variable:** `{job_posting_text}` (String — raw unstructured job posting)  
-  *   **Output Categories:**  
-      - `VALID` — Company + role + concrete responsibilities present → Proceed to B1  
-      - `INSUFFICIENT` — Missing company or role, or text too short → Escalate & End  
-      - `AMBIGUOUS` — Marketing-heavy or unclear role/company → Escalate & End  
-
-  *   **R.A.F.T. Prompt Draft:**
-      ```
-      # Role
-      You are a Triage Router responsible for determining whether a job posting contains sufficient structured information to proceed into the AI networking pipeline.
-
-      # Audience
-      Machine (controls process routing)
-
-      # Format
-      Return ONLY one of the following uppercase labels:
-      - VALID
-      - INSUFFICIENT
-      - AMBIGUOUS
-
-      # Task
-      Analyze the raw job posting text and determine whether it contains:
-      1. A clearly identifiable company name
-      2. A clearly identifiable role title
-      3. At least 2 concrete responsibilities or required skills
-
-      # Rules
-      - Do NOT extract or summarize content.
-      - Do NOT infer missing company names.
-      - If company is implied but not explicitly stated → AMBIGUOUS.
-      - If role title is unclear (e.g., “Exciting AI Opportunity”) → AMBIGUOUS.
-      - If text length < 100 words → INSUFFICIENT.
-      - If core elements (company OR role) missing → INSUFFICIENT.
-      - When in doubt between VALID and AMBIGUOUS → choose AMBIGUOUS.
-      - Output one word only.
-      ```
-
-#### **[Module 2: B Evaluator]**
-
-*   **Tool Name:** `B_Query_Quality_Evaluator`
-*   **Input Variable:** 
-    * `{judge_verdict_xml}` — XML output from B3 Judge (`<thinking>` + `<verdict>` containing titles, companies, skills, seniority logic)
-
-*   **Evaluation Rubric:** (Pass/Fail Criteria)
-
-    The evaluator must verify ALL of the following:
-
-    **1. Title Realism Rule**
-    - Titles must be commonly used on LinkedIn.
-    - Reject if titles are overly niche, academic, or invented (e.g., “Conversational AI Lead – Agentic Platform Architect”).
-    - Maximum 5 titles.
-    - Titles must be ≤ 4 words each.
-
-    **2. Anchor Protection Rule**
-    - If primary company exists in extracted JSON → it must remain the first priority company.
-    - Secondary companies ≤ 3.
-    - If no primary company → no expansion beyond industry-level logic.
-
-    **3. Keyword Discipline Rule**
-    - Skills limited to 2–3 high-frequency keywords.
-    - No long phrases (>3 words).
-    - No rare tools unless explicitly core to job.
-
-    **4. Length & Parsability Rule**
-    - Final query (simulated) must be ≤ 200 characters.
-    - One OR parenthetical block for titles only.
-    - No nested parentheses.
-    - No NOT operators.
-
-    **5. Strategic Coherence Rule**
-    - Titles, skills, and companies must align logically with job role.
-    - No drift into adjacent but irrelevant domains.
-
-    **PASS Condition:** All 5 rule groups satisfied.  
-    **FAIL Condition:** Any rule violated.
-
-*   **R.A.F.T. Prompt Draft:**
-    ```
-    # Role
-    You are a Query Quality Evaluator. Your job is to determine whether the Judge's search strategy is realistic, parsable, and strategically coherent.
-
-    # Audience
-    Machine (controls loop back to Judge if necessary)
-
-    # Format
-    Return ONLY one of:
-    - PASS
-    - FAIL
-
-    # Task
-    Evaluate the Judge's XML verdict for:
-    - Realistic LinkedIn-native job titles
-    - Proper company anchor protection
-    - Controlled skill keyword usage
-    - Boolean query structural compliance
-    - Strategic coherence with the job role
-
-    # Rules
-    - Do NOT rewrite the query.
-    - Do NOT propose improvements.
-    - If ANY rubric rule is violated → FAIL.
-    - If all rubric rules satisfied → PASS.
-    - Output one word only.
-    ```
-
-#### **[Module 3: C Router]**
-
-**Tool Name:** `C_Skill_Noise_Router`  
-  *   **Input Variable:** `{profile_skill_array}` — Array of extracted skills from C1 Gatekeeper  
-  *   **Output Categories:**  
-      - `COMPRESS` — More than 5 skills OR contains redundant/low-signal tools → Route to Skill Compression Node  
-      - `PROCEED` — 5 or fewer clearly relevant, high-signal skills → Proceed to C1 Gatekeeper  
-
-  *   **R.A.F.T. Prompt Draft:**
-      ```
-      # Role
-      You are a Skill Noise Router responsible for determining whether the extracted skill list is too long or too noisy to pass directly into relevance scoring.
-
-      # Audience
-      Machine (controls routing before profile evaluation)
-
-      # Format
-      Return ONLY one of:
-      - COMPRESS
-      - PROCEED
-
-      # Task
-      Evaluate the extracted skill array and determine:
-      1. Whether the number of skills exceeds 5
-      2. Whether the list contains redundant, generic, or low-signal tools
-      3. Whether the list lacks prioritization (core vs peripheral skills)
-
-      # Rules
-      - If skill count > 5 → COMPRESS.
-      - If multiple tools from the same category appear (e.g., many ML algorithms listed individually) → COMPRESS.
-      - If skills include generic labels such as "Data", "Technology", "Innovation" → COMPRESS.
-      - If skills are already concise (≤ 5) and clearly high-signal → PROCEED.
-      - Do NOT rank skills.
-      - Do NOT modify the array.
-      - Output one word only.
-      ```
-
-
-#### **[Module 4: C Evaluator]**
-
-*   **Tool Name:** `C_Relevance_Calibration_Evaluator`
-*   **Input Variable:** 
-    * `{lead_json}` — Structured profile output from C1 Gatekeeper  
-    * `{job_criteria_json}` — Extracted job criteria from Step B  
-    * `{judge_verdict_xml}` — XML output from C2 Judge (includes reasoning + High/Medium/Low verdict)
-
-*   **Evaluation Rubric:** (Pass/Fail Criteria)
-
-    The evaluator must verify ALL of the following:
-
-    **1. Hard Alignment Rule**
-    - If no overlap between required job skills and lead skills → cannot be marked HIGH.
-    - If company does not match and no strong skill alignment → cannot be HIGH.
-
-    **2. Anchor Weight Rule**
-    - Shared company OR shared university adds weight.
-    - Lack of both must lower ceiling to MEDIUM unless skills are extremely strong.
-
-    **3. Inflation Control Rule**
-    - HIGH tier should represent clear, multi-dimensional alignment.
-    - If reasoning lacks explicit matches across at least 2 of the following:  
-      (Company, Role, Skills, University, Interests) → cannot be HIGH.
-
-    **4. Prestige Bias Guard**
-    - Employer brand alone (e.g., Meta, AWS, Microsoft) cannot justify HIGH.
-    - Verdict must reference concrete skill/role alignment.
-
-    **5. Tier Separation Rule**
-    - HIGH = strong and explicit multi-factor alignment.
-    - MEDIUM = partial alignment or one strong signal.
-    - LOW = weak or minimal alignment.
-    - If verdict reasoning does not clearly justify tier distinction → FAIL.
-
-    **PASS Condition:** Verdict tier is justified, calibrated, and discriminative.  
-    **FAIL Condition:** Inflation, weak reasoning, or unjustified HIGH.
-
-*   **R.A.F.T. Prompt Draft:**
-    ```
-    # Role
-    You are a Relevance Calibration Evaluator responsible for preventing score inflation and enforcing strict tier discrimination.
-
-    # Audience
-    Machine (controls loop back to C2 Judge if necessary)
-
-    # Format
-    Return ONLY one of:
-    - PASS
-    - FAIL
-
-    # Task
-    Evaluate whether the Judge's relevance verdict is:
-    - Properly calibrated
-    - Free from prestige bias
-    - Explicitly justified with multi-factor alignment
-    - Clearly separated between HIGH, MEDIUM, and LOW tiers
-
-    # Rules
-    - Do NOT modify the verdict.
-    - Do NOT suggest improvements.
-    - If HIGH is assigned without strong multi-factor evidence → FAIL.
-    - If reasoning lacks explicit alignment references → FAIL.
-    - If verdict tiers appear inflated or compressed → FAIL.
-    - Output one word only.
-    ```
-    
-#### **[Module 5: D Router]**
-
-**Tool Name:** `D_Field_Integrity_Router`  
-  *   **Input Variable:** `{lead_summary_text}` — Plain text summary generated by C3 Worker  
-  *   **Output Categories:**  
-      - `PROCEED` — All required structured fields are present and intact  
-      - `REPARSE` — One or more key fields missing, malformed, or rewritten  
-
-  *   **R.A.F.T. Prompt Draft:**
-      ```
-      # Role
-      You are a Field Integrity Router responsible for verifying that all structured data required for message personalization is intact before strategy generation.
-
-      # Audience
-      Machine (controls routing before D2 Judge)
-
-      # Format
-      Return ONLY one of:
-      - PROCEED
-      - REPARSE
-
-      # Task
-      Examine the lead summary text and determine whether it clearly contains:
-
-      1. Current Company
-      2. Current Role
-      3. Skills (at least 1 identifiable skill)
-      4. Relevance tier (High, Medium, or Low)
-
-       # Rules
-      - If any of the required fields are missing → REPARSE.
-      - If skills are overly generic (e.g., “Data”, “Technology”) → REPARSE.
-      - If relevance tier is absent → REPARSE.
-      - If company or role is unclear or rewritten beyond recognition → REPARSE.
-      - Do NOT extract or modify content.
-      - Do NOT evaluate message quality.
-      - Output one word only.
-      ```
-#### **[Module 6: Evaluator]**
-
-*   **Tool Name:** `D_Message_Quality_Evaluator`
-*   **Input Variable:** 
-    * `{message_draft_text}` — Plain text output from D3 Worker  
-    * `{relevance_tier}` — High / Medium / Low  
-
-*   **Evaluation Rubric:** (Pass/Fail Criteria)
-
-    The evaluator must verify ALL of the following:
-
-    **1. Clear Call-To-Action Rule**
-    - Message must contain a direct, explicit ask.
-    - Acceptable forms:
-        - “Would you be open to a 15–20 min chat?”
-        - “Would you be available next week?”
-        - “Would you be open to connecting?”
-    - If no actionable request → FAIL.
-
-    **2. Timeline Specificity Rule**
-    - Must contain time anchor (e.g., “next week”, “15–20 minutes”, “brief call”).
-    - Vague phrases like “sometime” → FAIL.
-
-    **3. Length Discipline Rule**
-    - ≤ 220 words.
-    - ≤ 3 paragraphs.
-    - If longer → FAIL.
-
-    **4. Tone Calibration Rule**
-    - Must match relevance tier:
-        - HIGH → peer-level but not arrogant.
-        - MEDIUM → concise and respectful.
-        - LOW → light-touch and brief.
-    - If overly confident, dramatic, or grandiose → FAIL.
-
-    **5. Anchor Strength Rule**
-    - Must reference at least 1 concrete profile-specific signal:
-        - Specific skill
-        - Specific project/theme
-        - Specific role context
-    - Generic AI buzzwords without specificity → FAIL.
-
-    **PASS Condition:** All rubric rules satisfied.  
-    **FAIL Condition:** Any rule violated.
-
-*   **R.A.F.T. Prompt Draft:**
-    ```
-    # Role
-    You are a Message Quality Evaluator responsible for enforcing professional tone, clear calls-to-action, and structural discipline in networking outreach messages.
-
-    # Audience
-    Machine (controls loop back to D2 Judge if necessary)
-
-    # Format
-    Return ONLY one of:
-    - PASS
-    - FAIL
-
-    # Task
-    Evaluate whether the drafted message:
-    - Contains a clear, actionable ask with time specificity
-    - Is structurally concise
-    - Matches tone to relevance tier
-    - References at least one specific profile signal
-    - Avoids overconfidence or dramatic language
-
-    # Rules
-    - Do NOT rewrite the message.
-    - Do NOT suggest edits.
-    - If any rubric rule is violated → FAIL.
-    - If all rubric rules satisfied → PASS.
-    - Output one word only.
-    ```
----
-
-### 3.5 Master Simulation (Stress Test)
-
-### Stress Scenario:
-Judge in Step C returns ALL profiles as HIGH relevance without discrimination.
-
-```
-
-### TRACE LOG
-
-[START] → Job Posting Received
-
-[ROUTER B] → VALID  
-[JUDGE B] → Strategy Generated  
-[CRITIC B] → PASS  
-[WORKER B] → Query Generated  
-
-[ROUTER C] → PROCEED  
-[GATEKEEPER C] → Profiles Extracted  
-[JUDGE C] → ALL profiles marked HIGH  
-
-[CRITIC C] → REJECT  
-Reason: Inflation detected — HIGH assigned without multi-factor justification; flat tier distribution.
-
-[JUDGE C] → RETRY (Recalibrating tiers)  
-
-[JUDGE C] → Updated scoring:
-- 2 HIGH
-- 2 MEDIUM
-- 1 LOW
-
-[CRITIC C] → PASS  
-[WORKER C] → Lead Summary Generated  
-
-[ROUTER D] → PROCEED  
-[JUDGE D] → Message Strategy Created  
-
-[CRITIC D] → PASS  
-[WORKER D] → Draft Message  
-
-[HUMAN] → Review & Send  
-
-[RESULT] → Process Completed Successfully  
-END_PROCESS = TRUE
+#### **[Module A: The Evaluator Configuration]**
+
+**Tool Name:** Content Grounding Critic
+**Input Variable:**
+- `{{leads_json}}`
+- `{{messaging_strategy}}`
+
+**Where:**
+- **leads_json** = Structured output from Gatekeeper (Step D)
+- **messaging_strategy** = Structured strategy from Judge (tone, angle, CTA, references)
 
 ---
 
-### Observed System Behavior Under Stress
+## Evaluation Rubric (PASS / FAIL Criteria)
+The Critic evaluates whether the Judge’s strategy contains any content not strictly grounded in Gatekeeper fields.
 
-- Inflation was detected automatically.
-- Loop prevented propagation of weak scoring.
-- Calibration restored discrimination.
-- No anchor drift occurred.
-- Message layer executed only after validation.
+### Core Principle
+The strategy must be **strictly extractive-bound**.
+No inference. No enrichment. No relational assumption.
+
+### Rule Set
+* **Rule 1 — Field-Bound Referencing**
+    Every referenced attribute in the strategy must exist in:
+    * `lead.name`
+    * `lead.company`
+    * `lead.role`
+    * `lead.skills`
+    * `lead.university`
+    * If the strategy references anything outside those fields → **FAIL**
+* **Rule 2 — No Derived Relationships**
+    The strategy must **NOT**:
+    * Infer shared alumni status unless universities exactly match.
+    * Infer seniority level.
+    * Infer career trajectory.
+    * Infer leadership impact unless explicitly stated in role.
+    * Any inferred relationship or interpretation → **FAIL**
+* **Rule 3 — No External Knowledge Injection**
+    Strategy must not introduce:
+    * Industry commentary
+    * Assumed company initiatives
+    * Implied achievements
+    * Implied cross-functional impact
+    * If not explicitly stated in the profile fields → **FAIL**
+* **Rule 4 — CTA Must Be Generic**
+    CTA must not:
+    * Assume referral capability
+    * Assume hiring influence
+    * Assume mentorship willingness
+    * CTA must be neutral (e.g., short conversation, perspective sharing)
+    * Overreach → **FAIL**
+* **Rule 5 — Tone Eligibility Check**
+    * If `tone = warm_alumni`: `candidate.university` AND `lead.university` must be non-null AND equal.
+    * If not → **FAIL**
+
+---
+
+## PASS Criteria
+All rules satisfied.
+
+## FAIL Criteria
+Any single rule violation.
+
+---
+
+## R.A.F.T. Prompt
 ```
+#### Role  
+You are the Content Grounding Critic.
+
+#### Audience  
+Machine (Judge node).
+
+#### Format  
+Output strict JSON:
+
+{
+  "verdict": "PASS" | "FAIL",
+  "violations": [
+    "Rule X: explanation"
+  ]
+}
+
+#### Task  
+You will receive:
+
+- `leads_json`
+- `messaging_strategy`
+
+Your responsibility is to evaluate whether the messaging strategy is strictly grounded in the structured lead data.
+
+---
+
+### Evaluation Rules
+
+Rule 1 — Field-Bound Referencing  
+Every referenced attribute in the strategy must exist in one of the following fields from `leads_json`:
+
+- lead.name  
+- lead.company  
+- lead.role  
+- lead.skills  
+- lead.university  
+
+If the strategy references any content not directly traceable to these fields → FAIL.
+
+---
+
+Rule 2 — No Derived Relationships  
+The strategy must NOT:
+
+- Infer shared alumni status unless universities exactly match.
+- Infer seniority.
+- Infer career progression.
+- Infer leadership scope unless explicitly stated in role text.
+- Infer company initiatives or strategic direction.
+
+Any derived or interpretive statement → FAIL.
+
+---
+
+Rule 3 — No External Knowledge Injection  
+The strategy must not introduce:
+
+- Industry commentary
+- Assumed achievements
+- Assumed impact
+- Assumed hiring authority
+- Assumed mentorship relationship
+
+If not explicitly present in structured fields → FAIL.
+
+---
+
+Rule 4 — CTA Must Be Neutral  
+The call to action must:
+
+- Not assume referral capability
+- Not assume hiring influence
+- Not assume willingness to mentor
+
+CTA must remain neutral (e.g., short conversation, perspective sharing).
+
+Overreach → FAIL.
+
+---
+
+Rule 5 — Tone Eligibility Check  
+If tone = "warm_alumni":
+
+- candidate.university AND lead.university must be non-null
+- candidate.university must exactly equal lead.university
+
+If not → FAIL.
+
+---
+
+### Determinism Requirements
+
+- No rewriting.
+- No optimization.
+- No interpretation beyond rule set.
+- Binary verdict only.
+- If unsure → FAIL.
+
+Return structured JSON only.
+```
+
+### 3.5 Advanced Simulation Log (Proof of Robustness)
+*Provide a chat log showing the Logic handling a complex case.*
+
+**Scenario: The Edge Case**
+
+Input:
+
+Lead profile: Adam Ware
+
+University: Cornell University 
+
+Profile (4)
+
+Candidate university: Fairfield University
+
+Judge strategy incorrectly assumes shared alumni status.
+
+Trace Log
+Step D Execution
+
+[GATEKEEPER]
+Extracted:
+
+lead.name = "Adam Ware"
+lead.company = "Analytic-Aware LLC"
+lead.role = "Consultant & Founder"
+lead.university = "Cornell University"
+
+[JUDGE] → APPROVE (Initial Strategy)
+
+Generated strategy:
+
+Tone: warm_alumni
+Angle: Shared academic background
+CTA: 15-minute alumni conversation
+
+[CRITIC] → REJECT
+
+Reason:
+Rule 5 Violation:
+Tone warm_alumni requires exact university match.
+Candidate.university = Fairfield University
+Lead.university = Cornell University
+No equality.
+
+[JUDGE] → RETRY
+
+Regenerated strategy:
+
+Tone: professional_peer
+Angle: Analytics leadership and data strategy
+CTA: Short conversation to exchange perspectives
+
+[CRITIC] → PASS
+
+All references traceable to:
+
+role
+
+company
+
+skills
+
+university (without relational claim)
+
+[RESULT] → FINAL MESSAGE
+
+Hi Adam,
+
+I came across your work as Consultant & Founder at Analytic-Aware LLC and was impressed by your focus on analytics strategy and data visualization leadership.
+
+I’d appreciate the opportunity to connect for a brief conversation to exchange perspectives on analytics transformation and executive storytelling.
+
+Best,
+[Your Name]
+
 ---
 
 ## [Part 4: The Control Room (Safety & Governance)]
@@ -1854,120 +1413,7 @@ END_PROCESS = TRUE
 
 ### 4.1 The V3.0 Logic Map (Final Architecture)
 *Update your Mermaid diagram to include the **Auditor Node** and the **HITL (Human-in-the-Loop)** Routing.*
-
-```mermaid
-graph TD
-
-    %% INPUT
-    In1[📄 Job Description]
-    In2[👤 Candidate Profiles Batch]
-
-    %% ─────────────────────────────────────────────
-    %% NODE 1 — DEFENSE LAYER (Module 1 Upgrade)
-    %% ─────────────────────────────────────────────
-    subgraph Defense_Layer ["🛡️ NODE 1: ROUTER V3 (Signal Defense Layer)"]
-        direction TB
-        D1[📑 Boilerplate Filter]
-        D2[🔁 De-duplication Engine]
-        D3[🎯 Domain Anchor Enforcer]
-        Trash1[⛔ Terminate: Low Signal Integrity]
-
-        D1 --> D2
-        D2 --> D3
-        D1 -- "Institutional Noise Dominant" --> Trash1
-        D3 -- "Ambiguous Domain" --> Trash1
-    end
-
-    style Defense_Layer fill:#fee,stroke:#b91c1c,stroke-width:2px
-    style Trash1 fill:#eee,stroke:#999,stroke-dasharray: 5 5
-
-    In1 --> D1
-    D3 -- "Validated Core Signal" --> B1
-
-    %% ─────────────────────────────────────────────
-    %% NODE 2 — CONTEXT ENGINE (Module 2 + 3)
-    %% ─────────────────────────────────────────────
-    subgraph Context_Engine ["🧠 NODE 2: GATEKEEPER V3 (Query + Skill Integrity)"]
-        direction TB
-        B1[🤖 Criteria Extraction]
-        J2[⚖️ Strategy Builder]
-        C2{👮 Structural Query Guard}
-        S1[🧩 Skill Categorizer]
-        S2[📊 Context-Aware Skill Normalizer]
-
-        B1 --> J2
-        J2 --> C2
-        C2 -- "Cross-Family Titles" --> J2
-        C2 -- "Keyword Tail / Anchor Drift" --> J2
-        C2 -- "PASS" --> S1
-        S1 --> S2
-    end
-
-    style Context_Engine fill:#e0f2fe,stroke:#0369a1,stroke-width:2px
-    style C2 fill:#fff,stroke:#b91c1c,stroke-width:2px
-
-    In2 --> S1
-    S2 --> J3
-
-    %% ─────────────────────────────────────────────
-    %% NODE 3 — LOGIC CORE (Module 4 Upgrade)
-    %% ─────────────────────────────────────────────
-    subgraph Logic_Core ["⚖️ NODE 3: JUDGE V3 (Axis-Calibrated Ranking)"]
-        direction TB
-        J3[🔎 Relevance Scoring Engine]
-        C3{👮 Calibration Guard}
-        Reject2[⛔ Terminate: Inflation Detected]
-
-        J3 --> C3
-        C3 -- "Relative Inflation" --> J3
-        C3 -- "Implied Competence" --> J3
-        C3 -- "Axis Misalignment" --> J3
-        C3 -- "Max Retries" --> Reject2
-    end
-
-    style Logic_Core fill:#fff,stroke:#333,stroke-width:1px
-    style C3 fill:#fff,stroke:#b91c1c,stroke-width:2px
-
-    C3 -- "PASS" --> W1
-
-    %% ─────────────────────────────────────────────
-    %% NODE 4 — FIELD ROUTER (SIMPLIFIED)
-    %% ─────────────────────────────────────────────
-    subgraph Field_Router ["🧾 NODE 4: ROUTER V3 (Light Field Check)"]
-        direction TB
-        F1{Required Fields Present?}
-        Reject3[⛔ Terminate: Missing Core Fields]
-    end
-
-    style Field_Router fill:#fef9c3,stroke:#ca8a04,stroke-width:2px
-
-    W1[✍️ Lead Summary Generator]
-    W1 --> F1
-    F1 -- "Missing Company / Role / Tier" --> Reject3
-    F1 -- "PASS" --> J4
-
-    %% ─────────────────────────────────────────────
-    %% NODE 5 — MESSAGE ENGINE (Module 6 Upgrade)
-    %% ─────────────────────────────────────────────
-    subgraph Message_Engine ["💬 NODE 5: CRITIC LOOP V3 (Attention Enforcement)"]
-        direction TB
-        J4[✍️ Message Strategy & Draft]
-        C4{👮 Message Guard}
-        Reject4[⛔ Hard Block]
-
-        J4 --> C4
-        C4 -- "CTA Not Dominant" --> J4
-        C4 -- "Prestige Overuse (Med/Low)" --> J4
-        C4 -- "Anchor Density > Cap" --> J4
-        C4 -- "Max Retries" --> Reject4
-    end
-
-    style Message_Engine fill:#dcfce7,stroke:#15803d,stroke-width:2px
-    style C4 fill:#fff,stroke:#15803d,stroke-width:2px
-
-    C4 -- "Approved" --> Done
-    Done[✅ Human Review & Send]
-
+```
 
 ```
 
@@ -1986,205 +1432,15 @@ graph TD
 *   **Tool Name:** The Auditor
 *   **Input Variable:** `{{job_posting}}`
 *   **Fatal Errors (The Rules):**
-    1.  No extra keys.
-    2.  No commentary outside JSON.
-    3.  All numeric values must be floats between 0.0 and 1.0.
-    4.  primary_domain must be a short string label (e.g., "Data Science", "Fundraising Operations") or null.
+
 *   **Output Schema (JSON):**
     ```{
-  "status": "VALID | INSUFFICIENT | AMBIGUOUS",
-  "reason": "Short explanation of decision",
-  "signal_score": 0.0,
-  "noise_ratio": 0.0,
-  "duplication_ratio": 0.0,
-  "primary_domain": "string or null"
-}
+  
     ```
 *   **R.A.F.T. Prompt Draft:**
 ```
-  ### ROUTER_LOGIC
+ 
 
-#### Tool: Data_Intake_Specialist_Router (V3 Defense Layer)
-
----
-
-### Role
-
-You are the **Data Intake Specialist**, the Router responsible for protecting the LinkedIn Query Generator pipeline from low-signal, duplicated, or structurally ambiguous job descriptions.
-
-You are the **first line of defense** in the Control Room.
-
-Your responsibility is to determine whether the job description is structurally usable **before any reasoning, extraction, or query generation occurs**.
-
-You must enforce signal integrity.
-
----
-
-### Audience
-
-Machine (Controls routing into the downstream system)
-
-Your output determines whether the system:
-- Proceeds into extraction
-- Terminates safely
-- Flags ambiguity for escalation
-
----
-
-### Format (STRICT)
-
-You MUST return a valid JSON object with this exact structure:
-
-json
-{
-  "status": "VALID | INSUFFICIENT | AMBIGUOUS",
-  "reason": "Short explanation of decision",
-  "signal_score": 0.0,
-  "noise_ratio": 0.0,
-  "duplication_ratio": 0.0,
-  "primary_domain": "string or null"
-}
-
-Rules:
-
-No extra keys.
-
-No commentary outside JSON.
-
-All numeric values must be floats between 0.0 and 1.0.
-
-primary_domain must be a short string label (e.g., "Data Science", "Fundraising Operations") or null.
-
-Task
-
-You must:
-
-Use a Python tool to analyze the raw job_posting_text.
-
-Implement the Defense Strategy in this exact order:
-
-STEP 1 — Boilerplate Noise Detection
-
-Use Python to:
-
-Estimate total word count.
-
-Identify institutional boilerplate sections using keyword heuristics:
-
-Equal opportunity
-
-Non-discrimination
-
-Background check
-
-Compensation disclaimer
-
-Health requirements
-
-Policy language
-
-Compute:
-
-noise_ratio = boilerplate_word_count / total_word_count
-
-If:
-
-total_word_count < 100 → status = INSUFFICIENT
-
-noise_ratio > 0.45 → status = AMBIGUOUS
-
-Proceed otherwise.
-
-STEP 2 — Duplication Bias Detection
-
-Use Python to:
-
-Detect repeated paragraphs or high-overlap sentence blocks.
-
-Estimate duplication_ratio (duplicate_content / total_content).
-
-If duplication_ratio > 0.30:
-
-Normalize internally (for scoring purposes only).
-
-Do NOT terminate solely due to duplication.
-
-Record duplication_ratio in output.
-
-Proceed.
-
-STEP 3 — Core Signal Extraction Check
-
-Using structured pattern detection (regex / heuristic parsing), verify presence of:
-
-Explicit company name
-
-Explicit role title
-
-At least 2 responsibility/action statements
-
-If any missing:
-
-status = INSUFFICIENT
-
-Proceed otherwise.
-
-STEP 4 — Primary Domain Determination
-
-Using keyword clustering in Python:
-
-Identify dominant domain cluster (e.g., Data, Product, Fundraising, Research).
-
-If two domains are near equal strength (difference < 10% frequency):
-→ status = AMBIGUOUS
-→ primary_domain = null
-
-Otherwise:
-→ assign primary_domain
-
-Decision Logic
-
-Return:
-
-VALID if:
-
-Core elements present
-
-noise_ratio ≤ 0.45
-
-primary_domain confidently determined
-
-INSUFFICIENT if:
-
-Missing company OR role
-
-Word count < 100
-
-AMBIGUOUS if:
-
-Boilerplate dominates (>45%)
-
-Domain ambiguity detected
-
-Marketing-heavy or unclear structural role
-
-Behavioral Rules
-
-Do NOT summarize the job.
-
-Do NOT extract skills.
-
-Do NOT generate search logic.
-
-Do NOT infer missing company names.
-
-When uncertain between VALID and AMBIGUOUS → choose AMBIGUOUS.
-
-Never proceed optimistically.
-
-Your job is structural triage — not interpretation.
-
-Only return the required JSON object.
 ```
 
 ### 4.4 Validation Log (Red Teaming)
