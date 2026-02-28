@@ -1004,9 +1004,9 @@ graph TD
     %% =========================
 
     A[⚡ Candidate PDF + Job Posting] --> B1
-    B1[🤖 Gatekeeper (Extraction)] --> B2
-    B2[⚖️ Judge (3-State Strategy)] --> B3
-    B3[✍️ Worker (Query Renderer)] --> B4[🔎 LinkedIn Top Search]
+    B1["🤖 Gatekeeper (Extraction)"] --> B2
+    B2["⚖️ Judge (3-State Strategy)"] --> B3
+    B3["✍️ Worker (Query Renderer)"] --> B4[🔎 LinkedIn Top Search]
     B4 --> C
 
     %% =========================
@@ -1014,17 +1014,17 @@ graph TD
     %% =========================
 
     C[📥 5 Profile PDFs] --> D1
-    D1[🤖 Gatekeeper (Batch Extraction)] --> D2
-    D2[⚖️ Judge (Messaging Strategy)] --> D4
+    D1["🤖 Gatekeeper (Batch Extraction)"] --> D2
+    D2["⚖️ Judge (Messaging Strategy)"] --> D4
 
     %% --- WEEK 4 CONTENT VALIDATION LOOP ---
 
-    D4{🔎 Strategy References<br>Only Gatekeeper Fields?}
+    D4{"🔎 Strategy References<br>Only Gatekeeper Fields?"}
 
     D4 -->|Yes → Grounded| D7
     D4 -->|No → Regenerate Strategy| D2
 
-    D7[✍️ Worker (Message Drafting)] --> D8[👤 Human Review & Send]
+    D7["✍️ Worker (Message Drafting)"] --> D8[👤 Human Review & Send]
 
     %% =========================
     %% STYLING
