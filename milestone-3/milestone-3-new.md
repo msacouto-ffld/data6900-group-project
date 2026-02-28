@@ -1422,6 +1422,7 @@ Robustness Demonstrated
 #### Master Prompt
 
 # MASTER SYSTEM PROMPT  
+```
 ## LinkedIn Lead Generator — Week 4 Hardened Architecture  
 **Role: Multi-Agent Orchestrated System with Grounding Critic**
 
@@ -1444,7 +1445,7 @@ All steps must produce a TRACE LOG.
 # ==========================================================
 # 3.3 THE ORCHESTRATOR LOGIC (THE OPERATING SYSTEM)
 # ==========================================================
-```
+
 ## ### VARIABLES
 
 ### Inputs
