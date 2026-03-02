@@ -507,7 +507,7 @@ Single-line LinkedIn People keyword search string (plain text).
 - Use spaces as implicit AND.
 - Only one OR block (for titles).
 
-- 
+
 # Step D | Tool A: Gatekeeper (Batch Extraction)
 
 **Goal:**  
@@ -962,7 +962,7 @@ If you’re available, I’d love to schedule a short introductory call to learn
 ```
 
 #### 2.5 Value Definition (The KPI Dashboard)
-```
+
 | Metric                      | Current (Manual)             | Target (AI)                               | Estimated Impact                                                |
 | --------------------------- | ---------------------------- | ----------------------------------------- | --------------------------------------------------------------- |
 | Outreach Volume (Frequency) | 8–12 leads/week              | 8–12 leads/week (same or higher possible) | Maintains output with less effort; potential to increase volume |
@@ -972,7 +972,7 @@ If you’re available, I’d love to schedule a short introductory call to learn
 | Cognitive Load              | High                         | Moderate/Low                              | Reduced fatigue → higher consistency & quality                  |
 | Process Scalability         | Linear (time grows per lead) | Semi-automated                            | Enables 2× throughput with same time                            |
 
-```
+
 
 **Notes on benchmarks used (where PDD data was absent):**
 Job criteria extraction: Industry benchmark for manual job posting parsing is 3–5 min; LLM-based extraction typically runs under 60 seconds.
@@ -2145,24 +2145,24 @@ Structure over language.
 | **Metric** | **Value** | **Formula / Source** |
 | --- | --- | --- |
 | **1. Human Baseline** |  |  |
-| Hourly Rate (€) | **€35.00** | User Input (Professional Rate) |
+| Hourly Rate ($) | **$35.00** | User Input (Professional Rate) |
 | Mins Per Task (Manual) | **10.0** | 50 mins per 5-lead batch |
 | Weekly Volume (Leads) | **9.23** | 40 leads / 4.33 weeks |
-| **Manual Cost / Transaction** | **€5.83** | `(10 / 60) * €35` |
+| **Manual Cost / Transaction** | **$5.83** | `(10 / 60) * $35` |
 |  |  |  |
 | **2. Automation Costs** |  |  |
-| Dev Hourly Rate (€) | **€80.00** | Estimated Freelance Rate |
+| Dev Hourly Rate ($) | **$80.00** | Estimated Freelance Rate |
 | Total Build Hours | **20.0** | Estimated V3.0 Engineering Time |
-| **Total Investment (Capex)** | **€1,600.00** | `20 * €80` |
-| API Cost / Run | **€0.05** | Estimated (GPT-4o / 5-step chain) |
+| **Total Investment (Capex)** | **$1,600.00** | `20 * $80` |
+| API Cost / Run | **$0.05** | Estimated (GPT-4o / 5-step chain) |
 |  |  |  |
 | **3. The Return (ROI)** |  |  |
-| Weekly Manual Cost | **€53.81** | `€5.83 * 9.23` |
-| Weekly AI Cost (Labor + API) | **€19.85** | `((3.6/60)*35 + 0.05) * 9.23` |
-| Weekly Savings (Time Only) | **€33.96** | `Weekly Manual - Weekly AI` |
-| Weekly Opp. Value | **€86.54** | `(€4,500 annual value / 52)` |
-| **Total Weekly Benefit** | **€120.50** | `Weekly Savings + Weekly Opp. Value` |
-| **Net Value / Year** | **€6,293.40** | `Annual Time + Opp. Value` |
+| Weekly Manual Cost | **$53.81** | `$5.83 * 9.23` |
+| Weekly AI Cost (Labor + API) | **$19.85** | `((3.6/60)*35 + 0.05) * 9.23` |
+| Weekly Savings (Time Only) | **$33.96** | `Weekly Manual - Weekly AI` |
+| Weekly Opp. Value | **$86.54** | `($4,500 annual value / 52)` |
+| **Total Weekly Benefit** | **$120.50** | `Weekly Savings + Weekly Opp. Value` |
+| **Net Value / Year** | **$6,293.40** | `Annual Time + Opp. Value` |
 | **Payback Period** | **13.3 Weeks** | `Investment / Total Weekly Benefit` |
 
 **1. Volume & Time Assumptions**
@@ -2177,13 +2177,13 @@ AI Lead Processing (V3.0): 3.6 minutes per lead (Reviewing/tweaking AI output).
 Annual Duration: Calculations assume consistent usage over 52 weeks (12 months).
 
 **2. Labor & Development Costs**
-User Opportunity Cost: €35/hour. This represents the value of your time if spent on other professional tasks.
+User Opportunity Cost: $35/hour. This represents the value of your time if spent on other professional tasks.
 
-Developer Build Rate: €80/hour. This is a mid-market freelance rate for automation engineering.
+Developer Build Rate: $80/hour. This is a mid-market freelance rate for automation engineering.
 
 Project Build Time: 20 hours. This covers prompt engineering, API integration, and testing/iteration.
 
-API Usage: €0.05 per run. Based on current GPT-4o token costs for a multi-step chain.
+API Usage: $0.05 per run. Based on current GPT-4o token costs for a multi-step chain.
 
 **3. Pipeline Performance (The "Lift")**
 Manual Acceptance Rate: 22%. Baseline for standard personalized outreach.
@@ -2192,7 +2192,7 @@ V3.0 Acceptance Rate: 35%. Assumes higher resonance through better targeting and
 
 Interview Conversion: 15%. The probability that a new connection turns into a formal interview.
 
-Interview Value: €500. A conservative career proxy value (not a cash payment, but the "weight" of the opportunity toward a salary increase or new role).
+Interview Value: $500. A conservative career proxy value (not a cash payment, but the "weight" of the opportunity toward a salary increase or new role).
 
 ### 5.3 Implementation Strategy
 *   **Build vs. Buy:**
