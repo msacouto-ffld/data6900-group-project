@@ -2520,25 +2520,6 @@ If missing → null.
 No interpretation.
 
 NODE 2 — Judge_StepB
-Deterministic Title Logic
-
-IF job.role contains "Associate":
-
-Primary Titles:
-
-Sr. Associate
-
-Strategy Associate
-
-Analytics Associate
-
-Broader Titles:
-
-Senior Associate
-
-Strategy Manager
-
-Data Science Manager
 
 Generate EXACTLY 3 STATES
 
