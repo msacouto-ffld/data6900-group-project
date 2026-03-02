@@ -198,25 +198,6 @@ Your responsibility is to generate THREE deterministic search states.
 
 You must NOT output Boolean queries.  
 You must output structured anchor points and titles per state.
-
----
-
-### Deterministic Title Logic
-
-If job.role = "Data Scientist", use the following fixed title sets:
-
-Primary Title Set:
-- Data Scientist  
-- Machine Learning Engineer  
-- AI Engineer  
-
-Broader Title Set:
-- Senior Data Scientist  
-- Data Science Manager  
-- Machine Learning Specialist  
-
-These title sets are fixed and must NOT be regenerated dynamically.
-
 ---
 
 ### Required States
